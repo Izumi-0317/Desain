@@ -1,0 +1,254 @@
+# Blender 5.1.1 MTL File: 'Labyrinth.blend'
+# www.blender.org
+
+newmtl Bricks
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd textures/Bricks.png
+map_Bump -bm 1.000000 textures/Bricks_NRM.png
+
+newmtl Cement_A
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd -s 0.25 0.25 1 textures/Cement_A.png
+map_Bump -s 0.25 0.25 1 -bm 1.000000 textures/Cement_A_NRM.png
+
+newmtl Cement_B
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd -s 0.25 0.25 1 textures/Cement_B.png
+map_Bump -s 0.25 0.25 1 -bm 1.000000 textures/Cement_B_NRM.png
+
+newmtl Grunge_A
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd textures/Grunge_A.png
+map_d textures/Grunge_A.png
+map_Bump -bm 1.000000 textures/Grunge_A_NRM.png
+
+newmtl Grunge_B
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd textures/Grunge_B.png
+map_d textures/Grunge_B.png
+map_Bump -bm 1.000000 textures/Grunge_B_NRM.png
+
+newmtl Grunge_C
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd textures/Grunge_C.png
+map_d textures/Grunge_C.png
+map_Bump -bm 1.000000 textures/Grunge_C_NRM.png
+
+newmtl Grunge_D
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd textures/Grunge_D.png
+map_d textures/Grunge_D.png
+map_Bump -bm 1.000000 textures/Grunge_D_NRM.png
+
+newmtl Grunge_E
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd textures/Grunge_E.png
+map_d textures/Grunge_E.png
+map_Bump -bm 1.000000 textures/Grunge_E_NRM.png
+
+newmtl Grunge_F
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd textures/Grunge_F.png
+map_d textures/Grunge_F.png
+map_Bump -bm 1.000000 textures/Grunge_F_NRM.png
+
+newmtl Hay_A
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd textures/Hay_A.png
+map_d textures/Hay_A.png
+map_Bump -bm 1.000000 textures/Hay_A_NRM.png
+
+newmtl Hay_B
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd textures/Hay_B.png
+map_d textures/Hay_B.png
+map_Bump -bm 1.000000 textures/Hay_B_NRM.png
+
+newmtl Hay_C
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd textures/Hay_C.png
+map_d textures/Hay_C.png
+map_Bump -bm 1.000000 textures/Hay_C_NRM.png
+
+newmtl Hay_D
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd textures/Hay_D.png
+map_d textures/Hay_D.png
+map_Bump -bm 1.000000 textures/Hay_D_NRM.png
+
+newmtl M_Black
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.119661 0.119661 0.119661
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+
+newmtl Metal_A
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd textures/Metal_A.png
+map_Bump -bm 1.000000 textures/Metal_A_NRM.png
+
+newmtl Metal_B
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd textures/Metal_B.png
+map_Bump -bm 1.000000 textures/Metal_B_NRM.png
+
+newmtl Stone_A
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd textures/Stone_A.png
+map_Bump -bm 1.000000 textures/Stone_A_NRM.png
+
+newmtl Stone_B
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd textures/Stone_B.png
+map_Bump -bm 1.000000 textures/Stone_B_NRM.png
+
+newmtl Wax_A
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd -s 0.33333334 0.33333334 1 textures/Wax_A.png
+map_Bump -s 0.33333334 0.33333334 1 -bm 1.000000 textures/Wax_A_NRM.png
+
+newmtl Wax_B
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 2
+map_Kd textures/Wax_B.png
+map_d textures/Wax_B.png
+map_Bump -bm 1.000000 textures/Wax_B_NRM.png
+
+newmtl Wood_A
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd -s 0.6666667 1 1 textures/Wood_A.png
+map_Bump -s 0.6666667 1 1 -bm 1.000000 textures/Wood_A_NRM.png
+
+newmtl Wood_B
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd textures/Wood_B.png
+map_Bump -bm 1.000000 textures/Wood_B_NRM.png
+
+newmtl Wood_C
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd -s 0.5 1 1 textures/Wood_C.png
+map_Bump -s 0.5 1 1 -bm 1.000000 textures/Wood_C_NRM.png

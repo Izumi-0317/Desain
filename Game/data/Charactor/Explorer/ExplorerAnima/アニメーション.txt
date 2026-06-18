@@ -1,0 +1,22 @@
+Aiming			構える
+BackWard Walk　		後退
+Death From The Back　　 死亡
+Down to Aim		待機→構えるの間
+Firing		　　　　発射
+Hit			ダメージ
+Idle			待機
+Reloading		リロード
+Run			走る
+Side Step L		左移動
+Side Step R		右移動
+Smash			殴る
+Strafe B		撃ちながら前移動
+Strafe F		撃ちながら後移動
+Strafe L		撃ちながら左移動
+Strafe R		撃ちながら右移動
+Walk			歩く
+
+待機　歩く　後退　走る　左移動　右移動
+殴る　待機→構えるの間　構える　発射　撃ちながら前移動
+撃ちながら後移動　撃ちながら左移動
+撃ちながら右移動　リロード　ダメージ　死亡

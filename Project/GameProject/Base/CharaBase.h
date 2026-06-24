@@ -11,12 +11,15 @@ public:
 		SDeath,
 	};
 	CModelA3M m_model;
-	int m_state;
 	int m_hp;
+	int m_state;
+	int m_undoState;
+	int m_stateStep;
 public:
 	CharaBase(int type);
 	void Update() override;
 	void Render() override;
+	void NextState(int next);
 	virtual void StateIdle();
 	virtual void StateAttack();
 	virtual void StateDamage();

@@ -25,13 +25,16 @@ private:
 	};
 	CMatrix m_playerMat;
 	int m_fireTime;		//”­–CŠÔ
+	int m_undoState;	//1‚Â‘O‚ÌState‚É–ß‚é
 	bool m_animFlag;	//DownToAim‚Ì‘JˆÚ—p
 	bool m_attackFlag;	//UŒ‚ƒtƒ‰ƒO
+	bool m_isMaxAmmo;	//Œ»İ‚Ì‘•“U”‚ªÅ‘å‘•“U”‚©
 public:
 	enum AddState {
 		SHit = 4,		//‰£‘Å
 		SHave,			//\‚¦‚é
 		SAiming,		//‘_Œ‚€”õ
+		SReloaded,		//ƒŠƒ[ƒh
 	};
 	Player(const CVector3D& pos);
 	void Update() override;
@@ -40,12 +43,14 @@ public:
 	void StateHit();
 	void StateHave();
 	void StateAiming();
+	void StateReloaded();
 	void StateDamage();
 	void StateDeath();
 	void Collision(Base* b) override;
+	void Move(float speed);
+	void Fire();
 	CModel* GetModel() override { return &m_model; }
 	CCapsule* GetCapsule() override { return &m_capusle; }
 	int GetState() { return m_state; }
 	CMatrix GetMatrix() { return m_playerMat; }
-	void Fire();
 };

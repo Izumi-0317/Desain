@@ -8,4 +8,5 @@ public:
 	Shield();
 	void Update() override;
 	void Render() override;
+	void Collision(Base* b) override;
 };

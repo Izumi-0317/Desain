@@ -47,7 +47,7 @@ void Init(void)
 	//ボタンの設定
 	CInput::Init();
 	CInput::SetButton(0, CInput::eButton1, 'Z');
-	CInput::SetButton(0, CInput::eButton2, 'X');
+	CInput::SetButton(0, CInput::eButton2, 'R');
 	CInput::SetButton(0, CInput::eButton3, 'C');
 	CInput::SetButton(0, CInput::eButton4, VK_LSHIFT);
 	CInput::SetButton(0, CInput::eButton5, VK_SPACE);
@@ -105,6 +105,9 @@ void Init(void)
 	//ゲーム起動時に一度だけ呼ばれる
 	//-----------------------------------------------------
 	ADD_RESOURCE("ScopeView", CImage::CreateImage("Weapon/Scope/Scope.png"));
+	ADD_RESOURCE("AmmoUI", CImage::CreateImage("UI/AmmoUI.png"));
+	ADD_RESOURCE("RifleUI", CImage::CreateImage("UI/RifleUI.png"));
+	ADD_RESOURCE("WeaponUIBack", CImage::CreateImage("UI/WeaponUIBack.png"));
 	ADD_RESOURCE("Player", CModel::CreateModel("Charactor/Explorer/explorer.a3m"));
 	ADD_RESOURCE("Paladin", CModel::CreateModel("Charactor/Paladin/paladin.a3m"));
 	ADD_RESOURCE("Sword", CModel::CreateModel("Weapon/Sword/sword.obj"));
@@ -112,7 +115,7 @@ void Init(void)
 	ADD_RESOURCE("AK47", CModel::CreateModel("Weapon/AK47/AK47.obj"));
 	//ADD_RESOURCE("M1911", CModel::CreateModel("Weapon/M1911/M1911.obj"));
 	ADD_RESOURCE("Scope", CModel::CreateModel("Weapon/Scope/SR_Scope_00.obj"));
-	ADD_RESOURCE("Field", CModel::CreateModel("Field/Labyrinth/Labyrinth.obj", 20, 1, 20));
+	ADD_RESOURCE("Field", CModel::CreateModel("Field/Labyrinth/Labyrinth.obj", 40, 1, 40));
 
 
 

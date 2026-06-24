@@ -11,41 +11,44 @@
     <ClCompile Include="Effekseer\EffekseerManager.cpp">
       <Filter>Effekseer</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Player.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Game.cpp">
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="Game\Camera.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Field.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Gun.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Bullet.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Scope.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Base\CharaBase.cpp">
-      <Filter>Base</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Paladin.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Sword.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Shield.cpp">
-      <Filter>Game</Filter>
+    <ClCompile Include="UI\AmmoUI.cpp">
+      <Filter>UI</Filter>
     </ClCompile>
     <ClCompile Include="Base\ObjBase.cpp">
-      <Filter>Base</Filter>
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Gun.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Scope.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Shield.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Sword.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Field.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Bullet.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\CharaBase.cpp">
+      <Filter>Game\Object\Chara</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Player.cpp">
+      <Filter>Game\Object\Chara</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Paladin.cpp">
+      <Filter>Game\Object\Chara</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -59,44 +62,47 @@
     <ClInclude Include="Effekseer\EffekseerManager.h">
       <Filter>Effekseer</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Player.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Game.h">
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Game\Camera.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Field.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Gun.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Bullet.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Scope.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Base\CharaBase.h">
-      <Filter>Base</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Paladin.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Sword.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Shield.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Base\ObjBase.h">
-      <Filter>Base</Filter>
-    </ClInclude>
     <ClInclude Include="Base\Interface.h">
       <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\AmmoUI.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\ObjBase.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Gun.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Scope.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Shield.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Sword.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Field.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Bullet.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\CharaBase.h">
+      <Filter>Game\Object\Chara</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Player.h">
+      <Filter>Game\Object\Chara</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Paladin.h">
+      <Filter>Game\Object\Chara</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +114,15 @@
     </Filter>
     <Filter Include="Game">
       <UniqueIdentifier>{92e5e251-e57f-46e8-bef9-95234fd74fad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI">
+      <UniqueIdentifier>{04c03c3d-225a-4f68-b7b3-de925d53f3a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object">
+      <UniqueIdentifier>{7d6cc431-7612-4619-bd49-1c4b0c3608a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Chara">
+      <UniqueIdentifier>{e2b9134e-0242-4d12-af4f-a88a6370e10e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

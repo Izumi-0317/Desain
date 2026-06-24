@@ -2,30 +2,29 @@
 
 CharaBase::CharaBase(int type)
 	: Base(type)
-	, m_state(-1)
 	, m_hp(0)
+	, m_state(-1)
+	, m_stateStep(0)
+	, m_undoState(0)
 {
 	
 }
 
 void CharaBase::Update()
 {
-	//状態遷移
-	switch (m_state) {
-	case SIdle: StateIdle(); break;
-	case SAttack: StateAttack(); break;
-	case SDamage: StateDamage(); break;
-	case SDeath: StateDeath(); break;
-	}
 	//重力
 	m_vec.y = -GRAVITY * 10;
 	m_pos += m_vec;
-	//アニメーション更新
-	//m_model.UpdateAnimation();
 }
 
 void CharaBase::Render()
 {
+}
+
+void CharaBase::NextState(int next) {
+	m_undoState = m_state;
+	m_state = next;
+	m_stateStep = 0;
 }
 
 void CharaBase::StateIdle()

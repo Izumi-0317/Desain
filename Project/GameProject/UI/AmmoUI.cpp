@@ -1,5 +1,5 @@
 #include "AmmoUI.h"
-#include "Game/Gun.h"
+#include "Game/Obj/Weapon/Gun.h"
 
 AmmoUI::AmmoUI()
 	: Base(eUI)

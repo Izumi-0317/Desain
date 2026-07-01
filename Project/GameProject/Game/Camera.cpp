@@ -1,6 +1,6 @@
 #include "Camera.h"
 #include "Game.h"
-#include "Player.h"
+#include "Game/Obj/Chara/Player.h"
 
 Camera::Camera()
 	:Base(eCamera)
@@ -27,7 +27,7 @@ void Camera::UpdateCam(){
 		}
 		else {
 			m_camMat = CMatrix::MTranselate(p->m_pos)
-				* CMatrix::MTranselate(CVector3D(0, 1.1, 0))
+				* CMatrix::MTranselate(CVector3D(0, 2.5, 0))
 				* CMatrix::MRotation(m_rot)
 				* CMatrix::MTranselate(CVector3D(-0.3f, 0.2f, -0.5f));
 			/*m_dist = min(10.0f, max(2.0f, m_dist - CInput::GetMouseWheel()));

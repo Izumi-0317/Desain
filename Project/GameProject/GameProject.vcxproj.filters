@@ -14,41 +14,44 @@
     <ClCompile Include="Game\Game.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Camera.cpp">
-      <Filter>Game</Filter>
-    </ClCompile>
     <ClCompile Include="UI\AmmoUI.cpp">
       <Filter>UI</Filter>
     </ClCompile>
-    <ClCompile Include="Base\ObjBase.cpp">
-      <Filter>Game\Object</Filter>
+    <ClCompile Include="Game\Camera.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Gun.cpp">
-      <Filter>Game\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Scope.cpp">
-      <Filter>Game\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Shield.cpp">
-      <Filter>Game\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Sword.cpp">
-      <Filter>Game\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Field.cpp">
-      <Filter>Game\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Bullet.cpp">
-      <Filter>Game\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Base\CharaBase.cpp">
+    <ClCompile Include="Game\Obj\Chara\CharaBase.cpp">
       <Filter>Game\Object\Chara</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Player.cpp">
+    <ClCompile Include="Game\Obj\Chara\Paladin.cpp">
       <Filter>Game\Object\Chara</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Paladin.cpp">
+    <ClCompile Include="Game\Obj\Chara\Player.cpp">
       <Filter>Game\Object\Chara</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Obj\Weapon\Bullet.cpp">
+      <Filter>Game\Object\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Obj\Weapon\Gun.cpp">
+      <Filter>Game\Object\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Obj\Weapon\Scope.cpp">
+      <Filter>Game\Object\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Obj\Weapon\Shield.cpp">
+      <Filter>Game\Object\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Obj\Weapon\Sword.cpp">
+      <Filter>Game\Object\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Obj\Weapon\WeaponBase.cpp">
+      <Filter>Game\Object\Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Obj\Field.cpp">
+      <Filter>Game\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Obj\ObjBase.cpp">
+      <Filter>Game\Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -65,44 +68,47 @@
     <ClInclude Include="Game\Game.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Camera.h">
-      <Filter>Game</Filter>
-    </ClInclude>
     <ClInclude Include="Base\Interface.h">
       <Filter>Base</Filter>
     </ClInclude>
     <ClInclude Include="UI\AmmoUI.h">
       <Filter>UI</Filter>
     </ClInclude>
-    <ClInclude Include="Base\ObjBase.h">
-      <Filter>Game\Object</Filter>
+    <ClInclude Include="Game\Camera.h">
+      <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Gun.h">
-      <Filter>Game\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Scope.h">
-      <Filter>Game\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Shield.h">
-      <Filter>Game\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Sword.h">
-      <Filter>Game\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Field.h">
-      <Filter>Game\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Bullet.h">
-      <Filter>Game\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Base\CharaBase.h">
+    <ClInclude Include="Game\Obj\Chara\CharaBase.h">
       <Filter>Game\Object\Chara</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Player.h">
+    <ClInclude Include="Game\Obj\Chara\Paladin.h">
       <Filter>Game\Object\Chara</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Paladin.h">
+    <ClInclude Include="Game\Obj\Chara\Player.h">
       <Filter>Game\Object\Chara</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Obj\Weapon\Bullet.h">
+      <Filter>Game\Object\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Obj\Weapon\Gun.h">
+      <Filter>Game\Object\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Obj\Weapon\Scope.h">
+      <Filter>Game\Object\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Obj\Weapon\Shield.h">
+      <Filter>Game\Object\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Obj\Weapon\Sword.h">
+      <Filter>Game\Object\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Obj\Weapon\WeaponBase.h">
+      <Filter>Game\Object\Weapon</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Obj\Field.h">
+      <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Obj\ObjBase.h">
+      <Filter>Game\Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +129,9 @@
     </Filter>
     <Filter Include="Game\Object\Chara">
       <UniqueIdentifier>{e2b9134e-0242-4d12-af4f-a88a6370e10e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Weapon">
+      <UniqueIdentifier>{80fac9e8-2f09-4072-966c-2ea706b4d7eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

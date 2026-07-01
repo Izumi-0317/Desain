@@ -20,40 +20,42 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base\Base.cpp" />
-    <ClCompile Include="Base\CharaBase.cpp" />
-    <ClCompile Include="Base\ObjBase.cpp" />
     <ClCompile Include="Effekseer\EffekseerEffect.cpp" />
     <ClCompile Include="Effekseer\EffekseerManager.cpp" />
-    <ClCompile Include="Game\Bullet.cpp" />
     <ClCompile Include="Game\Camera.cpp" />
-    <ClCompile Include="Game\Field.cpp" />
     <ClCompile Include="Game\Game.cpp" />
-    <ClCompile Include="Game\Gun.cpp" />
-    <ClCompile Include="Game\Player.cpp" />
-    <ClCompile Include="Game\Scope.cpp" />
-    <ClCompile Include="Game\Paladin.cpp" />
-    <ClCompile Include="Game\Shield.cpp" />
-    <ClCompile Include="Game\Sword.cpp" />
+    <ClCompile Include="Game\Obj\Chara\CharaBase.cpp" />
+    <ClCompile Include="Game\Obj\Chara\Paladin.cpp" />
+    <ClCompile Include="Game\Obj\Chara\Player.cpp" />
+    <ClCompile Include="Game\Obj\Field.cpp" />
+    <ClCompile Include="Game\Obj\ObjBase.cpp" />
+    <ClCompile Include="Game\Obj\Weapon\Bullet.cpp" />
+    <ClCompile Include="Game\Obj\Weapon\Gun.cpp" />
+    <ClCompile Include="Game\Obj\Weapon\Scope.cpp" />
+    <ClCompile Include="Game\Obj\Weapon\Shield.cpp" />
+    <ClCompile Include="Game\Obj\Weapon\Sword.cpp" />
+    <ClCompile Include="Game\Obj\Weapon\WeaponBase.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="UI\AmmoUI.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Base\Base.h" />
-    <ClInclude Include="Base\CharaBase.h" />
     <ClInclude Include="Base\Interface.h" />
-    <ClInclude Include="Base\ObjBase.h" />
     <ClInclude Include="Effekseer\EffekseerEffect.h" />
     <ClInclude Include="Effekseer\EffekseerManager.h" />
-    <ClInclude Include="Game\Bullet.h" />
     <ClInclude Include="Game\Camera.h" />
-    <ClInclude Include="Game\Field.h" />
     <ClInclude Include="Game\Game.h" />
-    <ClInclude Include="Game\Gun.h" />
-    <ClInclude Include="Game\Player.h" />
-    <ClInclude Include="Game\Scope.h" />
-    <ClInclude Include="Game\Paladin.h" />
-    <ClInclude Include="Game\Shield.h" />
-    <ClInclude Include="Game\Sword.h" />
+    <ClInclude Include="Game\Obj\Chara\CharaBase.h" />
+    <ClInclude Include="Game\Obj\Chara\Paladin.h" />
+    <ClInclude Include="Game\Obj\Chara\Player.h" />
+    <ClInclude Include="Game\Obj\Field.h" />
+    <ClInclude Include="Game\Obj\ObjBase.h" />
+    <ClInclude Include="Game\Obj\Weapon\Bullet.h" />
+    <ClInclude Include="Game\Obj\Weapon\Gun.h" />
+    <ClInclude Include="Game\Obj\Weapon\Scope.h" />
+    <ClInclude Include="Game\Obj\Weapon\Shield.h" />
+    <ClInclude Include="Game\Obj\Weapon\Sword.h" />
+    <ClInclude Include="Game\Obj\Weapon\WeaponBase.h" />
     <ClInclude Include="Global.h" />
     <ClInclude Include="UI\AmmoUI.h" />
   </ItemGroup>

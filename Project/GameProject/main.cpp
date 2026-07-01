@@ -109,15 +109,18 @@ void Init(void)
 	ADD_RESOURCE("RifleUI", CImage::CreateImage("UI/RifleUI.png"));
 	ADD_RESOURCE("WeaponUIBack", CImage::CreateImage("UI/WeaponUIBack.png"));
 	ADD_RESOURCE("Player", CModel::CreateModel("Charactor/Explorer/explorer.a3m"));
+	ADD_RESOURCE("PlayerFPS", CModel::CreateModel("Charactor/Explorer/explorerFPS.a3m"));
 	ADD_RESOURCE("Paladin", CModel::CreateModel("Charactor/Paladin/paladin.a3m"));
 	ADD_RESOURCE("Sword", CModel::CreateModel("Weapon/Sword/sword.obj"));
 	ADD_RESOURCE("Shield", CModel::CreateModel("Weapon/Shield/shield.obj"));
 	ADD_RESOURCE("AK47", CModel::CreateModel("Weapon/AK47/AK47.obj"));
 	//ADD_RESOURCE("M1911", CModel::CreateModel("Weapon/M1911/M1911.obj"));
 	ADD_RESOURCE("Scope", CModel::CreateModel("Weapon/Scope/SR_Scope_00.obj"));
-	ADD_RESOURCE("Field", CModel::CreateModel("Field/Labyrinth/Labyrinth.obj", 40, 1, 40));
+	//ADD_RESOURCE("Field", CModel::CreateModel("Field/Room/Room.obj", 10, 1, 10));
+	ADD_RESOURCE("Field", CModel::CreateModel("Field/BattleRoom/BattleRoom.obj", 20, 1, 20));
 
-
+	SOUND("Reloaded")->Load("Sound/reloaded.wav");
+	SOUND("Shot")->Load("Sound/shot.wav");
 
 	Base::Add(new Game());
 

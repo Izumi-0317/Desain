@@ -19,6 +19,10 @@ public:
 	CharaBase(int type);
 	void Update() override;
 	void Render() override;
+	/// <summary>
+	/// ŽŸ‚Ìstate‚Ö‚Ì‘JˆÚ
+	/// </summary>
+	/// <param name="next">ŽŸ‚Ìstate</param>
 	void NextState(int next);
 	virtual void StateIdle();
 	virtual void StateAttack();

@@ -29,7 +29,7 @@ void Bullet::Render(){
 
 void Bullet::Collision(Base* b){
 	switch (b->GetType()){
-	case eField: {
+	case eRoom: {
 		CVector3D cross, normal;
 		if (b->GetModel()->CollisionRay(&cross, &normal, m_posOld, m_pos)) {
 			SetKill();

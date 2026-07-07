@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "Game/Obj/Weapon/Bullet.h"
 #include "Game/Camera.h"
-#include "Game/Obj/Field.h"
+#include "Game/Obj/Gimmick/GimmickBase.h"
 #include "Game/Game.h"
 #include "Game/Obj/Weapon/Gun.h"
 #include "Game/Obj/Weapon/Scope.h"
@@ -20,7 +20,8 @@ Player::Player(const CVector3D& pos)
 	, m_fireTime(0)
 	, m_animFlag(false)
 	, m_attackFlag(false)
-	, m_isMaxAmmo(true){
+	, m_isMaxAmmo(true)
+	, m_intaractable(nullptr){
 	m_model = COPY_RESOURCE("PlayerFPS", CModelA3M);
 	m_playerMat = (CMatrix::MTranselate(m_pos) * CMatrix::MRotation(m_rot));
 	m_pos = pos;
@@ -73,7 +74,8 @@ void Player::Update(){
 	}
 
 	//デバッグ
-	//if (PUSH(CInput::eButton1)) Game::m_cameraMode = !Game::m_cameraMode;
+	if (PUSH(CInput::eButton5)) m_vec.y = 5;
+	m_pos += m_vec;
 }
 
 void Player::Render(){
@@ -95,6 +97,7 @@ void Player::Render(){
 
 void Player::StateIdle(){
 	Move(RUN_SPEED);
+	Interact();
 	//攻撃
 	if (PUSH(CInput::eMouseL)) NextState(SHit);
 	if (PUSH(CInput::eNum1) || PUSH(CInput::eNum2)) m_animFlag = true;
@@ -127,6 +130,7 @@ void Player::StateHit(){
 void Player::StateHave(){
 	if (!PUSH(CInput::eMouseL)) Move(HAVE_SPEED);
 	else Fire();
+	Interact();
 
 	if (PUSH(CInput::eButton3)) NextState(SAiming);
 	if (PUSH(CInput::eNum3)) NextState(SIdle);
@@ -175,7 +179,7 @@ void Player::StateDeath(){
 
 void Player::Collision(Base* b){
 	switch (b->GetType()) {
-	case eField: {
+	case eRoom: {
 		CVector3D v(0, 0, 0);
 		auto tri = b->GetModel()->CollisionCapsule(m_capusle);
 		for (auto& t : tri) {
@@ -188,7 +192,7 @@ void Player::Collision(Base* b){
 			}
 			CVector3D nv = t.m_normal * (m_rad - t.m_dist);
 			v.y = fabs(v.y) > fabs(nv.y) ? v.y : nv.y;
-			if (max_y > m_pos.y + 0.2f) {
+			if (max_y > m_pos.y + 0.5f) {
 				v.x = fabs(v.x) > fabs(nv.x) ? v.x : nv.x;
 				v.z = fabs(v.z) > fabs(nv.z) ? v.z : nv.z;
 			}
@@ -196,7 +200,7 @@ void Player::Collision(Base* b){
 		m_pos += v;
 	}
 			   break;
-	case eEnemy:
+	case eEnemy: {
 		float dist;
 		CVector3D cross, dir;
 		if (CCollision::CollisionCapsule(m_capusle, b->m_capusle, &dist, &cross, &dir)) {
@@ -206,13 +210,28 @@ void Player::Collision(Base* b){
 		}
 		//近接攻撃
 		if (m_attackFlag && CCollision::CollisionCapsuleShpere(*b->GetCapsule(),
-			m_pos + CVector3D(0, 1, 0) + m_dir.GetNormalize() * 0.5f, 0.2f, 
+			m_pos + CVector3D(0, 1, 0) + m_dir.GetNormalize() * 0.5f, 0.2f,
 			&dist, &cross, &dir)) {
 			if (Interface* i = dynamic_cast<Interface*>(b)) {
 				i->TakeDamage(10);
 				m_attackFlag = false;
 			}
 		}
+	}
+		break;
+	case eDoor: {
+		float length;
+		CVector3D axis;
+		if (CCollision::CollisionOBBCapsule(b->m_obb, m_capusle, &axis, &length)) {
+			m_pos += axis * (m_rad - length);
+			if (GimmickBase* g = dynamic_cast<GimmickBase*>(b)) {
+				m_intaractable = g;
+			}
+		}
+		else {
+			if (m_intaractable == nullptr) m_intaractable = nullptr;
+		}
+	}
 		break;
 	}
 }
@@ -271,6 +290,7 @@ void Player::Move(float speed){
 void Player::Fire(){
 	if (Gun* g = dynamic_cast<Gun*>(Base::FindObject(eGun))) {
 		if (g->GetLoadedAmmo() <= 0) {
+			//空撃ち音ロードする
 			//TODO::空撃ち音
 			return;
 		}
@@ -284,4 +304,11 @@ void Player::Fire(){
 			m_fireTime = 10;
 		}
 	}
+}
+
+void Player::Interact(){
+	//インタラクト可能なオブジェクトに近づいているかつ
+	//Eを押したらインタラクトする
+	if (m_intaractable && PUSH(CInput::eButton1)) 
+		m_intaractable->Interact();
 }

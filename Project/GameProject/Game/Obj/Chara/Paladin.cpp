@@ -1,5 +1,5 @@
 #include "Paladin.h"
-#include "Game/Obj/Field.h"
+#include "Game/Obj/Room.h"
 #include "Game/Obj/Weapon/Shield.h"
 #include "Game/Obj/Weapon/Sword.h"
 #include "Player.h"
@@ -86,7 +86,7 @@ void Paladin::Render(){
 
 void Paladin::Collision(Base* b){
 	switch (b->GetType()) {
-	case eField: {
+	case eRoom: {
 		CVector3D v(0, 0, 0);
 		auto tri = b->GetModel()->CollisionCapsule(m_capusle);
 		for (auto& t : tri) {
@@ -243,14 +243,14 @@ void Paladin::StateDeath(){
 }
 
 void Paladin::WanderMove(){
-	if (Field* f = dynamic_cast<Field*>(Base::FindObject(eField))) {
+	if (Room* r = dynamic_cast<Room*>(Base::FindObject(eRoom))) {
 		bool b = false;
 		do {
 			m_rot.y = DtoR(Utility::NormalizeAngle(Base::GetRand(0.0f, 360.0f)));
 			m_dir = CVector3D(sin(m_rot.y), 0, cos(m_rot.y));
-			m_moveTime = Base::GetRand(5.0f, 10.0f);
+			m_moveTime = Base::GetRand(10.0f, 15.0f);
 			CVector3D afterPos = m_pos + m_dir.GetNormalize() * MOVE_SPEED * m_moveTime, c, n;
-			b = (f->GetModel()->CollisionRay(&c, &n,
+			b = (r->GetModel()->CollisionRay(&c, &n,
 				m_pos, afterPos))
 				? true : false;
 			//移動経路がフィールドと接触したら再設定

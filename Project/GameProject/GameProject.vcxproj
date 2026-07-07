@@ -27,8 +27,9 @@
     <ClCompile Include="Game\Obj\Chara\CharaBase.cpp" />
     <ClCompile Include="Game\Obj\Chara\Paladin.cpp" />
     <ClCompile Include="Game\Obj\Chara\Player.cpp" />
-    <ClCompile Include="Game\Obj\Field.cpp" />
-    <ClCompile Include="Game\Obj\ObjBase.cpp" />
+    <ClCompile Include="Game\Obj\Gimmick\Door.cpp" />
+    <ClCompile Include="Game\Obj\Gimmick\GimmickBase.cpp" />
+    <ClCompile Include="Game\Obj\Room.cpp" />
     <ClCompile Include="Game\Obj\Weapon\Bullet.cpp" />
     <ClCompile Include="Game\Obj\Weapon\Gun.cpp" />
     <ClCompile Include="Game\Obj\Weapon\Scope.cpp" />
@@ -48,8 +49,9 @@
     <ClInclude Include="Game\Obj\Chara\CharaBase.h" />
     <ClInclude Include="Game\Obj\Chara\Paladin.h" />
     <ClInclude Include="Game\Obj\Chara\Player.h" />
-    <ClInclude Include="Game\Obj\Field.h" />
-    <ClInclude Include="Game\Obj\ObjBase.h" />
+    <ClInclude Include="Game\Obj\Gimmick\Door.h" />
+    <ClInclude Include="Game\Obj\Gimmick\GimmickBase.h" />
+    <ClInclude Include="Game\Obj\Room.h" />
     <ClInclude Include="Game\Obj\Weapon\Bullet.h" />
     <ClInclude Include="Game\Obj\Weapon\Gun.h" />
     <ClInclude Include="Game\Obj\Weapon\Scope.h" />

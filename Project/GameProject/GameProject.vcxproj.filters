@@ -47,10 +47,13 @@
     <ClCompile Include="Game\Obj\Weapon\WeaponBase.cpp">
       <Filter>Game\Object\Weapon</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Obj\Field.cpp">
-      <Filter>Game\Object</Filter>
+    <ClCompile Include="Game\Obj\Gimmick\Door.cpp">
+      <Filter>Game\Object\Gimmick</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Obj\ObjBase.cpp">
+    <ClCompile Include="Game\Obj\Gimmick\GimmickBase.cpp">
+      <Filter>Game\Object\Gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Obj\Room.cpp">
       <Filter>Game\Object</Filter>
     </ClCompile>
   </ItemGroup>
@@ -104,10 +107,13 @@
     <ClInclude Include="Game\Obj\Weapon\WeaponBase.h">
       <Filter>Game\Object\Weapon</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Obj\Field.h">
-      <Filter>Game\Object</Filter>
+    <ClInclude Include="Game\Obj\Gimmick\Door.h">
+      <Filter>Game\Object\Gimmick</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Obj\ObjBase.h">
+    <ClInclude Include="Game\Obj\Gimmick\GimmickBase.h">
+      <Filter>Game\Object\Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Obj\Room.h">
       <Filter>Game\Object</Filter>
     </ClInclude>
   </ItemGroup>
@@ -132,6 +138,9 @@
     </Filter>
     <Filter Include="Game\Object\Weapon">
       <UniqueIdentifier>{80fac9e8-2f09-4072-966c-2ea706b4d7eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Gimmick">
+      <UniqueIdentifier>{16592d2d-2d3a-4784-a338-5c40a7fbbbd8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

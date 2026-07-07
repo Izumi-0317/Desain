@@ -18,7 +18,6 @@ void MainLoop(void) {
 	Base::RenderALL();
 	Base::DrawALL();
 
-
 	
 
 }
@@ -46,7 +45,7 @@ void Init(void)
 	CFPS::Init();
 	//ƒ{ƒ^ƒ“‚ÌÝ’è
 	CInput::Init();
-	CInput::SetButton(0, CInput::eButton1, 'Z');
+	CInput::SetButton(0, CInput::eButton1, 'E');
 	CInput::SetButton(0, CInput::eButton2, 'R');
 	CInput::SetButton(0, CInput::eButton3, 'C');
 	CInput::SetButton(0, CInput::eButton4, VK_LSHIFT);
@@ -116,8 +115,13 @@ void Init(void)
 	ADD_RESOURCE("AK47", CModel::CreateModel("Weapon/AK47/AK47.obj"));
 	//ADD_RESOURCE("M1911", CModel::CreateModel("Weapon/M1911/M1911.obj"));
 	ADD_RESOURCE("Scope", CModel::CreateModel("Weapon/Scope/SR_Scope_00.obj"));
-	//ADD_RESOURCE("Field", CModel::CreateModel("Field/Room/Room.obj", 10, 1, 10));
-	ADD_RESOURCE("Field", CModel::CreateModel("Field/BattleRoom/BattleRoom.obj", 20, 1, 20));
+	ADD_RESOURCE("Door", CModel::CreateModel("Field/Door/Door.obj"));
+	int i = 30;
+	ADD_RESOURCE("Room1", CModel::CreateModel("Field/Room/Room1.obj", i, 1, i));
+	ADD_RESOURCE("Room2I", CModel::CreateModel("Field/Room/Room2I.obj", i, 1, i));
+	ADD_RESOURCE("Room2L", CModel::CreateModel("Field/Room/Room2L.obj", i, 1, i));
+	ADD_RESOURCE("Room3", CModel::CreateModel("Field/Room/Room3.obj", i, 1, i));
+	ADD_RESOURCE("Room4", CModel::CreateModel("Field/Room/Room4.obj", i, 1, i));
 
 	SOUND("Reloaded")->Load("Sound/reloaded.wav");
 	SOUND("Shot")->Load("Sound/shot.wav");

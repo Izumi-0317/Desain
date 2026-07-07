@@ -1,9 +1,6 @@
 #include "Shield.h"
 
-namespace {
-	const CVector3D SHIELD_SCALE(50, 50, 50);
-}
-//int i = 0;
+int i = 0;
 Shield::Shield(Base* owner)
 	: WeaponBase(eShield)
 	, m_owner(owner){
@@ -12,18 +9,17 @@ Shield::Shield(Base* owner)
 }
 
 void Shield::Update(){
-	//TODO
 	//if (i++ >= 360)i = 0;
 	m_weaponMat = m_owner->GetModel()->GetFrameMatrix(35)
 		* CMatrix::MTranselate(0, -4, 0)
 		* CMatrix::MRotationZ(DtoR(175))
 		* CMatrix::MRotationX(DtoR(180))
-		* CMatrix::MScale(SHIELD_SCALE);
-	/*m_weaponMat = CMatrix::MTranselate(u, o, k)
+		* CMatrix::MScale(50, 50, 50);
+	/*m_weaponMat = CMatrix::MTranselate(0,0.5,0)
 		*CMatrix::MRotationX(DtoR(i));
 	CVector3D offsetOBB(0, 0.055, 0.01);*/
-	//TODO::í≤êÆ//ê≥ãKâªï˚å¸ÉxÉNÉgÉã
-	//m_obb = COBB(m_weaponMat.GetPosition() + offsetOBB, CVector3D(DtoR(i), 0, 0), m_weaponMat.GetScale() * CMatrix::MScale(0.35f, 0.1f, 0.54f));
+	
+	m_obb = COBB(m_weaponMat.GetPosition(), m_weaponMat.GetEuler(CMatrix::eZYX), m_weaponMat.GetScale() * CMatrix::MScale(0.35f, 0.1f, 0.54f));
 }
 
 void Shield::Render(){

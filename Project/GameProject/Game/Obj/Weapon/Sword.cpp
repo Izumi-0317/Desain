@@ -2,10 +2,6 @@
 #include "Game/Obj/Chara/Paladin.h"
 #include "Game/Obj/Chara/Player.h""
 
-namespace {
-	const CVector3D SWORD_SCALE(50, 50, 50);
-}
-
 Sword::Sword(Base* owner)
 	: WeaponBase(eSword)
 	, m_damage(0)
@@ -18,7 +14,7 @@ void Sword::Update(){
 	m_weaponMat = m_owner->GetModel()->GetFrameMatrix(60)
 		* CMatrix::MRotationZ(DtoR(90))
 		* CMatrix::MRotationX(DtoR(90))
-		* CMatrix::MScale(SWORD_SCALE);
+		* CMatrix::MScale(50, 50, 50);
 	m_rad = m_owner->GetModel()->GetScale().x * 4;
 	m_capusle = CCapsule(m_weaponMat.GetPosition(),
 		m_weaponMat.GetPosition() + m_weaponMat.GetUp() * 1.5f,

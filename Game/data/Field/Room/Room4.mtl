@@ -1,0 +1,24 @@
+# Blender 5.1.1 MTL File: 'None'
+# www.blender.org
+
+newmtl Bricks
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd textures/Bricks.png
+map_Bump -bm 1.000000 textures/Bricks_NRM.png
+
+newmtl Cement_A
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd -s 0.25 0.25 1 textures/Cement_A.png
+map_Bump -s 0.25 0.25 1 -bm 1.000000 textures/Cement_A_NRM.png

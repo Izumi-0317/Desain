@@ -1,6 +1,8 @@
 #pragma once
 #include "Game/Obj/Chara/CharaBase.h"
 
+class GimmickBase;
+
 class Player :public CharaBase {
 private:
 	enum Anim {
@@ -15,6 +17,7 @@ private:
 		DownToAim,		//挙銃
 		Aiming,			//構える
 		Firing,			//発砲
+		AimToDown,		//脱銃
 		StrafeF,		//発砲中の前移動
 		StrafeB,		//発砲中の後移動
 		StrafeL,		//発砲中の左移動
@@ -28,6 +31,7 @@ private:
 	bool m_animFlag;	//DownToAimの遷移用
 	bool m_attackFlag;	//攻撃フラグ
 	bool m_isMaxAmmo;	//現在の装填数が最大装填数か
+	GimmickBase* m_intaractable;	//インタラクト可能なオブジェクトのポインタ
 public:
 	enum AddState {
 		SHit = 4,		//殴打
@@ -48,8 +52,9 @@ public:
 	void Collision(Base* b) override;
 	void Move(float speed);
 	void Fire();
+	void Interact();
 	CModel* GetModel() override { return &m_model; }
 	CCapsule* GetCapsule() override { return &m_capusle; }
-	int GetState() const { return m_state; }
 	CMatrix GetMatrix() const { return m_playerMat; }
+	int GetState() const { return m_state; }
 };

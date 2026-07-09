@@ -56,6 +56,21 @@
     <ClCompile Include="Game\Obj\Room.cpp">
       <Filter>Game\Object</Filter>
     </ClCompile>
+    <ClCompile Include="Game\Obj\Gimmick\Chest.cpp">
+      <Filter>Game\Object\Gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Obj\Gimmick\Potion.cpp">
+      <Filter>Game\Object\Gimmick</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\PotionUI.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\HPUI.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UIBase.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -115,6 +130,21 @@
     </ClInclude>
     <ClInclude Include="Game\Obj\Room.h">
       <Filter>Game\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Obj\Gimmick\Chest.h">
+      <Filter>Game\Object\Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Obj\Gimmick\Potion.h">
+      <Filter>Game\Object\Gimmick</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\PotionUI.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\HPUI.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIBase.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

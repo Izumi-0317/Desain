@@ -8,7 +8,6 @@ private:
 	CMatrix m_gunMat;
 	CMatrix m_scopeMat;
 	int m_loadedAmmo;	//‘•“UÏ‚İ‚Ì’e‚Ì”
-	int m_stockAmmo;	//Š’†‚Ì’e‚Ì”
 public:
 	Gun(std::string name);
 	void UpdateGun();
@@ -17,6 +16,4 @@ public:
 	CMatrix GetMatrix() const { return m_gunMat; }
 	void SetLoadedAmmo(int ammo) { m_loadedAmmo -= ammo; }
 	int GetLoadedAmmo() const { return m_loadedAmmo; }
-	int GetStockAmmo() const { return m_stockAmmo; }
-	int GetMaxAmmo() const;
 };

@@ -3,7 +3,7 @@
 
 class AmmoUI :public Base {
 private:
-	CImage m_ammoImg;
+	CImage m_cntImg;
 	CImage m_rifleImg;
 	CImage m_backImg;
 	int m_ammo;			//’e‚ÌŠ”

@@ -2,6 +2,7 @@
 
 GimmickBase::GimmickBase(int type)
 	: Base(type)
+	, m_isInteractable(false)
 {
 	
 }

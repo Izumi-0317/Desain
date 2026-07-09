@@ -5,11 +5,10 @@ class Door :public GimmickBase {
 private:
 	int m_returnElapsedTime;	//元の位置に戻るまでの経過時間
 	float m_moveDist;			//移動距離
-	bool m_moveFlag;			//移動フラグ
 public:
 	Door(const CVector3D& pos, float roty = 0);
 	void Update() override;
 	void Render() override;
-	void Interact() override { m_moveFlag = true; }
+	void Interact() override { m_isInteractable = true; }
 	void Move(float& posXorZ);
 };

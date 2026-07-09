@@ -3,15 +3,12 @@
 #include "Game/Obj/Chara/Player.h"
 
 namespace {
-	const CVector3D GUN_ROT(DtoR(145), DtoR(110), DtoR(55));
-	const CVector3D GUN_SCALE(60.0f, 60.0f, 60.0f);
 	constexpr int MAX_AMMO = 30;	//最大装填数
 }
 
 Gun::Gun(std::string name)
 	:Base(eGun)
-	, m_loadedAmmo(MAX_AMMO)
-	, m_stockAmmo(30){
+	, m_loadedAmmo(MAX_AMMO){
 	m_gun = COPY_RESOURCE(name, CModelObj);
 	m_scope = COPY_RESOURCE("Scope", CModelObj);
 }
@@ -38,8 +35,8 @@ void Gun::UpdateGun() {
 		default:
 			m_gunMat = p->GetModel()->GetFrameMatrix(36)
 				* CMatrix::MTranselate(m_pos)
-				* CMatrix::MRotation(GUN_ROT)
-				* CMatrix::MScale(GUN_SCALE);
+				* CMatrix::MRotation(DtoR(145), DtoR(110), DtoR(55))
+				* CMatrix::MScale(60.0f, 60.0f, 60.0f);
 			break;
 		}
 	}
@@ -55,20 +52,8 @@ void Gun::Render(){
 }
 
 void Gun::Reloaded(){
-	if (m_stockAmmo == 0) return;
-	//必要分足りていれば
-	if (MAX_AMMO - m_loadedAmmo < m_stockAmmo) {
-		//必要分だけストックから差し引いて装填する
-		m_stockAmmo -= MAX_AMMO - m_loadedAmmo;
-		m_loadedAmmo += MAX_AMMO - m_loadedAmmo;
-	}
-	else {
-		//ストックを全て装填する
-		m_loadedAmmo += m_stockAmmo;
-		m_stockAmmo = 0;
-	}
-}
-
-int Gun::GetMaxAmmo() const {
-	return MAX_AMMO;
+	//MAX_AMMOと同量になるように装填する
+	m_loadedAmmo += MAX_AMMO - m_loadedAmmo;
+	//リロード音
+	SOUND("Reloaded")->Play3D(m_gunMat.GetPosition(), CVector3D(1, 1, 1));
 }

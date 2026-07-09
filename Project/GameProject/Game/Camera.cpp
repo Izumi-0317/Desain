@@ -16,7 +16,7 @@ void Camera::UpdateCam(){
 	m_posOld = m_pos;
 	CVector2D mouse_vec = CInput::GetMouseVec();
 	m_rot += CVector3D(mouse_vec.y, -mouse_vec.x, 0) * m_speed;
-	m_rot.x = min(DtoR(25), max(DtoR(-35), m_rot.x));
+	m_rot.x = min(DtoR(35), max(DtoR(-35), m_rot.x));
 	m_rot.y = Utility::NormalizeAngle(m_rot.y);
 	if (Player* p = dynamic_cast<Player*>(Base::FindObject(ePlayer))) {
 		m_playerPos = p->m_pos;

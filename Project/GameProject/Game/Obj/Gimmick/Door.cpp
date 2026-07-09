@@ -8,8 +8,7 @@ namespace {
 Door::Door(const CVector3D& pos, float roty)
 	: GimmickBase(eDoor)
 	, m_moveDist(0)
-	, m_returnElapsedTime(0)
-	, m_moveFlag(false){
+	, m_returnElapsedTime(0){
 	m_gimmick = COPY_RESOURCE("Door", CModelObj);
 	m_pos = pos;
 	m_rot.y = DtoR(roty);
@@ -40,16 +39,16 @@ void Door::Render(){
 }
 
 void Door::Move(float& posXorZ){
-	//移動フラグがオンなら
-	if (m_moveFlag) {
+	//移動できるなら
+	if (m_isInteractable) {
 		//移動距離が指定の距離になるまで移動する
 		if (m_moveDist < MOVE_DISTANCE) {
 			posXorZ += 0.1f;
 			m_moveDist += 0.1f;
 		}
-		else m_moveFlag = false;
+		else m_isInteractable = false;
 	}
-	//移動フラグがオフなら
+	//移動できないなら
 	else {
 		//2秒経ったら
 		if (m_returnElapsedTime++ >= 120) {

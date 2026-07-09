@@ -28,6 +28,7 @@ void Shield::Render(){
 }
 
 void Shield::Collision(Base* b){
+	//TODO
 	/*switch (b->GetType()){
 	case eBullet:
 		float len;

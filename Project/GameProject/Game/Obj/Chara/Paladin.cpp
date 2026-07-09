@@ -84,7 +84,7 @@ void Paladin::Render(){
 	Utility::DrawSector(m, -m_fovAng, m_fovAng, m_fovLen, color);*/
 }
 
-void Paladin::Collision(Base* b){
+void Paladin::Collision(Base* b) {
 	switch (b->GetType()) {
 	case eRoom: {
 		CVector3D v(0, 0, 0);
@@ -106,11 +106,12 @@ void Paladin::Collision(Base* b){
 		}
 		m_pos += v;
 	}
-			   break;
+			break;
 	case ePlayer:
 		if (Player* p = dynamic_cast<Player*>(b)) {
 			float dot(CVector3D::Dot(m_dir, (p->m_pos - m_pos).GetNormalize()));
 			//視野範囲内にプレイヤーがいたら
+	//TODO::障害物チェック
 			if (dot > cos(m_fovAng) &&
 				(p->m_pos - m_pos).Length() < m_fovLen) {
 				//ターゲットに設定
@@ -118,6 +119,17 @@ void Paladin::Collision(Base* b){
 			}
 			else if (m_chaseTime == 0) m_target = nullptr;
 		}
+		break;
+	case eChest:
+	case eDoor:
+	case ePotion: {
+		float length;
+		CVector3D axis;
+		if (CCollision::CollisionOBBCapsule(b->m_obb, m_capusle, &axis, &length)) {
+			m_pos += axis * (m_rad - length);
+		}
+	}
+			break;
 	}
 }
 

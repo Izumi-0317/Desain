@@ -8,6 +8,7 @@
 
 namespace {
 	constexpr int PLAYER_HP = 100;
+	constexpr int POTION_HEAL_AMOUNT = 30;
 	constexpr float PLAYER_HEIGHT = 2.8f;
 	constexpr float DEFAULT_MOVE_SPEED = 0.06f;
 	constexpr float RUN_SPEED = 2.0f;
@@ -18,9 +19,11 @@ namespace {
 Player::Player(const CVector3D& pos)
 	: CharaBase(ePlayer)
 	, m_fireTime(0)
+	, m_potionCnt(0)
 	, m_animFlag(false)
 	, m_attackFlag(false)
 	, m_isMaxAmmo(true)
+	, m_isDryFiringSound(true)
 	, m_intaractable(nullptr){
 	m_model = COPY_RESOURCE("PlayerFPS", CModelA3M);
 	m_playerMat = (CMatrix::MTranselate(m_pos) * CMatrix::MRotation(m_rot));
@@ -54,7 +57,7 @@ void Player::Update(){
 	//アニメーション更新
 	m_model.UpdateAnimation();
 	//発砲クールタイム
-	if(m_fireTime > 0) m_fireTime--;
+	if (m_fireTime > 0) m_fireTime--;
 
 	//挙銃のアニメーション遷移
 	if (m_animFlag && (int)m_model.GetAnimation() != DownToAim) {
@@ -69,13 +72,13 @@ void Player::Update(){
 	//リロード
 	if ((m_state == SIdle || m_state == SHave) &&
 		!m_isMaxAmmo) {
-		if(PUSH(CInput::eButton2))
-		NextState(SReloaded);
+		if (PUSH(CInput::eButton2))
+			NextState(SReloaded);
 	}
 
 	//デバッグ
-	if (PUSH(CInput::eButton5)) m_vec.y = 5;
-	m_pos += m_vec;
+	/*if (PUSH(CInput::eButton5)) m_vec.y = 5;
+	m_pos += m_vec;*/
 }
 
 void Player::Render(){
@@ -95,8 +98,71 @@ void Player::Render(){
 	}
 }
 
+void Player::Collision(Base* b) {
+	switch (b->GetType()) {
+	case eRoom: {
+		CVector3D v(0, 0, 0);
+		auto tri = b->GetModel()->CollisionCapsule(m_capusle);
+		for (auto& t : tri) {
+			float max_y = max(t.m_vertex[0].y, max(t.m_vertex[1].y, t.m_vertex[2].y));
+			if (t.m_normal.y < -0.5f) {
+				if (m_vec.y > 0) m_vec.y = 0;
+			}
+			else if (t.m_normal.y > 0.8f) {
+				if (m_vec.y < 0) m_vec.y = 0;
+			}
+			CVector3D nv = t.m_normal * (m_rad - t.m_dist);
+			v.y = fabs(v.y) > fabs(nv.y) ? v.y : nv.y;
+			if (max_y > m_pos.y + 0.5f) {
+				v.x = fabs(v.x) > fabs(nv.x) ? v.x : nv.x;
+				v.z = fabs(v.z) > fabs(nv.z) ? v.z : nv.z;
+			}
+		}
+		m_pos += v;
+	}
+			  break;
+	case eEnemy: {
+		float dist;
+		CVector3D cross, dir;
+		if (CCollision::CollisionCapsule(m_capusle, b->m_capusle, &dist, &cross, &dir)) {
+			float s = (m_capusle.GetRadius() + b->m_capusle.GetRadius()) - dist;
+			b->m_pos += dir * s * 0.5f;
+			m_pos -= dir * s * 0.5f;
+		}
+		//近接攻撃
+		if (m_attackFlag && CCollision::CollisionCapsuleShpere(*b->GetCapsule(),
+			m_pos + CVector3D(0, 1, 0) + m_dir.GetNormalize() * 0.5f, 0.2f,
+			&dist, &cross, &dir)) {
+			if (Interface* i = dynamic_cast<Interface*>(b)) {
+				i->TakeDamage(10);
+				m_attackFlag = false;
+			}
+		}
+	}
+			   break;
+	case eChest:
+	case eDoor:
+	case ePotion: {
+		float length;
+		CVector3D axis;
+		if (CCollision::CollisionOBBCapsule(b->m_obb, m_capusle, &axis, &length)) {
+			m_pos += axis * (m_rad - length);
+			if (GimmickBase* g = dynamic_cast<GimmickBase*>(b)) {
+				//インタラクトする対象に設定
+				m_intaractable = g;
+			}
+		}
+		else {
+			if (m_intaractable == nullptr) m_intaractable = nullptr;
+		}
+	}
+				break;
+	}
+}
+
 void Player::StateIdle(){
 	Move(RUN_SPEED);
+	UsePotion();
 	Interact();
 	//攻撃
 	if (PUSH(CInput::eMouseL)) NextState(SHit);
@@ -110,7 +176,7 @@ void Player::StateHit(){
 	case 0:
 		if (m_model.GetAnimationFrame() >= 30) {
 			m_attackFlag = true;
-			Utility::DrawSphere(m_pos + CVector3D(0, 1, 0) + m_dir.GetNormalize() * 0.5f, 0.2f, CVector4D(1, 0, 0, 1));
+			Utility::DrawSphere(m_pos + CVector3D(0, 1, 0) + m_dir.GetNormalize(), 0.2f, CVector4D(1, 0, 0, 1));
 			m_stateStep++;
 		}
 		break;
@@ -147,19 +213,15 @@ void Player::StateAiming(){
 
 void Player::StateReloaded(){
 	if (Gun* g = dynamic_cast<Gun*>(Base::FindObject(eGun))) {
-		//弾を持っていれば
-		if (g->GetStockAmmo() != 0) {
-			m_model.ChangeAnimation(Reloading, false);
-			if (m_model.GetAnimationFrame() >= 50) {
-				//TODO::遅い
-				SOUND("Reloaded")->Play();
-				//リロード
+		m_model.ChangeAnimation(Reloading, false);
+		if (m_model.GetAnimationFrame() >= 50) {
+			//リロード
+			if (!m_isMaxAmmo) {
 				g->Reloaded();
-				if (g->GetLoadedAmmo() == g->GetMaxAmmo()) m_isMaxAmmo = true;
+				m_isMaxAmmo = true;
 			}
-			if (m_model.isAnimationEnd()) NextState(m_undoState);
 		}
-		else NextState(m_undoState);
+		if (m_model.isAnimationEnd()) NextState(m_undoState);
 	}
 }
 
@@ -175,65 +237,6 @@ void Player::StateDamage(){
 void Player::StateDeath(){
 	m_model.ChangeAnimation(Death, false);
 	if (m_model.isAnimationEnd()); //TODO::GameOver
-}
-
-void Player::Collision(Base* b){
-	switch (b->GetType()) {
-	case eRoom: {
-		CVector3D v(0, 0, 0);
-		auto tri = b->GetModel()->CollisionCapsule(m_capusle);
-		for (auto& t : tri) {
-			float max_y = max(t.m_vertex[0].y, max(t.m_vertex[1].y, t.m_vertex[2].y));
-			if (t.m_normal.y < -0.5f) {
-				if (m_vec.y > 0) m_vec.y = 0;
-			}
-			else if (t.m_normal.y > 0.8f) {
-				if (m_vec.y < 0) m_vec.y = 0;
-			}
-			CVector3D nv = t.m_normal * (m_rad - t.m_dist);
-			v.y = fabs(v.y) > fabs(nv.y) ? v.y : nv.y;
-			if (max_y > m_pos.y + 0.5f) {
-				v.x = fabs(v.x) > fabs(nv.x) ? v.x : nv.x;
-				v.z = fabs(v.z) > fabs(nv.z) ? v.z : nv.z;
-			}
-		}
-		m_pos += v;
-	}
-			   break;
-	case eEnemy: {
-		float dist;
-		CVector3D cross, dir;
-		if (CCollision::CollisionCapsule(m_capusle, b->m_capusle, &dist, &cross, &dir)) {
-			float s = (m_capusle.GetRadius() + b->m_capusle.GetRadius()) - dist;
-			b->m_pos += dir * s * 0.5f;
-			m_pos -= dir * s * 0.5f;
-		}
-		//近接攻撃
-		if (m_attackFlag && CCollision::CollisionCapsuleShpere(*b->GetCapsule(),
-			m_pos + CVector3D(0, 1, 0) + m_dir.GetNormalize() * 0.5f, 0.2f,
-			&dist, &cross, &dir)) {
-			if (Interface* i = dynamic_cast<Interface*>(b)) {
-				i->TakeDamage(10);
-				m_attackFlag = false;
-			}
-		}
-	}
-		break;
-	case eDoor: {
-		float length;
-		CVector3D axis;
-		if (CCollision::CollisionOBBCapsule(b->m_obb, m_capusle, &axis, &length)) {
-			m_pos += axis * (m_rad - length);
-			if (GimmickBase* g = dynamic_cast<GimmickBase*>(b)) {
-				m_intaractable = g;
-			}
-		}
-		else {
-			if (m_intaractable == nullptr) m_intaractable = nullptr;
-		}
-	}
-		break;
-	}
 }
 
 void Player::Move(float speed){
@@ -290,8 +293,9 @@ void Player::Move(float speed){
 void Player::Fire(){
 	if (Gun* g = dynamic_cast<Gun*>(Base::FindObject(eGun))) {
 		if (g->GetLoadedAmmo() <= 0) {
-			//空撃ち音ロードする
-			//TODO::空撃ち音
+			if (m_isDryFiringSound)
+				SOUND("DryFiring")->Play3D(g->GetMatrix().GetPosition(), CVector3D(1, 1, 1));
+			m_isDryFiringSound = (m_state == SAiming) ? false : true;
 			return;
 		}
 		if (m_fireTime <= 0) {
@@ -299,10 +303,20 @@ void Player::Fire(){
 			g->SetLoadedAmmo(1);
 			CVector3D pos = g->GetMatrix() * CVector4D(0, 0, -0.4f, 1);
 			CVector3D dir = g->GetMatrix().GetFront().GetNormalize();
-			SOUND("Shot")->Play();
+			SOUND("Shot")->Play3D(g->GetMatrix().GetPosition(), CVector3D(1, 1, 1));
 			Base::Add(new Bullet(pos, -dir));
-			m_fireTime = 10;
+			m_fireTime = 15;
 		}
+	}
+}
+
+void Player::UsePotion(){
+	//ポーションを持っているかつ待機状態かつHPが100未満かつEを押したら
+	if (m_potionCnt > 0 && m_state == SIdle &&
+		m_hp < 100 && PUSH(CInput::eButton1)) {
+		m_hp = min(100, m_hp + POTION_HEAL_AMOUNT);
+		m_potionCnt--;
+		m_intaractable = nullptr;
 	}
 }
 

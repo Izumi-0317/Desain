@@ -28,9 +28,11 @@ private:
 	};
 	CMatrix m_playerMat;
 	int m_fireTime;		//発砲時間
+	int m_potionCnt;	//所持しているポーション数
 	bool m_animFlag;	//DownToAimの遷移用
 	bool m_attackFlag;	//攻撃フラグ
 	bool m_isMaxAmmo;	//現在の装填数が最大装填数か
+	bool m_isDryFiringSound;	//空撃ち音が再生可能か
 	GimmickBase* m_intaractable;	//インタラクト可能なオブジェクトのポインタ
 public:
 	enum AddState {
@@ -42,6 +44,7 @@ public:
 	Player(const CVector3D& pos);
 	void Update() override;
 	void Render() override;
+	void Collision(Base* b) override;
 	void StateIdle();
 	void StateHit();
 	void StateHave();
@@ -49,12 +52,14 @@ public:
 	void StateReloaded();
 	void StateDamage();
 	void StateDeath();
-	void Collision(Base* b) override;
 	void Move(float speed);
 	void Fire();
+	void UsePotion();
 	void Interact();
+	void SetPotionCnt(int potionCnt) { m_potionCnt = potionCnt; }
 	CModel* GetModel() override { return &m_model; }
 	CCapsule* GetCapsule() override { return &m_capusle; }
 	CMatrix GetMatrix() const { return m_playerMat; }
 	int GetState() const { return m_state; }
+	int GetPotionCnt() const { return m_potionCnt; }
 };

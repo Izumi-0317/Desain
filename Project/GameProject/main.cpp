@@ -104,25 +104,34 @@ void Init(void)
 	//ƒQ[ƒ€‹N“®Žž‚Éˆê“x‚¾‚¯ŒÄ‚Î‚ê‚é
 	//-----------------------------------------------------
 	ADD_RESOURCE("ScopeView", CImage::CreateImage("Weapon/Scope/Scope.png"));
-	ADD_RESOURCE("AmmoUI", CImage::CreateImage("UI/AmmoUI.png"));
+	ADD_RESOURCE("CntUI", CImage::CreateImage("UI/CntUI.png"));
 	ADD_RESOURCE("RifleUI", CImage::CreateImage("UI/RifleUI.png"));
 	ADD_RESOURCE("WeaponUIBack", CImage::CreateImage("UI/WeaponUIBack.png"));
+	ADD_RESOURCE("PotionUI", CImage::CreateImage("UI/PotionUI.png"));
+	ADD_RESOURCE("PotionUIBack", CImage::CreateImage("UI/PotionUIBack.png"));
+	ADD_RESOURCE("HPUI", CImage::CreateImage("UI/HPUI.png"));
+	ADD_RESOURCE("LowHPUI", CImage::CreateImage("UI/LowHPUI.png"));
+	ADD_RESOURCE("HPUIBack", CImage::CreateImage("UI/HPUIBack.png"));
+
 	ADD_RESOURCE("Player", CModel::CreateModel("Charactor/Explorer/explorer.a3m"));
 	ADD_RESOURCE("PlayerFPS", CModel::CreateModel("Charactor/Explorer/explorerFPS.a3m"));
 	ADD_RESOURCE("Paladin", CModel::CreateModel("Charactor/Paladin/paladin.a3m"));
 	ADD_RESOURCE("Sword", CModel::CreateModel("Weapon/Sword/sword.obj"));
 	ADD_RESOURCE("Shield", CModel::CreateModel("Weapon/Shield/shield.obj"));
 	ADD_RESOURCE("AK47", CModel::CreateModel("Weapon/AK47/AK47.obj"));
-	//ADD_RESOURCE("M1911", CModel::CreateModel("Weapon/M1911/M1911.obj"));
 	ADD_RESOURCE("Scope", CModel::CreateModel("Weapon/Scope/SR_Scope_00.obj"));
+	ADD_RESOURCE("ChestClose", CModel::CreateModel("Field/Chest/ChestClose.obj"));
+	ADD_RESOURCE("ChestOpen", CModel::CreateModel("Field/Chest/ChestOpen.obj"));
 	ADD_RESOURCE("Door", CModel::CreateModel("Field/Door/Door.obj"));
-	int i = 30;
-	ADD_RESOURCE("Room1", CModel::CreateModel("Field/Room/Room1.obj", i, 1, i));
-	ADD_RESOURCE("Room2I", CModel::CreateModel("Field/Room/Room2I.obj", i, 1, i));
-	ADD_RESOURCE("Room2L", CModel::CreateModel("Field/Room/Room2L.obj", i, 1, i));
-	ADD_RESOURCE("Room3", CModel::CreateModel("Field/Room/Room3.obj", i, 1, i));
-	ADD_RESOURCE("Room4", CModel::CreateModel("Field/Room/Room4.obj", i, 1, i));
+	ADD_RESOURCE("Potion", CModel::CreateModel("Field/Potion/Potion.obj"));
+	
+	ADD_RESOURCE("Room1", CModel::CreateModel("Field/Room/Room1.obj", 30, 1, 30));
+	ADD_RESOURCE("Room2I", CModel::CreateModel("Field/Room/Room2I.obj", 30, 1, 30));
+	ADD_RESOURCE("Room2L", CModel::CreateModel("Field/Room/Room2L.obj", 30, 1, 30));
+	ADD_RESOURCE("Room3", CModel::CreateModel("Field/Room/Room3.obj", 30, 1, 30));
+	ADD_RESOURCE("Room4", CModel::CreateModel("Field/Room/Room4.obj", 30, 1, 30));
 
+	SOUND("DryFiring")->Load("Sound/dryfiring.wav");
 	SOUND("Reloaded")->Load("Sound/reloaded.wav");
 	SOUND("Shot")->Load("Sound/shot.wav");
 

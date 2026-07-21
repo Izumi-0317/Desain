@@ -1,5 +1,5 @@
 #pragma once
-#include "Game/Obj/Chara/CharaBase.h"
+#include "CharaBase.h"
 
 class Paladin :public CharaBase {
 private:
@@ -7,7 +7,7 @@ private:
 		T,				//Tポーズ
 		Idle,			//待機
 		Walk,			//歩行
-		BackWardWalk,	//後退
+		WalkBack,		//後退
 		Attack,			//攻撃
 		SkillAttack,	//スキル攻撃
 		Damage,			//ダメージ
@@ -17,18 +17,18 @@ private:
 	int m_attackCnt;	//攻撃回数カウント
 	int m_chaseTime;	//追跡時間
 	float m_moveTime;	//移動中
-	float m_fovAng;		//視野角度
-	float m_fovLen;		//視野範囲
-	float m_attackLen;	//攻撃範囲
+	float m_backRotX;	//後退する際のX軸の角度調整
+	float m_backRotZ;	//後退する際のZ軸の角度調整
 	bool m_skillFlag;	//次の攻撃がスキルか
-	Base* m_target;		//攻撃ターゲット
-	Base* m_shield;		//持っている盾のポインタ
-	Base* m_sword;		//持っている剣のポインタ
+	Base* mp_target;	//攻撃ターゲット
+	Base* mp_shield;	//持っている盾のポインタ
+	Base* mp_sword;		//持っている剣のポインタ
+	Base* mp_effect;	//エフェクトのポインタ
 public:
 	enum AddState {
 		SSkillAttack = 4,	//スキル攻撃
 	};
-	Paladin(const CVector3D& pos);
+	Paladin(const CVector3D& pos, bool servant = false);
 	~Paladin();
 	void Update() override;
 	void Render() override;

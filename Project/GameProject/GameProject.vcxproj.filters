@@ -14,9 +14,6 @@
     <ClCompile Include="Game\Game.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="UI\AmmoUI.cpp">
-      <Filter>UI</Filter>
-    </ClCompile>
     <ClCompile Include="Game\Camera.cpp">
       <Filter>Game</Filter>
     </ClCompile>
@@ -33,9 +30,6 @@
       <Filter>Game\Object\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="Game\Obj\Weapon\Gun.cpp">
-      <Filter>Game\Object\Weapon</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Obj\Weapon\Scope.cpp">
       <Filter>Game\Object\Weapon</Filter>
     </ClCompile>
     <ClCompile Include="Game\Obj\Weapon\Shield.cpp">
@@ -62,14 +56,29 @@
     <ClCompile Include="Game\Obj\Gimmick\Potion.cpp">
       <Filter>Game\Object\Gimmick</Filter>
     </ClCompile>
-    <ClCompile Include="UI\PotionUI.cpp">
-      <Filter>UI</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\HPUI.cpp">
-      <Filter>UI</Filter>
-    </ClCompile>
     <ClCompile Include="UI\UIBase.cpp">
       <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UIAmmo.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UIHP.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UIPotion.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UIScope.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Obj\Effect\EffectMagic.cpp">
+      <Filter>Game\Object\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Obj\Effect\EffectParticle.cpp">
+      <Filter>Game\Object\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="Game\Obj\Chara\Boss.cpp">
+      <Filter>Game\Object\Chara</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -89,9 +98,6 @@
     <ClInclude Include="Base\Interface.h">
       <Filter>Base</Filter>
     </ClInclude>
-    <ClInclude Include="UI\AmmoUI.h">
-      <Filter>UI</Filter>
-    </ClInclude>
     <ClInclude Include="Game\Camera.h">
       <Filter>Game</Filter>
     </ClInclude>
@@ -108,9 +114,6 @@
       <Filter>Game\Object\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="Game\Obj\Weapon\Gun.h">
-      <Filter>Game\Object\Weapon</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Obj\Weapon\Scope.h">
       <Filter>Game\Object\Weapon</Filter>
     </ClInclude>
     <ClInclude Include="Game\Obj\Weapon\Shield.h">
@@ -137,14 +140,29 @@
     <ClInclude Include="Game\Obj\Gimmick\Potion.h">
       <Filter>Game\Object\Gimmick</Filter>
     </ClInclude>
-    <ClInclude Include="UI\PotionUI.h">
-      <Filter>UI</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\HPUI.h">
-      <Filter>UI</Filter>
-    </ClInclude>
     <ClInclude Include="UI\UIBase.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIAmmo.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIHP.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIPotion.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIScope.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Obj\Effect\EffectMagic.h">
+      <Filter>Game\Object\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Obj\Effect\EffectParticle.h">
+      <Filter>Game\Object\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\Obj\Chara\Boss.h">
+      <Filter>Game\Object\Chara</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +189,9 @@
     </Filter>
     <Filter Include="Game\Object\Gimmick">
       <UniqueIdentifier>{16592d2d-2d3a-4784-a338-5c40a7fbbbd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Object\Effect">
+      <UniqueIdentifier>{bae0cf65-483c-4593-a698-ea3e2c329f4d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

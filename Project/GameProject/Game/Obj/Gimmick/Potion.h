@@ -1,5 +1,5 @@
 #pragma once
-#include "Game/Obj/Gimmick/GimmickBase.h"
+#include "GimmickBase.h"
 
 class Potion :public GimmickBase {
 private:

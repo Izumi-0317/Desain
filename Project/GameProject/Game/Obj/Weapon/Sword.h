@@ -1,11 +1,11 @@
 #pragma once
-#include "Game/Obj/Weapon/WeaponBase.h"
+#include "WeaponBase.h"
 
 class Sword :public WeaponBase {
 private:
 	int m_damage;		//与えるダメージ量
 	bool m_enableCap;	//カプセル有効化
-	Base* m_owner;		//所有者のポインタ
+	Base* mp_owner;		//所有者のポインタ
 public:
 	Sword(Base* owner);
 	void Update() override;

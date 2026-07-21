@@ -1,10 +1,10 @@
 #include "Player.h"
-#include "Game/Obj/Weapon/Bullet.h"
 #include "Game/Camera.h"
 #include "Game/Obj/Gimmick/GimmickBase.h"
 #include "Game/Game.h"
+#include "Game/Obj/Weapon/Bullet.h"
 #include "Game/Obj/Weapon/Gun.h"
-#include "Game/Obj/Weapon/Scope.h"
+#include "UI/UIScope.h"
 
 namespace {
 	constexpr int PLAYER_HP = 100;
@@ -20,11 +20,12 @@ Player::Player(const CVector3D& pos)
 	: CharaBase(ePlayer)
 	, m_fireTime(0)
 	, m_potionCnt(0)
-	, m_animFlag(false)
+	, m_DownToAimFlag(false)
+	, m_AimToDownFlag(false)
 	, m_attackFlag(false)
 	, m_isMaxAmmo(true)
 	, m_isDryFiringSound(true)
-	, m_intaractable(nullptr){
+	, mp_intaractable(nullptr){
 	m_model = COPY_RESOURCE("PlayerFPS", CModelA3M);
 	m_playerMat = (CMatrix::MTranselate(m_pos) * CMatrix::MRotation(m_rot));
 	m_pos = pos;
@@ -58,14 +59,26 @@ void Player::Update(){
 	m_model.UpdateAnimation();
 	//発砲クールタイム
 	if (m_fireTime > 0) m_fireTime--;
+	//落下防止
+	if (m_pos.y < -0.3f) m_pos.y = 0;
 
 	//挙銃のアニメーション遷移
-	if (m_animFlag && (int)m_model.GetAnimation() != DownToAim) {
+	if (m_DownToAimFlag && (int)m_model.GetAnimation() != DownToAim) {
 		m_state = -1;
 		m_model.ChangeAnimation(DownToAim, false);
 		if (m_model.isAnimationEnd()) {
-			m_animFlag = false;
+			m_DownToAimFlag = false;
 			NextState(SHave);
+		}
+	}
+
+	//脱銃のアニメーション遷移
+	if (m_AimToDownFlag && (int)m_model.GetAnimation() != AimToDown) {
+		m_state = -1;
+		m_model.ChangeAnimation(AimToDown, false);
+		if (m_model.isAnimationEnd()) {
+			m_AimToDownFlag = false;
+			NextState(SIdle);
 		}
 	}
 
@@ -77,8 +90,8 @@ void Player::Update(){
 	}
 
 	//デバッグ
-	/*if (PUSH(CInput::eButton5)) m_vec.y = 5;
-	m_pos += m_vec;*/
+	//if (PUSH(CInput::eButton5)) m_vec.y = 5;
+	//m_pos += m_vec;
 }
 
 void Player::Render(){
@@ -149,11 +162,11 @@ void Player::Collision(Base* b) {
 			m_pos += axis * (m_rad - length);
 			if (GimmickBase* g = dynamic_cast<GimmickBase*>(b)) {
 				//インタラクトする対象に設定
-				m_intaractable = g;
+				mp_intaractable = g;
 			}
 		}
 		else {
-			if (m_intaractable == nullptr) m_intaractable = nullptr;
+			if (mp_intaractable == nullptr) mp_intaractable = nullptr;
 		}
 	}
 				break;
@@ -166,7 +179,7 @@ void Player::StateIdle(){
 	Interact();
 	//攻撃
 	if (PUSH(CInput::eMouseL)) NextState(SHit);
-	if (PUSH(CInput::eNum1) || PUSH(CInput::eNum2)) m_animFlag = true;
+	if (PUSH(CInput::eNum1) || PUSH(CInput::eNum2)) m_DownToAimFlag = true;
 }
 
 void Player::StateHit(){
@@ -177,6 +190,7 @@ void Player::StateHit(){
 		if (m_model.GetAnimationFrame() >= 30) {
 			m_attackFlag = true;
 			Utility::DrawSphere(m_pos + CVector3D(0, 1, 0) + m_dir.GetNormalize(), 0.2f, CVector4D(1, 0, 0, 1));
+			SOUND("Hit")->Play();
 			m_stateStep++;
 		}
 		break;
@@ -199,12 +213,11 @@ void Player::StateHave(){
 	Interact();
 
 	if (PUSH(CInput::eButton3)) NextState(SAiming);
-	if (PUSH(CInput::eNum3)) NextState(SIdle);
+	if (PUSH(CInput::eNum3)) m_AimToDownFlag = true;
 }
 
 void Player::StateAiming(){
-	//TODO::逆Downtoaim
-	if (!Base::FindObject(eScope)) Base::Add(new Scope());
+	if (!Base::FindObject(eUIScope)) Base::Add(new UIScope());
 	if (!HOLD(CInput::eMouseL)) Move(AIMING_SPEED);
 	else Fire();
 
@@ -316,13 +329,13 @@ void Player::UsePotion(){
 		m_hp < 100 && PUSH(CInput::eButton1)) {
 		m_hp = min(100, m_hp + POTION_HEAL_AMOUNT);
 		m_potionCnt--;
-		m_intaractable = nullptr;
+		mp_intaractable = nullptr;
 	}
 }
 
 void Player::Interact(){
 	//インタラクト可能なオブジェクトに近づいているかつ
 	//Eを押したらインタラクトする
-	if (m_intaractable && PUSH(CInput::eButton1)) 
-		m_intaractable->Interact();
+	if (mp_intaractable && PUSH(CInput::eButton1)) 
+		mp_intaractable->Interact();
 }

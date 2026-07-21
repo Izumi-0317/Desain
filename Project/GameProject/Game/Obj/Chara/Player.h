@@ -1,5 +1,5 @@
 #pragma once
-#include "Game/Obj/Chara/CharaBase.h"
+#include "CharaBase.h"
 
 class GimmickBase;
 
@@ -10,7 +10,7 @@ private:
 		Idle,			//待機
 		Walk,			//歩行
 		BackWardWalk,	//後退
-		Run,			//走行
+		Run,			//走る
 		SideStepL,		//左移動
 		SideStepR,		//右移動
 		Hit,			//殴打
@@ -27,13 +27,14 @@ private:
 		Death,			//死亡
 	};
 	CMatrix m_playerMat;
-	int m_fireTime;		//発砲時間
-	int m_potionCnt;	//所持しているポーション数
-	bool m_animFlag;	//DownToAimの遷移用
-	bool m_attackFlag;	//攻撃フラグ
-	bool m_isMaxAmmo;	//現在の装填数が最大装填数か
+	int m_fireTime;			//発砲時間
+	int m_potionCnt;		//所持しているポーション数
+	bool m_DownToAimFlag;	//DownToAimの遷移用
+	bool m_AimToDownFlag;	//AimToDownの遷移用
+	bool m_attackFlag;		//攻撃フラグ
+	bool m_isMaxAmmo;		//現在の装填数が最大装填数か
 	bool m_isDryFiringSound;	//空撃ち音が再生可能か
-	GimmickBase* m_intaractable;	//インタラクト可能なオブジェクトのポインタ
+	GimmickBase* mp_intaractable;	//インタラクト可能なオブジェクトのポインタ
 public:
 	enum AddState {
 		SHit = 4,		//殴打
@@ -56,7 +57,7 @@ public:
 	void Fire();
 	void UsePotion();
 	void Interact();
-	void SetPotionCnt(int potionCnt) { m_potionCnt = potionCnt; }
+	void SetPotionCnt(int potionCnt) { m_potionCnt += potionCnt; }
 	CModel* GetModel() override { return &m_model; }
 	CCapsule* GetCapsule() override { return &m_capusle; }
 	CMatrix GetMatrix() const { return m_playerMat; }

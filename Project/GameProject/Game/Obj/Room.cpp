@@ -1,19 +1,21 @@
 #include "Room.h"
 
-Room::Room(const CVector3D& pos, float roty, int doorCnt, bool IorL)
+Room::Room(const CVector3D& pos, float roty, RoomType roomType)
 	: Base(eRoom){
 	m_pos = pos;
 	m_rot.y = DtoR(roty);
 	std::string str;
-	switch (doorCnt){
-	case 1: str = "Room1"; break;
-	case 2: str = (IorL) ? "Room2I" : "Room2L"; break;
-	case 3: str = "Room3"; break;
-	case 4: str = "Room4"; break;
+	switch (roomType){
+	case R1: str = "Room1"; break;
+	case R2I: str = "Room2I"; break;
+	case R2L: str = "Room2L"; break;
+	case R3: str = "Room3"; break;
+	case R4: str = "Room4"; break;
+	case RBoss: str = "RoomBoss"; break;
 	default: SetKill();
 	}
 	m_room = COPY_RESOURCE(str, CModelObj);
-	m_roomPtr = &m_room;
+	mp_room = &m_room;
 }
 
 void Room::Update()

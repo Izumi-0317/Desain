@@ -23,6 +23,7 @@ void CharaBase::Render()
 
 void CharaBase::NextState(int next)
 {
+	if (m_state == next) return;
 	m_undoState = m_state;
 	m_state = next;
 	m_stateStep = 0;

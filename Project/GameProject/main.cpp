@@ -1,6 +1,7 @@
 #include "Base/Base.h"
 #include "Effekseer/EffekseerManager.h"
 #include "Game/Game.h"
+#include "UI/UIPotion.h"
 //--------------------------------------------
 //グローバル変数領域
 //-------------------------------------------
@@ -103,37 +104,48 @@ void Init(void)
 	//初期化の命令を書く
 	//ゲーム起動時に一度だけ呼ばれる
 	//-----------------------------------------------------
-	ADD_RESOURCE("ScopeView", CImage::CreateImage("Weapon/Scope/Scope.png"));
-	ADD_RESOURCE("CntUI", CImage::CreateImage("UI/CntUI.png"));
-	ADD_RESOURCE("RifleUI", CImage::CreateImage("UI/RifleUI.png"));
-	ADD_RESOURCE("WeaponUIBack", CImage::CreateImage("UI/WeaponUIBack.png"));
-	ADD_RESOURCE("PotionUI", CImage::CreateImage("UI/PotionUI.png"));
-	ADD_RESOURCE("PotionUIBack", CImage::CreateImage("UI/PotionUIBack.png"));
-	ADD_RESOURCE("HPUI", CImage::CreateImage("UI/HPUI.png"));
-	ADD_RESOURCE("LowHPUI", CImage::CreateImage("UI/LowHPUI.png"));
-	ADD_RESOURCE("HPUIBack", CImage::CreateImage("UI/HPUIBack.png"));
+	ADD_RESOURCE("UIScopeView", CImage::CreateImage("UI/UIScope.png"));
+	ADD_RESOURCE("UICnt", CImage::CreateImage("UI/UICnt.png"));
+	ADD_RESOURCE("UIRifle", CImage::CreateImage("UI/UIRifle.png"));
+	ADD_RESOURCE("UIWeaponBack", CImage::CreateImage("UI/UIWeaponBack.png"));
+	ADD_RESOURCE("UIPotion", CImage::CreateImage("UI/UIPotion.png", UIPotion::_anim, 32, 32));
+	ADD_RESOURCE("UIPotionBack", CImage::CreateImage("UI/UIPotionBack.png"));
+	ADD_RESOURCE("UIHP", CImage::CreateImage("UI/UIHP.png"));
+	ADD_RESOURCE("UILowHP", CImage::CreateImage("UI/UILowHP.png"));
+	ADD_RESOURCE("UIHPBack", CImage::CreateImage("UI/UIHPBack.png"));
 
 	ADD_RESOURCE("Player", CModel::CreateModel("Charactor/Explorer/explorer.a3m"));
 	ADD_RESOURCE("PlayerFPS", CModel::CreateModel("Charactor/Explorer/explorerFPS.a3m"));
 	ADD_RESOURCE("Paladin", CModel::CreateModel("Charactor/Paladin/paladin.a3m"));
+	ADD_RESOURCE("Boss", CModel::CreateModel("Charactor/Boss/boss.a3m"));
 	ADD_RESOURCE("Sword", CModel::CreateModel("Weapon/Sword/sword.obj"));
 	ADD_RESOURCE("Shield", CModel::CreateModel("Weapon/Shield/shield.obj"));
 	ADD_RESOURCE("AK47", CModel::CreateModel("Weapon/AK47/AK47.obj"));
+	ADD_RESOURCE("Bullet", CModel::CreateModel("Weapon/Bullet/bullet.obj"));
 	ADD_RESOURCE("Scope", CModel::CreateModel("Weapon/Scope/SR_Scope_00.obj"));
 	ADD_RESOURCE("ChestClose", CModel::CreateModel("Field/Chest/ChestClose.obj"));
 	ADD_RESOURCE("ChestOpen", CModel::CreateModel("Field/Chest/ChestOpen.obj"));
 	ADD_RESOURCE("Door", CModel::CreateModel("Field/Door/Door.obj"));
 	ADD_RESOURCE("Potion", CModel::CreateModel("Field/Potion/Potion.obj"));
+
+	ADD_RESOURCE("EBomb", CModel::CreateModel("Effect/Bomb.obj"));
+	ADD_RESOURCE("ECircleR", CModel::CreateModel("Effect/CircleR.obj"));
 	
 	ADD_RESOURCE("Room1", CModel::CreateModel("Field/Room/Room1.obj", 30, 1, 30));
 	ADD_RESOURCE("Room2I", CModel::CreateModel("Field/Room/Room2I.obj", 30, 1, 30));
 	ADD_RESOURCE("Room2L", CModel::CreateModel("Field/Room/Room2L.obj", 30, 1, 30));
 	ADD_RESOURCE("Room3", CModel::CreateModel("Field/Room/Room3.obj", 30, 1, 30));
 	ADD_RESOURCE("Room4", CModel::CreateModel("Field/Room/Room4.obj", 30, 1, 30));
+	ADD_RESOURCE("RoomBoss", CModel::CreateModel("Field/Room/RoomBoss.obj", 60, 1, 60));
 
-	SOUND("DryFiring")->Load("Sound/dryfiring.wav");
+	SOUND("DryFiring")->Load("Sound/dryFiring.wav");
 	SOUND("Reloaded")->Load("Sound/reloaded.wav");
 	SOUND("Shot")->Load("Sound/shot.wav");
+	SOUND("ChestUnlock")->Load("Sound/ChestUnlock.wav");
+	SOUND("Hit")->Load("Sound/hit.wav");
+	SOUND("SwordAttack")->Load("Sound/swordAttack.wav");
+	SOUND("SkillAttack")->Load("Sound/SkillAttack.wav");
+	SOUND("MissAttack")->Load("Sound/missAttack.wav");
 
 	Base::Add(new Game());
 

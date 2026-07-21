@@ -24,9 +24,12 @@
     <ClCompile Include="Effekseer\EffekseerManager.cpp" />
     <ClCompile Include="Game\Camera.cpp" />
     <ClCompile Include="Game\Game.cpp" />
+    <ClCompile Include="Game\Obj\Chara\Boss.cpp" />
     <ClCompile Include="Game\Obj\Chara\CharaBase.cpp" />
     <ClCompile Include="Game\Obj\Chara\Paladin.cpp" />
     <ClCompile Include="Game\Obj\Chara\Player.cpp" />
+    <ClCompile Include="Game\Obj\Effect\EffectMagic.cpp" />
+    <ClCompile Include="Game\Obj\Effect\EffectParticle.cpp" />
     <ClCompile Include="Game\Obj\Gimmick\Chest.cpp" />
     <ClCompile Include="Game\Obj\Gimmick\Door.cpp" />
     <ClCompile Include="Game\Obj\Gimmick\GimmickBase.cpp" />
@@ -34,15 +37,15 @@
     <ClCompile Include="Game\Obj\Room.cpp" />
     <ClCompile Include="Game\Obj\Weapon\Bullet.cpp" />
     <ClCompile Include="Game\Obj\Weapon\Gun.cpp" />
-    <ClCompile Include="Game\Obj\Weapon\Scope.cpp" />
     <ClCompile Include="Game\Obj\Weapon\Shield.cpp" />
     <ClCompile Include="Game\Obj\Weapon\Sword.cpp" />
     <ClCompile Include="Game\Obj\Weapon\WeaponBase.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="UI\AmmoUI.cpp" />
-    <ClCompile Include="UI\HPUI.cpp" />
-    <ClCompile Include="UI\PotionUI.cpp" />
+    <ClCompile Include="UI\UIAmmo.cpp" />
     <ClCompile Include="UI\UIBase.cpp" />
+    <ClCompile Include="UI\UIHP.cpp" />
+    <ClCompile Include="UI\UIPotion.cpp" />
+    <ClCompile Include="UI\UIScope.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Base\Base.h" />
@@ -51,9 +54,12 @@
     <ClInclude Include="Effekseer\EffekseerManager.h" />
     <ClInclude Include="Game\Camera.h" />
     <ClInclude Include="Game\Game.h" />
+    <ClInclude Include="Game\Obj\Chara\Boss.h" />
     <ClInclude Include="Game\Obj\Chara\CharaBase.h" />
     <ClInclude Include="Game\Obj\Chara\Paladin.h" />
     <ClInclude Include="Game\Obj\Chara\Player.h" />
+    <ClInclude Include="Game\Obj\Effect\EffectMagic.h" />
+    <ClInclude Include="Game\Obj\Effect\EffectParticle.h" />
     <ClInclude Include="Game\Obj\Gimmick\Chest.h" />
     <ClInclude Include="Game\Obj\Gimmick\Door.h" />
     <ClInclude Include="Game\Obj\Gimmick\GimmickBase.h" />
@@ -61,15 +67,15 @@
     <ClInclude Include="Game\Obj\Room.h" />
     <ClInclude Include="Game\Obj\Weapon\Bullet.h" />
     <ClInclude Include="Game\Obj\Weapon\Gun.h" />
-    <ClInclude Include="Game\Obj\Weapon\Scope.h" />
     <ClInclude Include="Game\Obj\Weapon\Shield.h" />
     <ClInclude Include="Game\Obj\Weapon\Sword.h" />
     <ClInclude Include="Game\Obj\Weapon\WeaponBase.h" />
     <ClInclude Include="Global.h" />
-    <ClInclude Include="UI\AmmoUI.h" />
-    <ClInclude Include="UI\HPUI.h" />
-    <ClInclude Include="UI\PotionUI.h" />
+    <ClInclude Include="UI\UIAmmo.h" />
     <ClInclude Include="UI\UIBase.h" />
+    <ClInclude Include="UI\UIHP.h" />
+    <ClInclude Include="UI\UIPotion.h" />
+    <ClInclude Include="UI\UIScope.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FE2CE3B1-49BF-46A5-9DB1-9BD5B52FE1A0}</ProjectGuid>

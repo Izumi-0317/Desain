@@ -12,15 +12,16 @@ enum {
 	ePotion,
 	ePlayer,
 	eEnemy,
+	eBoss,
 	eSword,
 	eShield,
-	eScope,
 	eGun,
 	eBullet,
 	eItem,
 	eBox,
 	eEffect,
 	eEffectManager,
+	eUIScope,
 	eUI,
 };
 class Base {

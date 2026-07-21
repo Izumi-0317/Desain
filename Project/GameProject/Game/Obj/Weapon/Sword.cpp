@@ -6,16 +6,16 @@ Sword::Sword(Base* owner)
 	: WeaponBase(eSword)
 	, m_damage(0)
 	, m_enableCap(false)
-	, m_owner(owner){
+	, mp_owner(owner){
 	m_weapon = COPY_RESOURCE("Sword", CModelObj);
 }
 
 void Sword::Update(){
-	m_weaponMat = m_owner->GetModel()->GetFrameMatrix(60)
+	m_weaponMat = mp_owner->GetModel()->GetFrameMatrix(60)
 		* CMatrix::MRotationZ(DtoR(90))
 		* CMatrix::MRotationX(DtoR(90))
 		* CMatrix::MScale(50, 50, 50);
-	m_rad = m_owner->GetModel()->GetScale().x * 4;
+	m_rad = mp_owner->GetModel()->GetScale().x * 4;
 	m_capusle = CCapsule(m_weaponMat.GetPosition(),
 		m_weaponMat.GetPosition() + m_weaponMat.GetUp() * 1.5f,
 		m_rad);
@@ -23,7 +23,7 @@ void Sword::Update(){
 
 void Sword::Render(){
 	m_weapon.Render(m_weaponMat);
-	if (m_enableCap) Utility::DrawCapsule(m_capusle, CVector4D(1, 0, 0, 0.5));
+	//Utility::DrawCapsule(m_capusle, CVector4D(1, 0, 0, 0.5));
 }
 
 void Sword::Collision(Base* b){
@@ -35,7 +35,8 @@ void Sword::Collision(Base* b){
 			if (Player* p = dynamic_cast<Player*>(b)) {
 				p->TakeDamage(m_damage);
 				m_enableCap = false;
-				if (Paladin* pd = dynamic_cast<Paladin*>(m_owner)) {
+				//TODO::‰¹‚ð–Â‚ç‚·
+				if (Paladin* pd = dynamic_cast<Paladin*>(mp_owner)) {
 					if (!pd->GetSkillFlag()) pd->AddAttackCnt();
 				}
 			}

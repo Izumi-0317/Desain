@@ -3,14 +3,14 @@
 int i = 0;
 Shield::Shield(Base* owner)
 	: WeaponBase(eShield)
-	, m_owner(owner){
+	, mp_owner(owner){
 	m_weapon = COPY_RESOURCE("Shield", CModelObj);
 	m_rot.z = DtoR(175);
 }
 
 void Shield::Update(){
 	//if (i++ >= 360)i = 0;
-	m_weaponMat = m_owner->GetModel()->GetFrameMatrix(35)
+	m_weaponMat = mp_owner->GetModel()->GetFrameMatrix(35)
 		* CMatrix::MTranselate(0, -4, 0)
 		* CMatrix::MRotationZ(DtoR(175))
 		* CMatrix::MRotationX(DtoR(180))
@@ -25,17 +25,4 @@ void Shield::Update(){
 void Shield::Render(){
 	m_weapon.Render(m_weaponMat);
 	//Utility::DrawOBB(m_obb, CVector4D(1, 0, 0, 0.5));
-}
-
-void Shield::Collision(Base* b){
-	//TODO
-	/*switch (b->GetType()){
-	case eBullet:
-		float len;
-		CVector3D axis;
-		if (CCollision::CollisionOBBCapsule(m_obb, b->m_capusle, &axis, &len)) {
-			b->SetKill();
-		}
-		break;
-	}*/
 }

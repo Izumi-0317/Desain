@@ -26,6 +26,12 @@ class CA3MMesh;
 	ノードクラス
 */
 class CA3MNode {
+public:
+	enum {
+		eBind_None,
+		eBind_Relative,
+		eBind_Absolute,
+	};
 #ifdef _GLLIBRARY_TOOL
 public:
 #else
@@ -43,7 +49,7 @@ protected:
 	CVector3D m_pos;
 	CQuaternion m_rot;
 	CVector3D m_scale;
-	bool m_bind;
+	int m_bind;
 	CMatrix m_bind_matrix;
 	bool m_visibility;
 	int m_animation_layer;
@@ -183,7 +189,7 @@ public:
 	/*
 	描画
 	*/
-	void Draw(std::vector<CMaterial*>& materialList, CMatrix* send_matrix, CMatrix* bone_matrix_base, int bone_size, const CMatrix& mv, const CMatrix& m, const CMatrix& lm, float shadow, bool toon);
+	void Draw(std::vector<CMaterial*>& materialList, CMatrix* send_matrix, CMatrix* bone_matrix_base, int bone_size, const CMatrix& v, const CMatrix& m, const CMatrix& lm, float shadow, bool toon);
 	void CreateCollisionIndex(const CA3MColl* c);
 
 	bool CollisionRay(CVector3D* c, CVector3D* n, const CVector3D& s, const CVector3D& e, float* pLength, const CMatrix& matrix);
@@ -476,14 +482,14 @@ public:
 	@param	no			[in] ボーン番号
 	@param	mat			[in] 回転行列
 	**/
-	void BindFrameMatrix(int no, const CMatrix& mat);
+	void BindFrameMatrix(int no, const CMatrix& mat, int bind_mode = CA3MNode::eBind_Relative);
 
 	/*!
 	@brief	ボーンを指定の方向へ向ける
 	@param	no			[in] ボーン名前
 	@param	mat			[in] 回転行列
 	**/
-	void BindFrameMatrix(const char* name, const CMatrix& mat);
+	void BindFrameMatrix(const char* name, const CMatrix& mat,int bind_mode = CA3MNode::eBind_Relative);
 
 
 	/*!

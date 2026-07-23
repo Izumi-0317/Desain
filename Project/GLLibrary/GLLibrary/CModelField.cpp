@@ -733,7 +733,7 @@ void CModelField::Render(const CMatrix &m){
 		s->Enable();
 		glUniform1f(glGetUniformLocation(s->GetProgram(), "shadow_bias"), m_shadow_bias);
 		glUniform1i(glGetUniformLocation(s->GetProgram(), "toon"), m_toon ? 1 : 0);
-		CModel::SendShaderParam(s,m, CCamera::GetCurrent()->GetViewMatrix() * m, CCamera::GetCurrent()->GetProjectionMatrix());
+		CModel::SendShaderParam(s,m, CCamera::GetCurrent()->GetViewMatrix(), CCamera::GetCurrent()->GetProjectionMatrix());
 
 		m_pMaterial[i].Map();
 		for (int x = m_minX; x <= m_maxX; x++){

@@ -5,15 +5,15 @@
 **/
 #pragma once
 
-//ヘッダーファイルのインクルード
 #define DIRECTINPUT_VERSION 0x0800
-
 #include <dinput.h>
 //必要なライブラリファイルのロード
 #pragma comment(lib,"winmm.lib")
 #pragma comment(lib,"dxguid.lib")
 #pragma comment(lib,"dinput8.lib")
 
+#include <xinput.h>
+#pragma comment(lib, "xinput.lib")
 
 #include "windows.h"
 #include "CVector.h"
@@ -21,7 +21,7 @@
 
 
 
-#define PAD_MAX 5
+#define PAD_MAX 4
 
 class CInput {
 public:
@@ -61,8 +61,8 @@ public:
 		eRight,
 		eKeyMax = 31
 	};
-	static unsigned char	m_key_code[PAD_MAX][eKeyMax];
-	static unsigned char	m_pad_code[PAD_MAX][16];
+	static unsigned short	m_key_code[PAD_MAX][eKeyMax];
+	static unsigned short	m_pad_code[PAD_MAX][10];
 	static unsigned long m_key_old[PAD_MAX];
 	static unsigned long m_key_state[PAD_MAX][eStateMax];
 	static CVector2D m_mouse_vec;
@@ -72,7 +72,8 @@ public:
 
 	static LPDIRECTINPUT8 m_pDinput;
 	static LPDIRECTINPUTDEVICE8 m_pMouse;
-	struct SPadDevice{
+
+	struct SPadDevice {
 		LPDIRECTINPUTDEVICE8 m_pPadDevice;
 		DIJOYSTATE2 js;
 		int no;
@@ -80,6 +81,7 @@ public:
 
 	static SPadDevice m_device[PAD_MAX];
 	static bool CALLBACK _padCallback(const LPDIDEVICEINSTANCE lpddi, LPVOID pvRef);
+	static XINPUT_STATE m_xstate[PAD_MAX];
 public:
 	static bool Init();
 	static void ClearInstance();
@@ -186,9 +188,7 @@ public:
 		@param	no		[in] コントローラ番号
 		@retval	無し
 	**/
-	static DIJOYSTATE2* GetPadData(int no) {
-		return (m_device[no].m_pPadDevice) ? &m_device[no].js : NULL;
-	}
+	static XINPUT_STATE* GetPadData(int no);
 	/*!
 		@brief	右スティックを取得
 		@param	no		[in] コントローラ番号
@@ -201,15 +201,28 @@ public:
 		@retval Vec -1.0～1.0
 	**/
 	static CVector2D GetLStick(int no);
+
+	/*!
+		@brief	左トリガーを取得
+		@param	no		[in] コントローラ番号
+		@retval 0.0～1.0
+	**/
+	static float GetLeftTrigger(int no);
+
+	/*!
+		@brief	右トリガーを取得
+		@param	no		[in] コントローラ番号
+		@retval 0.0～1.0
+	**/
+	static float GetRightTrigger(int no);
+
 	/*!
 		@brief	キーの状態を更新する
 		@retval	無し
 	**/
 	static void Update();
 	
-	static float toFloat(int i){
-		return ((float)i - (0x7FFF)) / 0x8000;
-	};
+	
 	static void UpdateClipCursor(int f);
 };
 

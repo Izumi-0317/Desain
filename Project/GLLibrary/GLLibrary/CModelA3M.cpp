@@ -127,12 +127,12 @@ struct SA3MBoneOffsetCHK {
 //</CA3MAnimationSet>
 
 CA3MNode::CA3MNode():
-	m_no(0), m_bone_no(-1),m_name(""), m_node_type(A3M::eNode), m_visibility(true), m_animation_layer(0),m_bind(false), mp_mesh(nullptr),
+	m_no(0), m_bone_no(-1),m_name(""), m_node_type(A3M::eNode), m_visibility(true), m_animation_layer(0),m_bind(eBind_None), mp_mesh(nullptr),
 	mp_child(nullptr), mp_parent(nullptr), mp_next(nullptr), mp_prev(nullptr){
 }
 
 CA3MNode::CA3MNode(int no,const char* name):
-	m_no(no), m_bone_no(-1),m_node_type(A3M::eNode), m_visibility(true), m_animation_layer(0), m_bind(false), mp_mesh(nullptr),
+	m_no(no), m_bone_no(-1),m_node_type(A3M::eNode), m_visibility(true), m_animation_layer(0), m_bind(eBind_None), mp_mesh(nullptr),
 	mp_child(nullptr), mp_parent(nullptr), mp_next(nullptr), mp_prev(nullptr)
 {
 	strcpy_s(m_name,sizeof(m_name), name);
@@ -736,7 +736,7 @@ void CA3MMesh::Release()
 }
 
 
-void CA3MMesh::Draw(std::vector<CMaterial*>& materialList, CMatrix* send_matrix, CMatrix* bone_matrix, int bone_size, const CMatrix& mv, const CMatrix& m, const CMatrix& lm, float shadow, bool toon) 
+void CA3MMesh::Draw(std::vector<CMaterial*>& materialList, CMatrix* send_matrix, CMatrix* bone_matrix, int bone_size, const CMatrix& v, const CMatrix& m, const CMatrix& lm, float shadow, bool toon) 
 {
 
 	if (send_matrix) {
@@ -759,7 +759,8 @@ void CA3MMesh::Draw(std::vector<CMaterial*>& materialList, CMatrix* send_matrix,
 		//if (m_vertex_type == A3M::eSkinMesh) {
 //} else {
 		glUniformMatrix4fv(glGetUniformLocation(mat->mp_shader->GetProgram(), "LocalMatrix"), 1, GL_FALSE, lm.f);
-		glUniformMatrix4fv(glGetUniformLocation(mat->mp_shader->GetProgram(), "ModelViewMatrix"), 1, GL_FALSE, mv.f);
+		glUniformMatrix4fv(glGetUniformLocation(mat->mp_shader->GetProgram(), "ModelViewMatrix"), 1, GL_FALSE, (v*m).f);
+		glUniformMatrix4fv(glGetUniformLocation(mat->mp_shader->GetProgram(), "ViewMatrix"), 1, GL_FALSE, v.f);
 		glUniformMatrix4fv(glGetUniformLocation(mat->mp_shader->GetProgram(), "WorldMatrix"), 1, false, m.f);
 		//}
 
@@ -979,7 +980,7 @@ void CModelA3M::DrawMesh(CA3MNode* node,const CMatrix&view_matrix)
 	//CMatrix world_matrix = parent_matrix*node->m_local_matrix;
 	if (node->mp_mesh && node->m_visibility) {
 		CA3MMesh* m = node->mp_mesh;
-		m->Draw(m_material_list, m_send_matrix, m_bone_matrix, m_bone_num, (view_matrix * m_matrix), m_matrix, node->m_matrix, m_shadow_bias, m_toon);
+		m->Draw(m_material_list, m_send_matrix, m_bone_matrix, m_bone_num, view_matrix, m_matrix, node->m_matrix, m_shadow_bias, m_toon);
 	}
 	if (node->mp_child) DrawMesh(node->mp_child,view_matrix);
 	if (node->mp_next) DrawMesh(node->mp_next,view_matrix);
@@ -1022,66 +1023,108 @@ void CModelA3M::CalcBoneMatrix(CA3MNode* node,bool reset)
 	} else */ {
 
 		if (node->mp_parent) {
-			if (node->m_bind) {
+			if (node->m_bind!=CA3MNode::eBind_None) {
 
-				CMatrix pm = m_matrix;
-				CVector3D scale(pm.GetLeft().Length(), pm.GetUp().Length(), pm.GetFront().Length());
-				CMatrix mm;
-				mm.Scale(scale);
+				if (node->m_bind == CA3MNode::eBind_Relative) {
+					CMatrix pm = m_matrix;
+					CVector3D scale(pm.GetLeft().Length(), pm.GetUp().Length(), pm.GetFront().Length());
+					CMatrix mm;
+					mm.Scale(scale);
 
-				////親の行列から回転行列のみ抽出した行列
-				CMatrix cc = pm * mm.GetInverse();
-				cc.Transelate(0, 0, 0);
+					////親の行列から回転行列のみ抽出した行列
+					CMatrix cc = pm * mm.GetInverse();
+					cc.Transelate(0, 0, 0);
 
-				////親の行列から回転成分を排除した行列
-				/*pm.m00 = scale.x; pm.m01 = 0; pm.m02 = 0;
-				pm.m10 = 0; pm.m11 = scale.y; pm.m12 = 0;
-				pm.m20 = 0; pm.m21 = 0; pm.m22 = scale.z;
+					////親の行列から回転成分を排除した行列
+					/*pm.m00 = scale.x; pm.m01 = 0; pm.m02 = 0;
+					pm.m10 = 0; pm.m11 = scale.y; pm.m12 = 0;
+					pm.m20 = 0; pm.m21 = 0; pm.m22 = scale.z;
 
-				pm.Scale(scale);
-				*/
-				CMatrix ll = m_matrix * node->mp_parent->m_matrix * node->m_local_matrix;
-				CMatrix l = ll;
-				l.m00 = 1; l.m01 = 0; l.m02 = 0;
-				l.m10 = 0; l.m11 = 1; l.m12 = 0;
-				l.m20 = 0; l.m21 = 0; l.m22 = 1;
+					pm.Scale(scale);
+					*/
+					CMatrix ll = m_matrix * node->mp_parent->m_matrix * node->m_local_matrix;
+					CMatrix l = ll;
+					l.m00 = 1; l.m01 = 0; l.m02 = 0;
+					l.m10 = 0; l.m11 = 1; l.m12 = 0;
+					l.m20 = 0; l.m21 = 0; l.m22 = 1;
 
-				node->m_matrix = m_matrix.GetInverse() * l * node->m_bind_matrix * cc.GetInverse() * l.GetInverse() * ll;
+					node->m_matrix = m_matrix.GetInverse() * l * node->m_bind_matrix * cc.GetInverse() * l.GetInverse() * ll;
 
-				/*
-				CMatrix pm = m_matrix;
+					/*
+					CMatrix pm = m_matrix;
 
-				////親の行列から回転成分を排除した行列
-				CMatrix mm;
-				mm.Scale(pm.GetRight().Length(), pm.GetUp().Length(), pm.GetFront().Length());
+					////親の行列から回転成分を排除した行列
+					CMatrix mm;
+					mm.Scale(pm.GetRight().Length(), pm.GetUp().Length(), pm.GetFront().Length());
 
-				////親の行列から回転行列のみ抽出した行列
-				CMatrix cc = pm * mm.GetInverse();
-				cc.Transelate(0, 0, 0);
+					////親の行列から回転行列のみ抽出した行列
+					CMatrix cc = pm * mm.GetInverse();
+					cc.Transelate(0, 0, 0);
 
-				CMatrix lt = node->m_local_matrix;
-				lt.m00 = 1; lt.m01 = 0; lt.m02 = 0;
-				lt.m10 = 0; lt.m11 = 1; lt.m12 = 0;
-				lt.m20 = 0; lt.m21 = 0; lt.m22 = 1;
+					CMatrix lt = node->m_local_matrix;
+					lt.m00 = 1; lt.m01 = 0; lt.m02 = 0;
+					lt.m10 = 0; lt.m11 = 1; lt.m12 = 0;
+					lt.m20 = 0; lt.m21 = 0; lt.m22 = 1;
 
-				CMatrix pl = node->mp_parent->m_matrix* node->m_local_matrix;
-				CMatrix plt = pl;
-				plt.m00 = 1; plt.m01 = 0; plt.m02 = 0;
-				plt.m10 = 0; plt.m11 = 1; plt.m12 = 0;
-				plt.m20 = 0; plt.m21 = 0; plt.m22 = 1;
-				CMatrix pltiv = plt.GetInverse();
+					CMatrix pl = node->mp_parent->m_matrix* node->m_local_matrix;
+					CMatrix plt = pl;
+					plt.m00 = 1; plt.m01 = 0; plt.m02 = 0;
+					plt.m10 = 0; plt.m11 = 1; plt.m12 = 0;
+					plt.m20 = 0; plt.m21 = 0; plt.m22 = 1;
+					CMatrix pltiv = plt.GetInverse();
 
-				CMatrix plr = pltiv*pl;
+					CMatrix plr = pltiv*pl;
 
-				CMatrix pt = CMatrix::MTranselate(node->mp_parent->m_matrix.GetPosition());
+					CMatrix pt = CMatrix::MTranselate(node->mp_parent->m_matrix.GetPosition());
 
-				CMatrix pp = pltiv * pl;
+					CMatrix pp = pltiv * pl;
 
-				CMatrix m1 = pltiv * pl;
-				CMatrix m2 = node->m_bind_matrix * m1;
-				CMatrix m3 = plt * m2;
-				node->m_matrix = cc.GetInverse()*m3;
-				*/
+					CMatrix m1 = pltiv * pl;
+					CMatrix m2 = node->m_bind_matrix * m1;
+					CMatrix m3 = plt * m2;
+					node->m_matrix = cc.GetInverse()*m3;
+					*/
+				} else {
+					// 1. 親のワールド行列を取得
+					CMatrix parentWorld = m_matrix * node->mp_parent->m_matrix;
+
+					// 2. 親の行列から「位置」と「拡大縮小」を除去し、純粋な「親の回転行列」をつくる
+					CMatrix parentRot = parentWorld;
+					parentRot.Transelate(0, 0, 0); // 位置を消去
+
+					// 各軸を正規化して拡大縮小（スケール）の影響を取り除く
+					CVector3D left = parentRot.GetLeft().Normalized();
+					CVector3D up = parentRot.GetUp().Normalized();
+					CVector3D front = parentRot.GetFront().Normalized();
+					parentRot.SetLeft(left);
+					parentRot.SetUp(up);
+					parentRot.SetFront(front);
+
+					// 3. 向かせたい方向（バインド行列）から純粋な回転成分を取り出す
+					CMatrix bindRot = node->m_bind_matrix;
+					bindRot.Transelate(0, 0, 0);
+
+					CVector3D bLeft = bindRot.GetLeft().Normalized();
+					CVector3D bUp = bindRot.GetUp().Normalized();
+					CVector3D bFront = bindRot.GetFront().Normalized();
+					bindRot.SetLeft(bLeft);
+					bindRot.SetUp(bUp);
+					bindRot.SetFront(bFront);
+
+					// 4. 親の回転を打ち消して(GetInverse)、バインドの回転を適用するローカル回転を作成
+					// [親の回転の打ち消し] * [向かせたい方向]
+					CMatrix targetLocalRot = parentRot.GetInverse() * bindRot;
+
+					// 5. 元々のローカル行列から「位置」と「スケール」のみ抽出し、回転を差し替える
+					CMatrix finalLocal = node->m_local_matrix;
+					// 位置とスケールを維持したまま、回転だけ targetLocalRot に差し替え
+					finalLocal.SetLeft(targetLocalRot.GetLeft() * node->m_local_matrix.GetLeft().Length());
+					finalLocal.SetUp(targetLocalRot.GetUp() * node->m_local_matrix.GetUp().Length());
+					finalLocal.SetFront(targetLocalRot.GetFront() * node->m_local_matrix.GetFront().Length());
+
+					// 6. 最終的なノードのワールド行列を計算
+					node->m_matrix = m_matrix.GetInverse()*parentWorld * finalLocal;
+				}
 			}
 			else {
 				node->m_matrix = node->mp_parent->m_matrix * node->m_local_matrix;
@@ -1188,7 +1231,7 @@ CModelA3M::CModelA3M()
 	,m_animation_size(0), m_col_cut(nullptr)
 	, m_enable_animation(false)
 {
-	m_shadow_bias = 0.0001f;
+	m_shadow_bias = 0.0005f;
 }
 
 CModelA3M::~CModelA3M()
@@ -2999,30 +3042,30 @@ CA3MNode* CModelA3M::GetNode(const char* name) const
 	return CA3MNode::FindNode(name, mp_root);
 }
 
-void CModelA3M::BindFrameMatrix(int no, const CMatrix& mat) {
+void CModelA3M::BindFrameMatrix(int no, const CMatrix& mat, int bind_mode) {
 
 	CA3MNode* n = CA3MNode::FindNode(no, mp_root);
 	if (!n) return;
-	n->m_bind = true;
+	n->m_bind = bind_mode;
 	n->m_bind_matrix = mat;
 }
-void CModelA3M::BindFrameMatrix(const char* name, const CMatrix& mat) {
+void CModelA3M::BindFrameMatrix(const char* name, const CMatrix& mat, int bind_mode) {
 
 	CA3MNode* n = CA3MNode::FindNode(name, mp_root);
 	if (!n) return;
-	n->m_bind = true;
+	n->m_bind = bind_mode;
 	n->m_bind_matrix = mat;
 }
 
 void CModelA3M::UnbindFrameMatrix(int no) {
 	CA3MNode* n = CA3MNode::FindNode(no, mp_root);
 	if (!n) return;
-	n->m_bind = false;
+	n->m_bind = CA3MNode::eBind_None;
 }
 void CModelA3M::UnbindFrameMatrix(const char* name) {
 	CA3MNode* n = CA3MNode::FindNode(name, mp_root);
 	if (!n) return;
-	n->m_bind = false;
+	n->m_bind = CA3MNode::eBind_None;
 }
 
 CMaterial* CModelA3M::GetMaterial(int no) const

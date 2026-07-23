@@ -11,6 +11,7 @@ const char* mesh_vert= "#version 430\n\n"\
 "#define SHADOW_MAX 12\n"\
 "uniform mat4 WorldMatrix;\n"\
 "uniform mat4 ModelViewMatrix;\n"\
+"uniform mat4 ViewMatrix;\n"\
 "uniform mat4 ProjectionMatrix;\n"\
 "uniform mat4 ShadowTextureMatrix[SHADOW_MAX];\n"\
 "layout(location = 0) in vec3	Vertex;\n"\
@@ -49,6 +50,7 @@ const char *skin_mesh_vert = "#version 430\n\n"\
 "uniform mat4 WorldMatrix;\n"\
 "uniform mat4 LocalMatrix;\n"\
 "uniform mat4 ModelViewMatrix;\n"\
+"uniform mat4 ViewMatrix;\n"\
 "uniform mat4 ProjectionMatrix;\n"\
 "uniform mat4 ShadowTextureMatrix[SHADOW_MAX];\n"\
 "uniform int useSkin = 0;\n"\
@@ -213,137 +215,177 @@ const char* mesh_frag = "#version 430\n\n"\
 "	}\n"\
 "}";
 
-const char* mesh_frag_f = "#version 430\n\n"\
-"#define SHADOW_MAX 12\n"\
-"#define LIGHT_MAX 20\n"\
-"uniform vec3 lightPos[LIGHT_MAX];\n"\
-"uniform vec3 lightDir[LIGHT_MAX];\n"\
-"uniform vec3 lightAmbientColor[LIGHT_MAX];\n"\
-"uniform vec3 lightDiffuseColor[LIGHT_MAX];\n"\
-"uniform float lightRange[LIGHT_MAX];\n"\
-"uniform int lightType[LIGHT_MAX];\n"\
-"uniform float lightRadiationAngle[LIGHT_MAX];\n"\
-"uniform int lightUseShadow[LIGHT_MAX];\n"\
-"uniform vec2 stscroll;\n"\
-"uniform vec3 eyeVec;\n"\
-"uniform vec3 eyePos;\n"\
-"uniform vec4 Ambient;\n"\
-"uniform vec4 Diffuse;\n"\
-"uniform vec3 Specular;\n"\
-"uniform vec3 Emissive;\n"\
-"uniform float Pow;\n"\
-"uniform float alpha;\n"\
-"uniform int lighting;\n"\
-"uniform int uSetex;\n"\
-"uniform int usenormalMap;\n"\
-"uniform vec4 fogColor;\n"\
-"uniform float fogNear;\n"\
-"uniform float fogFar;\n"\
-"uniform int depth_tex_size;\n"\
-"in vec4 vShadowCoord[SHADOW_MAX];    //!< シャドウデプスマップの参照用座標\n"\
-"uniform sampler2D depth_tex[SHADOW_MAX];    //!< デプス値テクスチャ\n"\
-"uniform float shadow_ambient;    //!< 影の濃さ\n"\
-"uniform vec2 d_tex_scale[SHADOW_MAX];\n"\
-"//頂点シェーダーから受け取る変数\n"\
-"in vec4 V;//位置\n"\
-"in vec3 N;//法線ベクトル\n"\
-"in vec3 T;//接線ベクトル\n"\
-"in vec3 B;//従法線ベクトル\n"\
-"in vec2 texCoord;\n"\
-"uniform sampler2D sampler;\n"\
-"uniform sampler2D normalMap;//法線マップ\n"\
-"out vec4 out_color[2];\n"\
-"uniform float shadow_bias;\n"\
-"uniform int toon;\n"\
-"float restDepth(vec4 RGBA) {\n"\
-"	const float rMask = 1.0;\n"\
-"	const float gMask = 1.0 / 255.0;\n"\
-"	const float bMask = 1.0 / (255.0 * 255.0);\n"\
-"	const float aMask = 1.0 / (255.0 * 255.0 * 255.0);\n"\
-"	float depth = dot(RGBA, vec4(rMask, gMask, bMask, aMask));\n"\
-"	return depth;\n"\
-"}\n"\
-"bool shadowmap(int i,vec3 coord) {\n"\
-"	if (texture2D(depth_tex[i], coord.xy).z  <  coord.z-shadow_bias "\
-"		&& coord.x>0 && coord.x<1.0 && coord.y>0.0 && coord.y<1.0)\n"\
-"	return true;\n"\
-"	return false;\n"\
-"}\n"\
-"void main(void)\n"\
-"{\n"\
-"	vec4 texColor = vec4(1, 1, 1, 1);\n"\
-"	if (uSetex != 0) {\n"\
-"		texColor = texture2D(sampler, texCoord + stscroll);\n"\
-"	}\n"\
-"	if(texColor.a * alpha <=0) discard;\n"
-"	vec3 D = vec3(0, 0, 0);\n"\
-"	vec3 S = vec3(0, 0, 0);\n"\
-"	vec3 color;\n"\
-"	float visibility = 1.0;\n"\
-"	vec3 E = normalize(eyePos - V.xyz);\n"\
-"	vec3 Normal=N;\n"\
-"	if (usenormalMap != 0) {\n"\
-"		Normal = (texture2D(normalMap, texCoord + stscroll).xyz - 0.5) * 2.0;\n"\
-"		Normal = T * Normal.x + B * Normal.y + N * Normal.z;\n"\
-"		//Normal.xyz = (Normal / 2.0f) + 0.5f; //-1～1から0～1に補正\n"\
-"		//Normal.w = texture2D(specurMap, texCoord + stscroll).r;\n"\
-"		//Normal.w = 0;\n"\
-"	}\n"\
-"	if (lighting == 1) {\n"\
-"		for (int i = 0; i < LIGHT_MAX; i++) {\n"\
-"			if (lightType[i] == 0) continue;\n"\
-"			vec3 vec = vec3(0, 0, 0);\n"\
-"			float p = 0;\n"\
-"			if (lightType[i] == 1) {\n"\
-"				vec = -lightDir[i];\n"\
-"				p = 1;\n"\
-"			}else\n"\
-"			if (lightType[i] == 2 || lightType[i] == 3) {\n"\
-"					vec = vec3(V.xyz - lightPos[i]);\n"\
-"					float l = length(vec);\n"\
-"					vec = normalize(vec);\n"\
-"					if (l > 0)\n"\
-"						p = 1.0-clamp(pow(l / lightRange[i], 5), 0.0, 1.0);\n"\
-"					else\n"\
-"						p = 1.0;\n"\
-"					if (lightType[i] == 3) {\n"\
-"						float t = acos(dot(vec, lightDir[i]));\n"\
-"						p *= 1.0-clamp(pow(t / lightRadiationAngle[i], 5), 0.0, 1.0); \n"\
-"					}\n"\
-"					vec = -vec;\n"\
-"				}\n"\
-"			vec3 L = vec; \n"\
-"			float NL = max(0, dot(Normal, L)); \n"\
-"			if (toon == 1)\n"\
-"			//NL = (NL>0.0) ? ((NL>0.3) ? 1.0:0.95):0.80;\n"\
-"			NL = (NL>0.0) ? 1.0:1-shadow_ambient;\n"\
-"			vec3 R = reflect(-E, Normal);\n"\
-"			S += pow(max(0, dot(R, L)), Pow) * p;\n"\
-"			D += (lightDiffuseColor[i] * clamp(NL, 0.0, 1.0) + lightAmbientColor[i]) * p;\n"\
-"			if(i==0){\n"\
-"				for(int i=0;i<depth_tex_size;i++) {\n"\
-"					vec3 coord = vShadowCoord[i].xyz / vShadowCoord[i].w;\n"\
-"					if(coord.z<1.0)\n"\
-"						for(int k=-1;k<=1;k++)\n"\
-"							for(int j=-1;j<=1;j++)\n"\
-"								if ( shadowmap(i,vec3(coord.xy + vec2(k,j)*d_tex_scale[i],coord.z)))\n"\
-"									visibility -= shadow_ambient/9;\n"\
-"				}\n"\
-"			D=min(D,visibility);\n"\
-"			}\n"\
-"		}\n"\
-"		float l = length(eyePos - V.xyz);\n"\
-"		float f = clamp((fogFar - l) / (fogFar - fogNear), 0.0, 1.0);\n"\
-"		color = texColor.xyz * Diffuse.xyz * D /*+ visibility * Specular * clamp(S, 0.0, 1.0) + Emissive*/;\n"\
-"		out_color[0] = vec4(color + fogColor.xyz * (1.0 - f), clamp((texColor.w * Diffuse.w * alpha) - ((1.0 - fogColor.w) * (1.0 - f)), 0.0f, 1.0f));\n"\
-"		out_color[1] = vec4(visibility * Specular * clamp(S, 0.0, 1.0)+ Emissive,1);\n"\
-"	}\n"\
-"	else {\n"\
-"		color = Diffuse.xyz;\n"\
-"		out_color[0] = (texColor * vec4(color, Diffuse.w * alpha));\n"\
-"		out_color[1] = vec4(0,0,0,1);\n"\
-"	}\n"\
-"}";
+const char* mesh_frag_f = R"(
+#version 430
+#define SHADOW_MAX 12
+#define LIGHT_MAX 20
+uniform vec3 lightPos[LIGHT_MAX];
+uniform vec3 lightDir[LIGHT_MAX];
+uniform vec3 lightAmbientColor[LIGHT_MAX];
+uniform vec3 lightDiffuseColor[LIGHT_MAX];
+uniform float lightRange[LIGHT_MAX];
+uniform int lightType[LIGHT_MAX];
+uniform float lightRadiationAngle[LIGHT_MAX];
+uniform int lightUseShadow[LIGHT_MAX];
+uniform vec2 stscroll;
+uniform vec3 eyeVec;
+uniform vec3 eyePos;
+uniform vec4 Ambient;
+uniform vec4 Diffuse;
+uniform vec3 Specular;
+uniform vec3 Emissive;
+uniform float Pow;
+uniform float alpha;
+uniform int lighting;
+uniform int uSetex;
+uniform int usenormalMap;
+uniform vec4 fogColor;
+uniform float fogNear;
+uniform float fogFar;
+uniform int depth_tex_size;
+in vec4 vShadowCoord[SHADOW_MAX];    //!< シャドウデプスマップの参照用座標
+uniform sampler2D depth_tex[SHADOW_MAX];    //!< デプス値テクスチャ
+uniform float shadow_ambient;    //!< 影の濃さ
+uniform vec2 d_tex_scale[SHADOW_MAX];
+//頂点シェーダーから受け取る変数
+in vec4 V;//位置
+in vec3 N;//法線ベクトル
+in vec3 T;//接線ベクトル
+in vec3 B;//従法線ベクトル
+in vec2 texCoord;
+uniform sampler2D sampler;
+uniform sampler2D normalMap;//法線マップ
+out vec4 out_color[2];
+uniform float shadow_bias;
+uniform int toon;
+float restDepth(vec4 RGBA) {
+	const float rMask = 1.0;
+	const float gMask = 1.0 / 255.0;
+	const float bMask = 1.0 / (255.0 * 255.0);
+	const float aMask = 1.0 / (255.0 * 255.0 * 255.0);
+	float depth = dot(RGBA, vec4(rMask, gMask, bMask, aMask));
+	return depth;
+}
+bool shadowmap(int i,vec3 coord) {
+	if (texture2D(depth_tex[i], coord.xy).z  <  coord.z-shadow_bias
+		&& coord.x>0 && coord.x<1.0 && coord.y>0.0 && coord.y<1.0)
+	return true;
+	return false;
+}
+// --- 3D Noise 共通のユーティリティ関数 ---
+
+// 3次元の座標からランダムな1値を返すハッシュ関数
+float hash3D(vec3 p) {
+    p = fract(p * vec3(443.8975, 397.2973, 491.1871));
+    p += dot(p.xyz, p.yzx + 19.19);
+    return fract(p.x * p.y * p.z);
+}
+
+float noise3D(vec3 p) {
+    vec3 i = floor(p);
+    vec3 f = fract(p);
+
+    // エルミート補間（滑らかな見た目にする）
+    vec3 u = f * f * (3.0 - 2.0 * f);
+
+    // 立方体の8個の頂点のハッシュ値を補間
+    return mix(
+        mix(mix(hash3D(i + vec3(0.0, 0.0, 0.0)), hash3D(i + vec3(1.0, 0.0, 0.0)), u.x),
+            mix(hash3D(i + vec3(0.0, 1.0, 0.0)), hash3D(i + vec3(1.0, 1.0, 0.0)), u.x), u.y),
+        mix(mix(hash3D(i + vec3(0.0, 0.0, 1.0)), hash3D(i + vec3(1.0, 0.0, 1.0)), u.x),
+            mix(hash3D(i + vec3(0.0, 1.0, 1.0)), hash3D(i + vec3(1.0, 1.0, 1.0)), u.x), u.y), u.z
+    );
+}
+
+vec3 noise3D_vector(vec3 p) {
+    float x = noise3D(p);
+    float y = noise3D(p + vec3(31.41)); // 各軸が被らないようにオフセット
+    float z = noise3D(p + vec3(59.26));
+    return vec3(x, y, z) * 2.0 - 1.0;  // 0~1 を -1~1 に変換
+}
+void main(void)
+{
+	vec4 texColor = vec4(1, 1, 1, 1);
+	if (uSetex != 0) {
+		texColor = texture2D(sampler, texCoord + stscroll);
+	}
+	if(texColor.a * alpha <=0) discard;
+	vec3 D = vec3(0, 0, 0);
+	vec3 S = vec3(0, 0, 0);
+	vec3 color;
+	float visibility = 1.0;
+	vec3 E = normalize(eyePos - V.xyz);
+	vec3 Normal=N;
+	if (usenormalMap != 0) {
+		Normal = (texture2D(normalMap, texCoord + stscroll).xyz - 0.5) * 2.0;
+		Normal = normalize(T * Normal.x + B * Normal.y + N * Normal.z);
+		//Normal.xyz = (Normal / 2.0f) + 0.5f; //-1～1から0～1に補正
+		//Normal.w = texture2D(specurMap, texCoord + stscroll).r;
+		//Normal.w = 0;
+	}
+	vec3 noiseNormal = Normal + noise3D(V.xyz * 1.0) * 0.1;
+	Normal = normalize(noiseNormal);
+	if (lighting == 1) {
+		for (int i = 0; i < LIGHT_MAX; i++) {
+			if (lightType[i] == 0) continue;
+			vec3 vec = vec3(0, 0, 0);
+			float p = 0;
+			if (lightType[i] == 1) {
+				vec = -lightDir[i];
+				p = 1;
+			}else
+			if (lightType[i] == 2 || lightType[i] == 3) {
+					vec = vec3(V.xyz - lightPos[i]);
+					float l = length(vec);
+					vec = normalize(vec);
+					if (l > 0)
+						p = 1.0-clamp(pow(l / lightRange[i], 5), 0.0, 1.0);
+					else
+						p = 1.0;
+					if (lightType[i] == 3) {
+						float t = acos(dot(vec, lightDir[i]));
+						p *= 1.0-clamp(pow(t / lightRadiationAngle[i], 5), 0.0, 1.0); 
+					}
+					vec = -vec;
+				}
+			vec3 L = vec; 
+			float NL = dot(Normal, L); 
+			if (toon == 1)
+			//NL = (NL>0.0) ? ((NL>0.3) ? 1.0:0.95):0.80;
+			NL = (NL>-0.5) ? 1.0:0.0;
+			vec3 R = reflect(-E, Normal); 
+			S += pow(max(0, dot(R, L)), Pow) * p;
+			D += (lightDiffuseColor[i] * clamp(NL, 0.0, 1.0) + lightAmbientColor[i]) * p;
+			if(i==0){
+				for(int i=0;i<depth_tex_size;i++) {
+					vec3 coord = vShadowCoord[i].xyz / vShadowCoord[i].w;
+					if(coord.z<1.0)
+						for(int k=-1;k<=1;k++)
+							for(int j=-1;j<=1;j++)
+								if ( shadowmap(i,vec3(coord.xy + vec2(k,j)*d_tex_scale[i],coord.z)))
+									visibility -= shadow_ambient/9;
+				}
+				D=min(D,max(lightAmbientColor[i],visibility));
+			}
+		}
+		float fresnel_base = 1.0 - max(dot(Normal, E), 0.0);
+		float fresnel_power = 5.0; // 値が大きいほど輪郭が鋭くなる
+		float fresnel_scale = 0.4; // 輪郭の明るさの倍率
+		float fresnel = pow(fresnel_base, fresnel_power) * fresnel_scale;
+		D.xyz += vec3(fresnel);
+		float l = length(eyePos - V.xyz);
+		float f = clamp((fogFar - l) / (fogFar - fogNear), 0.0, 1.0);
+		color = texColor.xyz * Diffuse.xyz * D /*+ visibility * Specular * clamp(S, 0.0, 1.0) + Emissive*/;
+		out_color[0] = vec4(color + fogColor.xyz * (1.0 - f), clamp((texColor.w * Diffuse.w * alpha) - ((1.0 - fogColor.w) * (1.0 - f)), 0.0f, 1.0f));
+		out_color[1] = vec4(visibility * Specular * clamp(S, 0.0, 1.0)+ Emissive,1);
+	}
+	else {
+		color = Diffuse.xyz;
+		out_color[0] = (texColor * vec4(color, Diffuse.w * alpha));
+		out_color[1] = vec4(0,0,0,1);
+	}
+}
+)";
 
 const char* mesh_frag_d = "#version 430\n\n"\
 "#define SHADOW_MAX 12\n"\
@@ -436,6 +478,30 @@ const char* mesh_frag_d = "#version 430\n\n"\
 "	}\n"\
 "}";
 
+const char* sky_vert = "#version 430\n\n"\
+"#define SHADOW_MAX 12\n"\
+"uniform mat4 WorldMatrix;\n"\
+"uniform mat4 ModelViewMatrix;\n"\
+"uniform mat4 ViewMatrix;\n"\
+"uniform mat4 ProjectionMatrix;\n"\
+"uniform mat4 ShadowTextureMatrix[SHADOW_MAX];\n"\
+"layout(location = 0) in vec3	Vertex;\n"\
+"layout(location = 1) in vec3	Normal;\n"\
+"layout(location = 2) in vec2	TexCoord;\n"\
+"layout(location = 6) in vec3	Tangent;\n"\
+"out vec2 texCoord;\n"\
+"//フラグメントシェーダーに渡す変数\n"\
+"out vec4 vShadowCoord[SHADOW_MAX];    //!< シャドウデプスマップの参照用座標\n"\
+"uniform int usenormalMap;\n"\
+"uniform int depth_tex_size;\n"\
+"void main(void)\n"\
+"{\n"\
+"   mat4 m=mat4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0);\n"\
+"	vec4 v = ViewMatrix*m * WorldMatrix*vec4(Vertex, 1);"	
+"	gl_Position = ProjectionMatrix * vec4(v.xyz,1);\n"\
+
+"	texCoord = TexCoord;\n"\
+"}";
 
 const char* sky_frag = "#version 430\n\n"\
 "#define SHADOW_MAX 12\n"\
@@ -469,13 +535,8 @@ const char* sky_frag = "#version 430\n\n"\
 "uniform float shadow_ambient;    //!< 影の濃さ\n"\
 "uniform vec2 d_tex_scale[SHADOW_MAX];\n"\
 "//頂点シェーダーから受け取る変数\n"\
-"in vec4 V;//位置\n"\
-"in vec3 N;//法線ベクトル\n"\
-"in vec3 T;//接線ベクトル\n"\
-"in vec3 B;//従法線ベクトル\n"\
 "in vec2 texCoord;\n"\
 "uniform sampler2D sampler;\n"\
-"uniform sampler2D normalMap;//法線マップ\n"\
 "out vec4 out_color;\n"\
 "uniform float shadow_bias;\n"\
 "uniform int toon;\n"\
@@ -486,12 +547,13 @@ const char* sky_frag = "#version 430\n\n"\
 "		texColor = texture2D(sampler, texCoord + stscroll);\n"\
 "	}\n"\
 "	if(texColor.a * alpha <=0) discard;\n"
+"	vec3 color=vec3(0,0,0);\n"\
 "	for (int i = 0; i < LIGHT_MAX; i++) {\n"\
 "		if (lightType[i] != 1) continue;\n"\
-"		vec3 color = lightAmbientColor[i] + lightDiffuseColor[i];\n"\
-"		out_color = (texColor * vec4(color, Diffuse.w * alpha));\n"\
+"		color = lightAmbientColor[i] + lightDiffuseColor[i];\n"\
 "		break;\n"\
 "	}\n"\
+"	out_color = (texColor * vec4(color, Diffuse.w * alpha));\n"\
 "}";
 
 const char* sky_frag_f = "#version 430\n\n"\
@@ -526,10 +588,6 @@ const char* sky_frag_f = "#version 430\n\n"\
 "uniform float shadow_ambient;    //!< 影の濃さ\n"\
 "uniform vec2 d_tex_scale[SHADOW_MAX];\n"\
 "//頂点シェーダーから受け取る変数\n"\
-"in vec4 V;//位置\n"\
-"in vec3 N;//法線ベクトル\n"\
-"in vec3 T;//接線ベクトル\n"\
-"in vec3 B;//従法線ベクトル\n"\
 "in vec2 texCoord;\n"\
 "uniform sampler2D sampler;\n"\
 "uniform sampler2D normalMap;//法線マップ\n"\
@@ -1180,9 +1238,9 @@ CShader::CShader(std::string type) {
 		},{
 			"Sky",
 			{
-				{mesh_vert,sky_frag},
-				{mesh_vert,sky_frag_f},
-				{mesh_vert,sky_frag},
+				{sky_vert,sky_frag},
+				{sky_vert,sky_frag_f},
+				{sky_vert,sky_frag},
 			}
 		},
 	};

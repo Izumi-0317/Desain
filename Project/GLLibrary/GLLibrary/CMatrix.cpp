@@ -287,6 +287,14 @@ CMatrix& CMatrix::operator *=(const float num){
 
 }
 
+void CMatrix::NormalizeRot()
+{
+	SetFront(GetFront().GetNormalize());
+	SetLeft(GetLeft().GetNormalize());
+	SetUp(GetUp().GetNormalize());
+	Transelate(0, 0, 0);
+}
+
 
 
 

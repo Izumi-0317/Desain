@@ -102,10 +102,13 @@ public:
 	CMatrix& operator *=(const float num);
 
 
-
+	void NormalizeRot();
 	CVector3D GetFront() const {return CVector3D(m02,m12,m22);}
+	void SetFront(const CVector3D& v) { m02 = v.x; m12 = v.y; m22 = v.z; }
 	CVector3D GetUp() const {return CVector3D(m01,m11,m21);}
+	void SetUp(const CVector3D& v) { m01 = v.x; m11 = v.y; m21 = v.z; }
 	CVector3D GetLeft() const {return CVector3D(m00,m10,m20);}
+	void SetLeft(const CVector3D& v) { m00 = v.x; m10 = v.y; m20 = v.z; }
 	CVector3D GetRight() const { return CVector3D(-m00, -m10, -m20); }
 	CVector3D GetPosition() const {return CVector3D(m03,m13,m23);}
 

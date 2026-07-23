@@ -327,7 +327,7 @@ public:
 		@brief	シェーダーへ基本情報（変換行列、ライト）を転送する
 		@retval	無し
 	*/
-	static  void SendShaderParam(CShader* s, const CMatrix& m, const CMatrix& mv, const CMatrix& p);
+	static  void SendShaderParam(CShader* s, const CMatrix& m, const CMatrix& v, const CMatrix& p);
 
 	/*!
 	@brief	アニメーション更新

@@ -160,6 +160,7 @@ public:
 	//単位ベクトルを返却
 	CVector3D GetNormalize() const;
 
+	CVector3D Normalized() const;
 	const static CVector3D up;
 	const static CVector3D down;
 	const static CVector3D left;

@@ -158,6 +158,10 @@ CVector3D CVector3D::GetNormalize() const
 	out.Normalize();
 	return out;
 }
+CVector3D CVector3D::Normalized() const
+{
+	return GetNormalize();
+}
 CVector3D CQuaternion::operator* (const CVector3D &v) const {
 
 	float qx = x, qy = y, qz = z, qw = w;

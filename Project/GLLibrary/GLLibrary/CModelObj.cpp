@@ -848,7 +848,7 @@ void CModelObj::Render(const CMatrix &m) {
 		s->Enable();
 		glUniform1f(glGetUniformLocation(s->GetProgram(), "shadow_bias"), m_shadow_bias);
 		glUniform1i(glGetUniformLocation(s->GetProgram(), "toon"), m_toon ? 1 : 0);
-		SendShaderParam(s,m, CCamera::GetCurrent()->GetViewMatrix() * m, CCamera::GetCurrent()->GetProjectionMatrix());
+		SendShaderParam(s,m, CCamera::GetCurrent()->GetViewMatrix(), CCamera::GetCurrent()->GetProjectionMatrix());
 		m_mesh[i].Render(m_material[i]);
 		s->Disable();
 	}

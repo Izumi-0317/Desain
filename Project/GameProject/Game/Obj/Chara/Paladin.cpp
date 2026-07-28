@@ -6,7 +6,7 @@
 #include "Player.h"
 
 namespace {
-	constexpr int PALADIN_HP = 50;
+	constexpr int PALADIN_HP = 100;
 	constexpr int ATTACK_DAMAGE = 10;
 	constexpr int SKILLATTACK_DAMAGE = 20;
 	constexpr int ATTACK_CT = 120;

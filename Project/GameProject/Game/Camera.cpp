@@ -29,7 +29,7 @@ void Camera::UpdateCam(){
 			m_camMat = CMatrix::MTranselate(p->m_pos)
 				* CMatrix::MTranselate(CVector3D(0, 2.5, 0))
 				* CMatrix::MRotation(m_rot)
-				* CMatrix::MTranselate(CVector3D(-0.3f, 0.2f, -0.5f));
+				* CMatrix::MTranselate(CVector3D(-0.3f, 0.2f, -2.5f));
 			/*m_dist = min(10.0f, max(2.0f, m_dist - CInput::GetMouseWheel()));
 			m_at = p->m_pos + CVector3D(0, 1.5f, 0);
 			m_pos = m_at + CMatrix::MRotation(m_rot).GetFront() * -m_dist;

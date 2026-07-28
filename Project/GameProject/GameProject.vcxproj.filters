@@ -80,6 +80,15 @@
     <ClCompile Include="Game\Obj\Chara\Boss.cpp">
       <Filter>Game\Object\Chara</Filter>
     </ClCompile>
+    <ClCompile Include="Title\Title.cpp">
+      <Filter>Title</Filter>
+    </ClCompile>
+    <ClCompile Include="Title\Complete.cpp">
+      <Filter>Title</Filter>
+    </ClCompile>
+    <ClCompile Include="Title\GameOver.cpp">
+      <Filter>Title</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -164,6 +173,15 @@
     <ClInclude Include="Game\Obj\Chara\Boss.h">
       <Filter>Game\Object\Chara</Filter>
     </ClInclude>
+    <ClInclude Include="Title\Title.h">
+      <Filter>Title</Filter>
+    </ClInclude>
+    <ClInclude Include="Title\Complete.h">
+      <Filter>Title</Filter>
+    </ClInclude>
+    <ClInclude Include="Title\GameOver.h">
+      <Filter>Title</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Base">
@@ -192,6 +210,9 @@
     </Filter>
     <Filter Include="Game\Object\Effect">
       <UniqueIdentifier>{bae0cf65-483c-4593-a698-ea3e2c329f4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Title">
+      <UniqueIdentifier>{e50e6fb3-a878-489b-b986-58a7c826ceaa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

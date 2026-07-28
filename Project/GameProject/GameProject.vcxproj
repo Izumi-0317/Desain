@@ -41,6 +41,9 @@
     <ClCompile Include="Game\Obj\Weapon\Sword.cpp" />
     <ClCompile Include="Game\Obj\Weapon\WeaponBase.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Title\Complete.cpp" />
+    <ClCompile Include="Title\GameOver.cpp" />
+    <ClCompile Include="Title\Title.cpp" />
     <ClCompile Include="UI\UIAmmo.cpp" />
     <ClCompile Include="UI\UIBase.cpp" />
     <ClCompile Include="UI\UIHP.cpp" />
@@ -71,6 +74,9 @@
     <ClInclude Include="Game\Obj\Weapon\Sword.h" />
     <ClInclude Include="Game\Obj\Weapon\WeaponBase.h" />
     <ClInclude Include="Global.h" />
+    <ClInclude Include="Title\Complete.h" />
+    <ClInclude Include="Title\GameOver.h" />
+    <ClInclude Include="Title\Title.h" />
     <ClInclude Include="UI\UIAmmo.h" />
     <ClInclude Include="UI\UIBase.h" />
     <ClInclude Include="UI\UIHP.h" />

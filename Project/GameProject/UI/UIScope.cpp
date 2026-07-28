@@ -8,7 +8,7 @@ UIScope::UIScope()
 }
 
 void UIScope::Update(){
-	CCamera::GetCurrent()->Perspective(DtoR(20.0), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.03f, 1000.0f);
+	CCamera::GetCurrent()->Perspective(DtoR(30.0), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.03f, 1000.0f);
 	if (Player* p = dynamic_cast<Player*>(Base::FindObject(ePlayer))) {
 		if (p->GetState() != p->SAiming) {
 			CCamera::GetCurrent()->Perspective(DtoR(60.0), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.03f, 1000.0f);

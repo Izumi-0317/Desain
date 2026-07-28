@@ -6,6 +6,8 @@
 #include "Game/Obj/Gimmick/Chest.h"
 #include "Game/Obj/Gimmick/Door.h"
 #include "Game/Obj/Room.h"
+#include "Title/Complete.h"
+#include "Title/GameOver.h"
 #include "UI/UIAmmo.h"
 #include "UI/UIHP.h"
 #include "UI/UIPotion.h"
@@ -14,10 +16,13 @@ bool Game::m_cameraMode = true;
 const float ROOM_SIZE = 16.5f;
 
 Game::Game()
-	:Base(eScene){
+	:Base(eScene)
+	, m_delayTime(30)
+	, m_isComplete(false)
+	, m_isGameOver(false){
 	Base::Add(new Player(CVector3D(0, 0, 0)));
-	Base::Add(new Paladin(CVector3D(0, 0, -16.5f)));
-	Base::Add(new Boss(CVector3D(0,0,0)));
+	Base::Add(new Paladin(CVector3D(0, 0, -ROOM_SIZE)));
+	Base::Add(new Boss(CVector3D(ROOM_SIZE, 0, -ROOM_SIZE * 4)));
 	Base::Add(new UIAmmo());
 	Base::Add(new UIHP());
 	Base::Add(new UIPotion());
@@ -40,6 +45,13 @@ Game::Game()
 	Base::Add(new Camera());
 }
 
-void Game::Update()
-{
+void Game::Update(){
+	if (m_isComplete || m_isGameOver) {
+		if (m_delayTime-- <= 0) {
+			KillALL();
+			(m_isComplete) ?
+				Base::Add(new Complete()) :
+				Base::Add(new GameOver());
+		}
+	}
 }

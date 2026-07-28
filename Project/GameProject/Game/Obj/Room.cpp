@@ -1,7 +1,8 @@
 #include "Room.h"
 
 Room::Room(const CVector3D& pos, float roty, RoomType roomType)
-	: Base(eRoom){
+	: Base(eRoom)
+	, m_isCol(false){
 	m_pos = pos;
 	m_rot.y = DtoR(roty);
 	std::string str;
@@ -26,4 +27,18 @@ void Room::Render(){
 	m_room.SetPos(m_pos);
 	m_room.SetRot(m_rot);
 	m_room.Render();
+	//Utility::DrawAABB(CVector3D(-0.5f, -0.5f, -80), CVector3D(35, 5, -41.5f), CVector4D(1, 0, 0, 0.5f));
+}
+
+void Room::Collision(Base* b) {
+	switch (b->GetType()) {
+	case ePlayer:
+		if (CCollision::CollisionAABBPoint(
+			CVector3D(-0.5f, -0.5f, -80),
+			CVector3D(35, 5, -41.5f), b->m_pos)) {
+			m_isCol = true;
+		}
+		else m_isCol = false;
+		break;
+	}
 }

@@ -720,16 +720,16 @@ bool CCollision::CollisionCapsule(const CCapsule& cap1, const CCapsule& cap2, fl
 }
 //AABBìØémÇÃè’ìÀîªíË
 bool CCollision::CollisionAABB(const CVector3D &minA,const CVector3D &maxA,const CVector3D &minB,const CVector3D &maxB){
-	if( minA.x  <= maxB.x && maxA.x >= minB.x &&
-		minA.y  <= maxB.y && maxA.y >= minB.y &&
-		minA.z  <= maxB.z && maxA.z >= minB.z) return true;
+	if( minA.x <= maxB.x && maxA.x >= minB.x &&
+		minA.y <= maxB.y && maxA.y >= minB.y &&
+		minA.z <= maxB.z && maxA.z >= minB.z) return true;
 	return false;
 }
 
 bool CCollision::CollisionAABBPoint(const CVector3D &min, const CVector3D &max, const CVector3D &point) {
-	if (min.x  <= point.x && max.x >= point.x &&
-		min.y  <= point.y && max.y >= point.y &&
-		min.z  <= point.z && max.z >= point.z) return true;
+	if (min.x <= point.x && max.x >= point.x &&
+		min.y <= point.y && max.y >= point.y &&
+		min.z <= point.z && max.z >= point.z) return true;
 	return false;
 
 }

@@ -35,6 +35,8 @@ private:
 	bool m_isMaxAmmo;		//現在の装填数が最大装填数か
 	bool m_isDryFiringSound;	//空撃ち音が再生可能か
 	GimmickBase* mp_intaractable;	//インタラクト可能なオブジェクトのポインタ
+
+	int m_upper_body;
 public:
 	enum AddState {
 		SHit = 4,		//殴打
@@ -57,6 +59,7 @@ public:
 	void Fire();
 	void UsePotion();
 	void Interact();
+	void AddForce(const CVector3D& vec, float force);
 	void SetPotionCnt(int potionCnt) { m_potionCnt += potionCnt; }
 	CModel* GetModel() override { return &m_model; }
 	CCapsule* GetCapsule() override { return &m_capusle; }

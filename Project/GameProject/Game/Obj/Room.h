@@ -4,6 +4,7 @@
 class Room :public Base {
 private:
 	CModelObj m_room;
+	bool m_isCol;
 	CModelObj* mp_room;
 public:
 	enum RoomType {
@@ -23,5 +24,7 @@ public:
 	Room(const CVector3D& pos, float roty, RoomType roomType);
 	void Update() override;
 	void Render() override;
+	void Collision(Base* b) override;
 	CModel* GetModel() override { return mp_room; }
+	bool IsCollision() { return m_isCol; }
 };

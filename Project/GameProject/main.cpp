@@ -1,6 +1,6 @@
 #include "Base/Base.h"
 #include "Effekseer/EffekseerManager.h"
-#include "Game/Game.h"
+#include "Title/Title.h"
 #include "UI/UIPotion.h"
 //--------------------------------------------
 //グローバル変数領域
@@ -18,7 +18,7 @@ void MainLoop(void) {
 	Base::CollisionALL();
 	Base::RenderALL();
 	Base::DrawALL();
-
+	
 	
 
 }
@@ -104,6 +104,10 @@ void Init(void)
 	//初期化の命令を書く
 	//ゲーム起動時に一度だけ呼ばれる
 	//-----------------------------------------------------
+	ADD_RESOURCE("Title", CImage::CreateImage("Title/Title.png"));
+	ADD_RESOURCE("TitleBack", CImage::CreateImage("Title/TitleBack.png"));
+	ADD_RESOURCE("Start", CImage::CreateImage("Title/Start.png"));
+
 	ADD_RESOURCE("UIScopeView", CImage::CreateImage("UI/UIScope.png"));
 	ADD_RESOURCE("UICnt", CImage::CreateImage("UI/UICnt.png"));
 	ADD_RESOURCE("UIRifle", CImage::CreateImage("UI/UIRifle.png"));
@@ -147,7 +151,7 @@ void Init(void)
 	SOUND("SkillAttack")->Load("Sound/SkillAttack.wav");
 	SOUND("MissAttack")->Load("Sound/missAttack.wav");
 
-	Base::Add(new Game());
+	Base::Add(new Title());
 
 }
 

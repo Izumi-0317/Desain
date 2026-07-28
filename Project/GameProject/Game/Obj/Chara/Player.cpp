@@ -12,8 +12,8 @@ namespace {
 	constexpr float PLAYER_HEIGHT = 2.8f;
 	constexpr float DEFAULT_MOVE_SPEED = 0.06f;
 	constexpr float RUN_SPEED = 2.0f;
-	constexpr float HAVE_SPEED = 0.75f;
-	constexpr float AIMING_SPEED = 0.25f;
+	constexpr float HAVE_SPEED = 1.0f;
+	constexpr float AIMING_SPEED = 0.5f;
 }
 
 Player::Player(const CVector3D& pos)
@@ -33,6 +33,11 @@ Player::Player(const CVector3D& pos)
 	m_hp = PLAYER_HP;
 	m_rad = 0.2f;
 	m_model.ChangeAnimation(Idle);
+	m_upper_body = 4;
+	int m_body_end = 56;
+	for (int i = m_upper_body; i <= m_body_end; i++)
+		m_model.GetNode(i)->SetAnimationLayer(1);
+
 	Base::Add(new Gun("AK47"));
 }
 
@@ -65,8 +70,8 @@ void Player::Update(){
 	//挙銃のアニメーション遷移
 	if (m_DownToAimFlag && (int)m_model.GetAnimation() != DownToAim) {
 		m_state = -1;
-		m_model.ChangeAnimation(DownToAim, false);
-		if (m_model.isAnimationEnd()) {
+		m_model.ChangeAnimation(1, DownToAim, false);
+		if (m_model.isAnimationEnd(1)) {
 			m_DownToAimFlag = false;
 			NextState(SHave);
 		}
@@ -75,8 +80,8 @@ void Player::Update(){
 	//脱銃のアニメーション遷移
 	if (m_AimToDownFlag && (int)m_model.GetAnimation() != AimToDown) {
 		m_state = -1;
-		m_model.ChangeAnimation(AimToDown, false);
-		if (m_model.isAnimationEnd()) {
+		m_model.ChangeAnimation(1, AimToDown, false);
+		if (m_model.isAnimationEnd(1)) {
 			m_AimToDownFlag = false;
 			NextState(SIdle);
 		}
@@ -101,7 +106,13 @@ void Player::Render(){
 	m_model.UpdateMatrix();
 	if (Camera* f = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
 		f->UpdateCam();
-		m_model.BindFrameMatrix(5, CMatrix::MRotation(f->m_rot));
+		if (m_state == SHit) {
+			m_model.BindFrameMatrix(m_upper_body, CMatrix::MRotation(f->m_rot), CA3MNode::eBind_Relative);
+		}
+		else {
+			m_model.BindFrameMatrix(m_upper_body,
+				CMatrix::MRotation(f->m_rot) * CMatrix::MRotationY(DtoR(-40)), CA3MNode::eBind_Absolute);
+		}
 	}
 	m_model.Render();
 	//Utility::DrawCapsule(m_capusle, CVector4D(1, 0, 0, 0.5f));
@@ -132,8 +143,9 @@ void Player::Collision(Base* b) {
 			}
 		}
 		m_pos += v;
+		break;
 	}
-			  break;
+	case eBoss:
 	case eEnemy: {
 		float dist;
 		CVector3D cross, dir;
@@ -151,8 +163,8 @@ void Player::Collision(Base* b) {
 				m_attackFlag = false;
 			}
 		}
+		break;
 	}
-			   break;
 	case eChest:
 	case eDoor:
 	case ePotion: {
@@ -168,8 +180,8 @@ void Player::Collision(Base* b) {
 		else {
 			if (mp_intaractable == nullptr) mp_intaractable = nullptr;
 		}
+		break;
 	}
-				break;
 	}
 }
 
@@ -183,8 +195,10 @@ void Player::StateIdle(){
 }
 
 void Player::StateHit(){
-	m_model.SetAnimationSpeed(2.5f);
-	m_model.ChangeAnimation(Hit, false);
+	m_model.SetAnimationSpeed(1, 2.5f);
+	m_model.SetAnimationSpeed(0, 2.5f);
+	m_model.ChangeAnimation(1, Hit, false);
+	m_model.ChangeAnimation(0, Hit, false);
 	switch (m_stateStep){
 	case 0:
 		if (m_model.GetAnimationFrame() >= 30) {
@@ -202,14 +216,15 @@ void Player::StateHit(){
 		break;
 	}
 	if (m_model.isAnimationEnd()) {
-		m_model.SetAnimationSpeed(1.0f);
+		m_model.SetAnimationSpeed(1, 1.0f);
+		m_model.SetAnimationSpeed(0, 1.0f);
 		NextState(SIdle);
 	}
 }
 
 void Player::StateHave(){
-	if (!PUSH(CInput::eMouseL)) Move(HAVE_SPEED);
-	else Fire();
+	if (PUSH(CInput::eMouseL)) Fire();
+	Move(HAVE_SPEED);
 	Interact();
 
 	if (PUSH(CInput::eButton3)) NextState(SAiming);
@@ -226,21 +241,25 @@ void Player::StateAiming(){
 
 void Player::StateReloaded(){
 	if (Gun* g = dynamic_cast<Gun*>(Base::FindObject(eGun))) {
-		m_model.ChangeAnimation(Reloading, false);
-		if (m_model.GetAnimationFrame() >= 50) {
-			//リロード
-			if (!m_isMaxAmmo) {
-				g->Reloaded();
-				m_isMaxAmmo = true;
+		if (m_undoState != SDamage) {
+			m_model.ChangeAnimation(1, Reloading, false);
+			if (m_model.GetAnimationFrame(1) >= 50) {
+				//リロード
+				if (!m_isMaxAmmo) {
+					g->Reloaded();
+					m_isMaxAmmo = true;
+				}
 			}
+			if (m_model.isAnimationEnd(1)) NextState(m_undoState);
 		}
-		if (m_model.isAnimationEnd()) NextState(m_undoState);
+		else if (m_model.isAnimationEnd(1)) NextState(SHave);
 	}
 }
 
 void Player::StateDamage(){
 	m_model.SetAnimationSpeed(2.0f);
-	m_model.ChangeAnimation(Damage, false);
+	m_model.ChangeAnimation(1, Damage, false);
+	m_model.ChangeAnimation(0, Damage, false);
 	if (m_model.isAnimationEnd()) {
 		m_model.SetAnimationSpeed(1.0f);
 		NextState(m_undoState);
@@ -248,8 +267,13 @@ void Player::StateDamage(){
 }
 
 void Player::StateDeath(){
-	m_model.ChangeAnimation(Death, false);
-	if (m_model.isAnimationEnd()); //TODO::GameOver
+	m_model.ChangeAnimation(1, Death, false);
+	m_model.ChangeAnimation(0, Death, false);
+	if (m_model.isAnimationEnd()) {
+		if (Game* g = dynamic_cast<Game*>(Base::FindObject(eScene))) {
+			g->markAsGameOver();
+		}
+	}
 }
 
 void Player::Move(float speed){
@@ -264,7 +288,8 @@ void Player::Move(float speed){
 			m_dir = (CMatrix::MRotationY(m_rot.y) * key_dir).GetNormalize();
 			switch (m_state){
 			case SIdle:
-				m_model.ChangeAnimation(Walk);
+				m_model.ChangeAnimation(1, Walk);
+				m_model.ChangeAnimation(0, Walk);
 				if (key_dir.z > 0) {
 					if (key_dir.LengthSq() < 0.3f || !HOLD(CInput::eButton4))
 						m_pos += m_dir * DEFAULT_MOVE_SPEED;
@@ -285,19 +310,26 @@ void Player::Move(float speed){
 				break;
 			case SHave:
 			case SAiming:
+				m_model.ChangeAnimation(1, Aiming);
 				m_pos += m_dir * (DEFAULT_MOVE_SPEED * speed);
-				if (key_dir.z > 0) m_model.ChangeAnimation(StrafeF);
-				else if (key_dir.z < 0) m_model.ChangeAnimation(StrafeB);
-				else if (key_dir.x > 0) m_model.ChangeAnimation(StrafeL);
-				else if (key_dir.x < 0) m_model.ChangeAnimation(StrafeR);
+				if (key_dir.z > 0) m_model.ChangeAnimation(0, StrafeF);
+				else if (key_dir.z < 0) m_model.ChangeAnimation(0, StrafeB);
+				else if (key_dir.x > 0) m_model.ChangeAnimation(0, StrafeL);
+				else if (key_dir.x < 0) m_model.ChangeAnimation(0, StrafeR);
 				break;
 			}
 		}
 		else {
 			switch (m_state){
-			case SIdle: m_model.ChangeAnimation(Idle); break;
+			case SIdle:
+				m_model.ChangeAnimation(1, Idle);
+				m_model.ChangeAnimation(0, Idle);
+				break;
 			case SHave:
-			case SAiming: m_model.ChangeAnimation(Aiming); break;
+			case SAiming:
+				m_model.ChangeAnimation(1, Aiming);
+				m_model.ChangeAnimation(0, Aiming);
+				break;
 			}
 		}
 	}
@@ -338,4 +370,8 @@ void Player::Interact(){
 	//Eを押したらインタラクトする
 	if (mp_intaractable && PUSH(CInput::eButton1)) 
 		mp_intaractable->Interact();
+}
+
+void Player::AddForce(const CVector3D& vec, float force){
+	m_pos += vec.GetNormalize() * force;
 }

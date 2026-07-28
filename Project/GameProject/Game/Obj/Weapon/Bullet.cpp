@@ -1,4 +1,5 @@
 #include "Bullet.h"
+#include "Game/Obj/Chara/Boss.h"
 #include "Game/Obj/Chara/Paladin.h"
 #include "Game/Obj/Effect/EffectParticle.h"
 #include "Game/Obj/Weapon/Gun.h"
@@ -64,16 +65,20 @@ void Bullet::Collision(Base* b) {
 		}
 		break;
 	}
+	case eBoss:
 	case eEnemy: {
 		float dist;
 		CVector3D cross, dir;
 		if (CCollision::CollisionCapsule(m_capusle, b->m_capusle, &dist, &cross, &dir)) {
 			if (Paladin* p = dynamic_cast<Paladin*>(b)) {
 				p->TakeDamage(BULLET_DAMAGE);
-				SetKill();
-				m_isCol = true;
-				m_effectPos = m_posOld;
 			}
+			if (Boss* boss = dynamic_cast<Boss*>(b)) {
+				boss->TakeDamage(BULLET_DAMAGE);
+			}
+			SetKill();
+			m_isCol = true;
+			m_effectPos = m_posOld;
 		}
 		break;
 	}

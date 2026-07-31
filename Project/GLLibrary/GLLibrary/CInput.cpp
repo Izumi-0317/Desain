@@ -169,6 +169,7 @@ XINPUT_STATE* CInput::GetPadData(int no)
 		HRESULT hr = m_device[no].m_pPadDevice->Acquire();
 		if ((hr == DI_OK) || (hr == S_FALSE)) {
 			m_device[no].m_pPadDevice->GetDeviceState(sizeof(DIJOYSTATE2), pd);
+			memset(&m_xstate[no], 0, sizeof(m_xstate[no]));
 			convert_dinput_to_xinput(&m_xstate[no], pd);
 			return &m_xstate[no];
 		}

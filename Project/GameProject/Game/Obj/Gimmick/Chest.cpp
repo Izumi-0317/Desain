@@ -37,6 +37,7 @@ void Chest::Update(){
 		}
 		//インタラクトしたらポーション生成
 		if (m_isInteractable) {
+			SOUND("ChestUnlock")->Play3D(m_pos, m_pos);
 			m_gimmick = COPY_RESOURCE("ChestOpen", CModelObj);
 			Base::Add(new Potion(m_pos));
 			m_isOpen = false;

@@ -12,6 +12,7 @@ public:
 	};
 	CModelA3M m_model;
 	int m_hp;
+	int m_maxHp;
 	int m_state;
 	int m_undoState;
 	int m_stateStep;

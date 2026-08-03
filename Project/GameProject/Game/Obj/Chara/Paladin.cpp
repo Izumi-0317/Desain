@@ -32,7 +32,7 @@ Paladin::Paladin(const CVector3D& pos, bool servant)
 	m_model = COPY_RESOURCE("Paladin", CModelA3M);
 	m_pos = pos;
 	m_state = SIdle;
-	m_hp = PALADIN_HP;
+	m_hp = m_maxHp = PALADIN_HP;
 	m_rad = 0.2f;
 	m_rot.y = DtoR(Utility::NormalizeAngle(Base::GetRand(0.0f, 360.0f)));
 	m_dir = CVector3D(sin(m_rot.y), 0, cos(m_rot.y));

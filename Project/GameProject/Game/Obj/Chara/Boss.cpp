@@ -1,8 +1,10 @@
 #include "Boss.h"
+#include "Game/Camera.h"
 #include "Game/Game.h"
 #include "Game/Obj/Room.h"
 #include "Player.h"
-
+#include "UI/UIHP.h"
+//TODO::咆哮中はプレイヤーは動けないようにする　スコープを覗いていたらそれを解除
 namespace {
 	constexpr int BOSS_HP = 500;
 	constexpr int PUNCH_DMG = 10;				//殴打のダメージ
@@ -31,10 +33,11 @@ Boss::Boss(const CVector3D& pos)
 	, m_atkPos(pos)
 	, m_jumpPos(CVector3D::zero)
 	, m_landingPos(CVector3D::zero)
-	, mp_target(nullptr) {
+	, mp_target(nullptr)
+	, mp_UIHP(nullptr){
 	m_model = COPY_RESOURCE("Boss", CModelA3M);
 	m_pos = pos;
-	m_hp = BOSS_HP;
+	m_hp = m_maxHp = BOSS_HP;
 	m_rad = 2.0f;
 	m_state = SIdle;
 }
@@ -94,8 +97,18 @@ void Boss::Collision(Base* b) {
 		if (Room* r = dynamic_cast<Room*>(b)) {
 			if (r->IsCollision()) {
 				mp_target = Base::FindObject(ePlayer);
+				if (mp_UIHP == nullptr) {
+					mp_UIHP = new UIHP(eBoss);
+					Base::Add(mp_UIHP);
+				}
 			}
-			else mp_target = nullptr;
+			else {
+				mp_target = nullptr;
+				if (mp_UIHP != nullptr) {
+					mp_UIHP->SetKill();
+					mp_UIHP = nullptr;
+				}
+			}
 		}
 		break;
 	}
@@ -109,11 +122,16 @@ void Boss::Collision(Base* b) {
 			if (!m_isHit && CCollision::CollisionCapsuleShpere(p->m_capusle, m_atkPos, m_atkRad, &dist, &cross, &dir)) {
 				p->TakeDamage(m_atkDmg);
 				m_isHit = true;
-				if (m_state == SJumpAttack) {
+				switch (m_state){
+				case SAttack: SOUND("Punch")->Play3D(m_pos, m_pos); break;
+				case SHaymaker: SOUND("Haymaker")->Play3D(m_pos, m_pos); break;
+				case SJumpAttack:
+					SOUND("JumpAtk")->Play3D(m_pos, m_pos);
 					if (Player* p = dynamic_cast<Player*>(mp_target)) {
 						float force = (float)JUMPATK_DMG / 30;
 						p->AddForce(dir, -force);
 					}
+					break;
 				}
 			}
 		}
@@ -144,9 +162,16 @@ void Boss::StateIdle(){
 		}
 	}
 	else {
-		//最初だけ咆哮する
+		//ターゲットを発見したら咆哮する
 		if (!m_isRoar) {
 			m_model.ChangeAnimation(Roaring, false);
+			if (m_model.GetAnimationFrame() == 37)
+				SOUND("Roar")->Play3D(m_pos, m_dir);
+			if (m_model.GetAnimationFrame() == 53) {
+				if (Camera* c = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
+					c->SetShake(120, 0.067f);
+				}
+			}
 			if (m_model.isAnimationEnd()) m_isRoar = true;
 		}
 		else {
@@ -164,7 +189,7 @@ void Boss::StateIdle(){
 			else {
 				if (m_isAtk[1]) NextState(SHaymaker);
 				else if (m_isAtk[0]) NextState(SAttack);
-				else m_model.ChangeAnimation(Run);//TODO::ターゲットの背後に回る
+				else m_model.ChangeAnimation(Run);
 			}
 		}
 	}
@@ -258,6 +283,7 @@ void Boss::StateShowOff(){
 }
 
 void Boss::StateDeath(){
+	SOUND("BossDeath")->Play3D(m_pos, m_pos);
 	m_model.ChangeAnimation(Death, false);
 	if (m_model.isAnimationEnd()) 
 		if (Game* g = dynamic_cast<Game*>(Base::FindObject(eScene))) {
@@ -300,7 +326,7 @@ void Boss::ResetStatus(){
 	m_isAtk[1] = false;
 	m_isAtk[2] = false;
 	m_isHit = false;
-	m_hp = 500;
+	m_hp = m_maxHp = BOSS_HP;
 	m_rot = CVector3D::zero;
 	m_state = SIdle;
 }

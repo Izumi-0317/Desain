@@ -104,9 +104,40 @@ void Init(void)
 	//‰Šú‰»‚Ì–½—ß‚ð‘‚­
 	//ƒQ[ƒ€‹N“®Žž‚Éˆê“x‚¾‚¯ŒÄ‚Î‚ê‚é
 	//-----------------------------------------------------
+	ADD_RESOURCE("Player", CModel::CreateModel("Charactor/Explorer/explorer.a3m"));
+	ADD_RESOURCE("PlayerFPS", CModel::CreateModel("Charactor/Explorer/explorerFPS.a3m"));
+	ADD_RESOURCE("Paladin", CModel::CreateModel("Charactor/Paladin/paladin.a3m"));
+	ADD_RESOURCE("Boss", CModel::CreateModel("Charactor/Boss/boss.a3m"));
+	ADD_RESOURCE("Sword", CModel::CreateModel("Weapon/Sword/sword.obj"));
+	ADD_RESOURCE("Shield", CModel::CreateModel("Weapon/Shield/shield.obj"));
+	ADD_RESOURCE("AK47", CModel::CreateModel("Weapon/AK47/AK47.obj"));
+	ADD_RESOURCE("Bullet", CModel::CreateModel("Weapon/Bullet/bullet.obj"));
+	ADD_RESOURCE("Scope", CModel::CreateModel("Weapon/Scope/SR_Scope_00.obj"));
+
+	ADD_RESOURCE("ChestClose", CModel::CreateModel("Field/Chest/ChestClose.obj"));
+	ADD_RESOURCE("ChestOpen", CModel::CreateModel("Field/Chest/ChestOpen.obj"));
+	ADD_RESOURCE("Door", CModel::CreateModel("Field/Door/Door.obj"));
+	ADD_RESOURCE("StuckDoor", CModel::CreateModel("Field/Door/StuckDoor.obj"));
+	ADD_RESOURCE("Potion", CModel::CreateModel("Field/Potion/Potion.obj"));
+	
+	ADD_RESOURCE("Room1", CModel::CreateModel("Field/Room/Room1.obj", 30, 1, 30));
+	ADD_RESOURCE("Room2I", CModel::CreateModel("Field/Room/Room2I.obj", 30, 1, 30));
+	ADD_RESOURCE("Room2L", CModel::CreateModel("Field/Room/Room2L.obj", 30, 1, 30));
+	ADD_RESOURCE("Room3", CModel::CreateModel("Field/Room/Room3.obj", 30, 1, 30));
+	ADD_RESOURCE("Room4", CModel::CreateModel("Field/Room/Room4.obj", 30, 1, 30));
+	ADD_RESOURCE("RoomBoss", CModel::CreateModel("Field/Room/RoomBoss.obj", 60, 1, 60));
+
+	ADD_RESOURCE("EBomb", CModel::CreateModel("Effect/Bomb.obj"));
+	ADD_RESOURCE("ECircleR", CModel::CreateModel("Effect/CircleR.obj"));
+
 	ADD_RESOURCE("Title", CImage::CreateImage("Title/Title.png"));
 	ADD_RESOURCE("TitleBack", CImage::CreateImage("Title/TitleBack.png"));
 	ADD_RESOURCE("Start", CImage::CreateImage("Title/Start.png"));
+	ADD_RESOURCE("Complete", CImage::CreateImage("Title/Complete.png"));
+	ADD_RESOURCE("CompleteBack", CImage::CreateImage("Title/CompleteBack.png"));
+	ADD_RESOURCE("GameOver", CImage::CreateImage("Title/GameOver.png"));
+	ADD_RESOURCE("GameOverBack", CImage::CreateImage("Title/GameOverBack.png"));
+	ADD_RESOURCE("Return", CImage::CreateImage("Title/Return.png"));
 
 	ADD_RESOURCE("UIScopeView", CImage::CreateImage("UI/UIScope.png"));
 	ADD_RESOURCE("UICnt", CImage::CreateImage("UI/UICnt.png"));
@@ -117,39 +148,27 @@ void Init(void)
 	ADD_RESOURCE("UIHP", CImage::CreateImage("UI/UIHP.png"));
 	ADD_RESOURCE("UILowHP", CImage::CreateImage("UI/UILowHP.png"));
 	ADD_RESOURCE("UIHPBack", CImage::CreateImage("UI/UIHPBack.png"));
+	ADD_RESOURCE("BossName", CImage::CreateImage("UI/BossName.png"));
 
-	ADD_RESOURCE("Player", CModel::CreateModel("Charactor/Explorer/explorer.a3m"));
-	ADD_RESOURCE("PlayerFPS", CModel::CreateModel("Charactor/Explorer/explorerFPS.a3m"));
-	ADD_RESOURCE("Paladin", CModel::CreateModel("Charactor/Paladin/paladin.a3m"));
-	ADD_RESOURCE("Boss", CModel::CreateModel("Charactor/Boss/boss.a3m"));
-	ADD_RESOURCE("Sword", CModel::CreateModel("Weapon/Sword/sword.obj"));
-	ADD_RESOURCE("Shield", CModel::CreateModel("Weapon/Shield/shield.obj"));
-	ADD_RESOURCE("AK47", CModel::CreateModel("Weapon/AK47/AK47.obj"));
-	ADD_RESOURCE("Bullet", CModel::CreateModel("Weapon/Bullet/bullet.obj"));
-	ADD_RESOURCE("Scope", CModel::CreateModel("Weapon/Scope/SR_Scope_00.obj"));
-	ADD_RESOURCE("ChestClose", CModel::CreateModel("Field/Chest/ChestClose.obj"));
-	ADD_RESOURCE("ChestOpen", CModel::CreateModel("Field/Chest/ChestOpen.obj"));
-	ADD_RESOURCE("Door", CModel::CreateModel("Field/Door/Door.obj"));
-	ADD_RESOURCE("Potion", CModel::CreateModel("Field/Potion/Potion.obj"));
-
-	ADD_RESOURCE("EBomb", CModel::CreateModel("Effect/Bomb.obj"));
-	ADD_RESOURCE("ECircleR", CModel::CreateModel("Effect/CircleR.obj"));
-	
-	ADD_RESOURCE("Room1", CModel::CreateModel("Field/Room/Room1.obj", 30, 1, 30));
-	ADD_RESOURCE("Room2I", CModel::CreateModel("Field/Room/Room2I.obj", 30, 1, 30));
-	ADD_RESOURCE("Room2L", CModel::CreateModel("Field/Room/Room2L.obj", 30, 1, 30));
-	ADD_RESOURCE("Room3", CModel::CreateModel("Field/Room/Room3.obj", 30, 1, 30));
-	ADD_RESOURCE("Room4", CModel::CreateModel("Field/Room/Room4.obj", 30, 1, 30));
-	ADD_RESOURCE("RoomBoss", CModel::CreateModel("Field/Room/RoomBoss.obj", 60, 1, 60));
-
+	SOUND("FootstepsRun")->Load("Sound/footstepsRun.mp3");
+	SOUND("FootstepsWalk")->Load("Sound/footstepsWalk.mp3");
 	SOUND("DryFiring")->Load("Sound/dryFiring.wav");
 	SOUND("Reloaded")->Load("Sound/reloaded.wav");
 	SOUND("Shot")->Load("Sound/shot.wav");
-	SOUND("ChestUnlock")->Load("Sound/ChestUnlock.wav");
+	SOUND("Potion")->Load("Sound/potion.mp3");
+	SOUND("Roar")->Load("Sound/roar.wav");
+	SOUND("Punch")->Load("Sound/punch.mp3");
+	SOUND("Haymaker")->Load("Sound/haymaker.mp3");
+	SOUND("JumpAtk")->Load("Sound/jumpAttack.mp3");
+	SOUND("BossDeath")->Load("Sound/bossDeath.wav");
+	SOUND("ChestUnlock")->Load("Sound/chestUnlock.wav");
+	SOUND("DoorOpen")->Load("Sound/doorOpen.mp3");
+	SOUND("DoorClose")->Load("Sound/doorClose.mp3");
 	SOUND("Hit")->Load("Sound/hit.wav");
 	SOUND("SwordAttack")->Load("Sound/swordAttack.wav");
-	SOUND("SkillAttack")->Load("Sound/SkillAttack.wav");
-	SOUND("MissAttack")->Load("Sound/missAttack.wav");
+	SOUND("SkillAttack")->Load("Sound/skillAttack.wav");
+	SOUND("GameOver")->Load("Sound/gameOver.mp3");
+	SOUND("Complete")->Load("Sound/complete.mp3");
 
 	Base::Add(new Title());
 

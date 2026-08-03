@@ -5,13 +5,16 @@ class UIHP :public UIBase {
 private:
 	CImage m_hpImg;
 	CImage m_lowHpImg;
-	int m_currentHP;
-	int m_lowStartHP;
+	CImage m_nameImg;
+	int m_type;
+	int m_maxHp;
+	int m_currentHp;
+	int m_lowStartHp;
 	int m_delayTime;
 	float m_lerpTime;
-	float m_lowHPSize;
+	float m_lowHpSize;
 public:
-	UIHP();
+	UIHP(int type);
 	void Update() override;
 	void Draw() override;
 };

@@ -25,6 +25,7 @@ private:
 	CVector3D m_jumpPos;	//跳躍点
 	CVector3D m_landingPos;	//着地点
 	Base* mp_target;	//ターゲットのポインタ
+	Base* mp_UIHP;		//自分のUIHPのポインタ
 public:
 	enum AddState {
 		SHaymaker = 4,

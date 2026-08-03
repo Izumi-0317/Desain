@@ -3,6 +3,7 @@
 CharaBase::CharaBase(int type)
 	: Base(type)
 	, m_hp(0)
+	, m_maxHp(0)
 	, m_state(-1)
 	, m_stateStep(0)
 	, m_undoState(0)

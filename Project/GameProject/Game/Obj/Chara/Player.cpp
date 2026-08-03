@@ -30,7 +30,7 @@ Player::Player(const CVector3D& pos)
 	m_playerMat = (CMatrix::MTranselate(m_pos) * CMatrix::MRotation(m_rot));
 	m_pos = pos;
 	m_state = SIdle;
-	m_hp = PLAYER_HP;
+	m_hp = m_maxHp = PLAYER_HP;
 	m_rad = 0.2f;
 	m_model.ChangeAnimation(Idle);
 	m_upper_body = 4;
@@ -70,9 +70,11 @@ void Player::Update(){
 	//‹“e‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‘JˆÚ
 	if (m_DownToAimFlag && (int)m_model.GetAnimation() != DownToAim) {
 		m_state = -1;
+		m_model.SetAnimationSpeed(1, 2.0f);
 		m_model.ChangeAnimation(1, DownToAim, false);
 		if (m_model.isAnimationEnd(1)) {
 			m_DownToAimFlag = false;
+			m_model.SetAnimationSpeed(1, 1.0f);
 			NextState(SHave);
 		}
 	}
@@ -80,9 +82,11 @@ void Player::Update(){
 	//’Ee‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‘JˆÚ
 	if (m_AimToDownFlag && (int)m_model.GetAnimation() != AimToDown) {
 		m_state = -1;
+		m_model.SetAnimationSpeed(1, 2.0f);
 		m_model.ChangeAnimation(1, AimToDown, false);
 		if (m_model.isAnimationEnd(1)) {
 			m_AimToDownFlag = false;
+			m_model.SetAnimationSpeed(1, 1.0f);
 			NextState(SIdle);
 		}
 	}
@@ -155,12 +159,16 @@ void Player::Collision(Base* b) {
 			m_pos -= dir * s * 0.5f;
 		}
 		//‹ßÚUŒ‚
-		if (m_attackFlag && CCollision::CollisionCapsuleShpere(*b->GetCapsule(),
-			m_pos + CVector3D(0, 1, 0) + m_dir.GetNormalize() * 0.5f, 0.2f,
-			&dist, &cross, &dir)) {
-			if (Interface* i = dynamic_cast<Interface*>(b)) {
-				i->TakeDamage(10);
-				m_attackFlag = false;
+		if (Camera* c = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
+			CVector3D center = m_pos + CVector3D(0, 1, 0) + c->m_dir.GetNormalize() * 1.5f;
+			if (m_attackFlag && CCollision::CollisionCapsuleShpere(*b->GetCapsule(),
+				center, 1.0f,
+				&dist, &cross, &dir)) {
+				if (Interface* i = dynamic_cast<Interface*>(b)) {
+					SOUND("Hit")->Play();
+					i->TakeDamage(10);
+					m_attackFlag = false;
+				}
 			}
 		}
 		break;
@@ -203,8 +211,9 @@ void Player::StateHit(){
 	case 0:
 		if (m_model.GetAnimationFrame() >= 30) {
 			m_attackFlag = true;
-			Utility::DrawSphere(m_pos + CVector3D(0, 1, 0) + m_dir.GetNormalize(), 0.2f, CVector4D(1, 0, 0, 1));
-			SOUND("Hit")->Play();
+			/*if (Camera* c = dynamic_cast<Camera*>(Base::FindObject(eCamera)))
+				Utility::DrawSphere(m_pos + CVector3D(0, 1, 0) + c->m_dir.GetNormalize() * 1.5f,
+					1.0f, CVector4D(1, 0, 0, 1));*/
 			m_stateStep++;
 		}
 		break;
@@ -233,8 +242,8 @@ void Player::StateHave(){
 
 void Player::StateAiming(){
 	if (!Base::FindObject(eUIScope)) Base::Add(new UIScope());
-	if (!HOLD(CInput::eMouseL)) Move(AIMING_SPEED);
-	else Fire();
+	if (HOLD(CInput::eMouseL)) Fire();
+	Move(AIMING_SPEED);
 
 	if (PUSH(CInput::eButton3)) NextState(SHave);
 }
@@ -285,18 +294,36 @@ void Player::Move(float speed){
 	if (HOLD(CInput::eRight)) key_dir.x = -1;
 	if (Camera* f = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
 		if (key_dir.LengthSq() > 0.05f) {
+			if (SOUND("FootstepsWalk")->CheckEnd()) {
+				float pitch = min(1.0f, speed * 1.5f);
+				SOUND("FootstepsWalk")->Pitch(pitch);
+				SOUND("FootstepsWalk")->Play3D(m_pos, m_pos);
+			}
+
 			m_dir = (CMatrix::MRotationY(m_rot.y) * key_dir).GetNormalize();
 			switch (m_state){
 			case SIdle:
 				m_model.ChangeAnimation(1, Walk);
 				m_model.ChangeAnimation(0, Walk);
 				if (key_dir.z > 0) {
-					if (key_dir.LengthSq() < 0.3f || !HOLD(CInput::eButton4))
+					if (key_dir.LengthSq() < 0.3f || !HOLD(CInput::eButton4)) {
+						SOUND("FootstepsRun")->Stop();
 						m_pos += m_dir * DEFAULT_MOVE_SPEED;
-					else
+					}
+					else {
+						SOUND("FootstepsWalk")->Stop();
+						if (SOUND("FootstepsRun")->CheckEnd()) {
+							SOUND("FootstepsRun")->Volume(0.4f);
+							SOUND("FootstepsRun")->Play3D(m_pos, m_pos);
+						}
+
 						m_pos += m_dir * (DEFAULT_MOVE_SPEED * speed);
+					}
 				}
-				else m_pos += m_dir * DEFAULT_MOVE_SPEED;
+				else {
+					SOUND("FootstepsRun")->Stop();
+					m_pos += m_dir * DEFAULT_MOVE_SPEED;
+				}
 				/*if (key_dir.z > 0) {
 				if (key_dir.LengthSq() < 0.3f || !HOLD(CInput::eButton4)) m_model.ChangeAnimation(Walk);
 				else {
@@ -320,6 +347,8 @@ void Player::Move(float speed){
 			}
 		}
 		else {
+			SOUND("FootstepsRun")->Stop();
+			SOUND("FootstepsWalk")->Stop();
 			switch (m_state){
 			case SIdle:
 				m_model.ChangeAnimation(1, Idle);
@@ -359,6 +388,7 @@ void Player::UsePotion(){
 	//ƒ|[ƒVƒ‡ƒ“‚ðŽ‚Á‚Ä‚¢‚é‚©‚Â‘Ò‹@ó‘Ô‚©‚ÂHP‚ª100–¢–ž‚©‚ÂE‚ð‰Ÿ‚µ‚½‚ç
 	if (m_potionCnt > 0 && m_state == SIdle &&
 		m_hp < 100 && PUSH(CInput::eButton1)) {
+		SOUND("Potion")->Play3D(m_pos, m_pos);
 		m_hp = min(100, m_hp + POTION_HEAL_AMOUNT);
 		m_potionCnt--;
 		mp_intaractable = nullptr;

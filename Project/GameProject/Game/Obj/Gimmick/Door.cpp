@@ -5,11 +5,14 @@ namespace {
 	constexpr float MOVE_DISTANCE = 6.1f;
 }
 
-Door::Door(const CVector3D& pos, float roty)
+Door::Door(const CVector3D& pos, float roty, bool stuck)
 	: GimmickBase(eDoor)
 	, m_moveDist(0)
-	, m_returnElapsedTime(0){
-	m_gimmick = COPY_RESOURCE("Door", CModelObj);
+	, m_returnElapsedTime(0)
+	, m_isStuck(stuck){
+	m_gimmick = stuck ?
+		COPY_RESOURCE("StuckDoor", CModelObj) :
+		COPY_RESOURCE("Door", CModelObj);
 	m_pos = pos;
 	m_rot.y = DtoR(roty);
 }
@@ -39,10 +42,14 @@ void Door::Render(){
 }
 
 void Door::Move(float& posXorZ){
+	//開かないドアなら処理しない
+	if (m_isStuck) return;
 	//移動できるなら
 	if (m_isInteractable) {
 		//移動距離が指定の距離になるまで移動する
 		if (m_moveDist < MOVE_DISTANCE) {
+			if (SOUND("DoorOpen")->CheckEnd())
+				SOUND("DoorOpen")->Play3D(m_pos, m_pos);
 			posXorZ += 0.1f;
 			m_moveDist += 0.1f;
 		}
@@ -54,6 +61,12 @@ void Door::Move(float& posXorZ){
 		if (m_returnElapsedTime++ >= 120) {
 			//移動距離が0.1になるまで移動する
 			if (m_moveDist > 0.1f) {
+				if (m_moveDist < 3.0f) {
+					if (SOUND("DoorClose")->CheckEnd()) {
+						SOUND("DoorClose")->Volume(0.1f);
+						SOUND("DoorClose")->Play3D(m_pos, m_pos);
+					}
+				}
 				posXorZ -= 0.1f;
 				m_moveDist -= 0.1f;
 			}

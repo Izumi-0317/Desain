@@ -35,9 +35,12 @@ void Sword::Collision(Base* b){
 			if (Player* p = dynamic_cast<Player*>(b)) {
 				p->TakeDamage(m_damage);
 				m_enableCap = false;
-				//TODO::‰¹‚ð–Â‚ç‚·
 				if (Paladin* pd = dynamic_cast<Paladin*>(mp_owner)) {
-					if (!pd->GetSkillFlag()) pd->AddAttackCnt();
+					if (!pd->GetSkillFlag()) {
+						SOUND("SwordAttack")->Play3D(m_pos, m_pos);
+						pd->AddAttackCnt();
+					}
+					else SOUND("SkillAttack")->Play3D(m_pos, m_pos);
 				}
 			}
 		}

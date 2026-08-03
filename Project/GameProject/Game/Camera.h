@@ -6,9 +6,9 @@ private:
 	CMatrix m_camMat;
 	float m_dist;		//ƒvƒŒƒCƒ„[‚Ü‚Å‚Ì‹——£
 	float m_speed;		//‰ñ“]‘¬“x
+	float m_shakeTime;	//—h‚ê‚éŠÔ
+	float m_shakeIntensity;	//—h‚ê‚é‹­‚³
 	CVector3D m_at;		//’‹“_
-	CVector3D m_playerPos;
-	CVector3D m_posOld;
 public:
 	Camera();
 	/// <summary>
@@ -16,7 +16,9 @@ public:
 	/// </summary>
 	void UpdateCam();
 	void Collision(Base* b) override;
-	CMatrix GetMatrix() {
-		return m_camMat;
+	void SetShake(float time, float intensity) {
+		m_shakeTime = time;
+		m_shakeIntensity = intensity;
 	}
+	CMatrix GetMatrix() { return m_camMat; }
 };

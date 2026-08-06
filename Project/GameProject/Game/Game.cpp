@@ -11,6 +11,8 @@
 #include "UI/UIAmmo.h"
 #include "UI/UIHP.h"
 #include "UI/UIPotion.h"
+#include "UI/UIPrompts.h"
+#include "UI/UIVignette.h"
 
 bool Game::m_cameraMode = true;
 const float ROOM_SIZE = 16.5f;
@@ -19,14 +21,15 @@ Game::Game()
 	:Base(eScene)
 	, m_delayTime(30)
 	, m_isComplete(false)
-	, m_isGameOver(false)
-	, m_isCaptured(false){
+	, m_isGameOver(false){
 	Base::Add(new Player(CVector3D(0, 0, 0)));
 	Base::Add(new Paladin(CVector3D(0, 0, -ROOM_SIZE)));
 	Base::Add(new Boss(CVector3D(ROOM_SIZE, 0, -ROOM_SIZE * 4)));
 	Base::Add(new UIAmmo());
 	Base::Add(new UIHP(ePlayer));
 	Base::Add(new UIPotion());
+	Base::Add(new UIPrompts());
+	Base::Add(new UIVignette());
 
 	Base::Add(new Room(CVector3D(0, 0, 0), 0, Room::RoomType::R2I));
 	Base::Add(new Room(CVector3D(0, 0, -ROOM_SIZE), 180, Room::RoomType::R3));
@@ -44,28 +47,18 @@ Game::Game()
 	Base::Add(new Door(CVector3D(17.6f, 0, -75.5f), 90, true));
 
 	Base::Add(new Chest(CVector3D(-ROOM_SIZE, 0, -ROOM_SIZE), 0, 2));
+	Base::Add(new Chest(CVector3D(ROOM_SIZE, 0, -ROOM_SIZE), 180, 1));
 
 	Base::Add(new Camera());
-
-	m_completeTF = new CTextureFrame(1920.0f, 1080.0f, CVector4D(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
 void Game::Update(){
 	if (m_isComplete || m_isGameOver) {
 		if (m_delayTime-- <= 0) {
-			if (m_isComplete && !m_isCaptured) {
-				m_completeTF->BeginDraw();
-				glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-				Base::RenderALL();
-				m_completeTF->EndDraw();
-				m_isCaptured = true;
-			}
-			KillALL();
 			(m_isComplete) ?
-				Base::Add(new Complete(*m_completeTF->GetTexture())) :
+				Base::Add(new Complete()) :
 				Base::Add(new GameOver());
-			delete m_completeTF;
+			SetKill();
 		}
 	}
 }

@@ -51,8 +51,8 @@ void Gun::UpdateGun() {
 				//オイラー角を取得
 				CVector3D elur = diff_rot.GetEuler(CMatrix::eZYX);
 				//現在の調整角度を表示
-				if (PUSH(CInput::eButton1))
-					printf("%f %f %f", RtoD(elur.x), RtoD(elur.y), RtoD(elur.z));
+				//if (PUSH(CInput::eButton1))
+				//	printf("%f %f %f", RtoD(elur.x), RtoD(elur.y), RtoD(elur.z));
 				//手のボーンからカメラ方向への差分回転行列をかけて、銃をカメラへ真っすぐ向ける
 				m_gunMat = p->GetModel()->GetFrameMatrix(36)
 					* CMatrix::MTranselate(m_pos)

@@ -4,7 +4,7 @@
 #include "Game/Obj/Room.h"
 #include "Player.h"
 #include "UI/UIHP.h"
-//TODO::咆哮中はプレイヤーは動けないようにする　スコープを覗いていたらそれを解除
+
 namespace {
 	constexpr int BOSS_HP = 500;
 	constexpr int PUNCH_DMG = 10;				//殴打のダメージ
@@ -23,7 +23,7 @@ namespace {
 
 Boss::Boss(const CVector3D& pos)
 	: CharaBase(eBoss)
-	, m_atkCT(0, HAYMAKER_CT, JUMPATK_CT)
+	, m_atkCT(0, HAYMAKER_CT, JUMPATK_CT / 2)
 	, m_atkDmg(0)
 	, m_atkRad(0.0f)
 	, m_isRoar(false)
@@ -167,12 +167,21 @@ void Boss::StateIdle(){
 			m_model.ChangeAnimation(Roaring, false);
 			if (m_model.GetAnimationFrame() == 37)
 				SOUND("Roar")->Play3D(m_pos, m_dir);
-			if (m_model.GetAnimationFrame() == 53) {
-				if (Camera* c = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
-					c->SetShake(120, 0.067f);
+
+			if (Player* p = dynamic_cast<Player*>(mp_target)) {
+				if (m_model.GetAnimationFrame() == 53) {
+					//咆哮中はプレイヤーの行動を封じる
+					p->SetCanAct(false);
+
+					if (Camera* c = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
+						c->SetShake(120, 0.067f);
+					}
+				}
+				if (m_model.isAnimationEnd()) {
+					m_isRoar = true;
+					p->SetCanAct(true);
 				}
 			}
-			if (m_model.isAnimationEnd()) m_isRoar = true;
 		}
 		else {
 			m_isHit = false;
@@ -283,7 +292,6 @@ void Boss::StateShowOff(){
 }
 
 void Boss::StateDeath(){
-	SOUND("BossDeath")->Play3D(m_pos, m_pos);
 	m_model.ChangeAnimation(Death, false);
 	if (m_model.isAnimationEnd()) 
 		if (Game* g = dynamic_cast<Game*>(Base::FindObject(eScene))) {

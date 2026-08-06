@@ -48,7 +48,9 @@
     <ClCompile Include="UI\UIBase.cpp" />
     <ClCompile Include="UI\UIHP.cpp" />
     <ClCompile Include="UI\UIPotion.cpp" />
+    <ClCompile Include="UI\UIPrompts.cpp" />
     <ClCompile Include="UI\UIScope.cpp" />
+    <ClCompile Include="UI\UIVignette.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Base\Base.h" />
@@ -81,7 +83,9 @@
     <ClInclude Include="UI\UIBase.h" />
     <ClInclude Include="UI\UIHP.h" />
     <ClInclude Include="UI\UIPotion.h" />
+    <ClInclude Include="UI\UIPrompts.h" />
     <ClInclude Include="UI\UIScope.h" />
+    <ClInclude Include="UI\UIVignette.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FE2CE3B1-49BF-46A5-9DB1-9BD5B52FE1A0}</ProjectGuid>

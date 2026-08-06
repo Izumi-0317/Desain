@@ -263,7 +263,10 @@ void Paladin::StateSkillAttack(){
 
 void Paladin::StateDamage(){
 	//追跡中はリアクションしない
-	if (m_chaseTime > 0) NextState(SIdle);
+	if (m_chaseTime > 0) {
+		NextState(SIdle);
+		return;
+	}
 	m_model.SetAnimationSpeed(1.0f);
 	m_model.ChangeAnimation(Damage, false);
 	//ダメージを受けたら追跡時間を設定

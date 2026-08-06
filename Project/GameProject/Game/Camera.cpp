@@ -13,6 +13,11 @@ Camera::Camera()
 }
 
 void Camera::UpdateCam(){
+	if (CInput::GetPadData(0)) {
+		float speedStick = 0.03f;
+		CVector2D axis = CInput::GetRStick(0);
+		m_rot += CVector3D(-axis.y, -axis.x, 0) * speedStick;
+	}
 	CVector2D mouse_vec = CInput::GetMouseVec();
 	m_rot += CVector3D(mouse_vec.y, -mouse_vec.x, 0) * m_speed;
 	m_rot.x = min(DtoR(35), max(DtoR(-35), m_rot.x));
@@ -23,6 +28,7 @@ void Camera::UpdateCam(){
 				* CMatrix::MTranselate(CVector3D(sin(m_rot.y), 0, cos(m_rot.y)) * 0.1f)
 				* CMatrix::MRotation(m_rot);*/
 			m_dir = CVector3D(sin(m_rot.y), 0, cos(m_rot.y));
+
 			if (m_shakeTime > 0.0f) {
 				float x = Base::GetRand(-1.0f, 1.0f)
 					, y = Base::GetRand(-1.0f, 1.0f)

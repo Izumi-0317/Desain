@@ -20,6 +20,7 @@ Player::Player(const CVector3D& pos)
 	: CharaBase(ePlayer)
 	, m_fireTime(0)
 	, m_potionCnt(0)
+	, m_canAct(true)
 	, m_DownToAimFlag(false)
 	, m_AimToDownFlag(false)
 	, m_attackFlag(false)
@@ -39,6 +40,9 @@ Player::Player(const CVector3D& pos)
 		m_model.GetNode(i)->SetAnimationLayer(1);
 
 	Base::Add(new Gun("AK47"));
+	if (Camera* f = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
+		f->m_rot = CVector3D(0, DtoR(180), 0);
+	}
 }
 
 void Player::Update(){
@@ -46,14 +50,20 @@ void Player::Update(){
 	if (Camera* f = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
 		m_rot.y = f->m_rot.y;
 	}
-	switch (m_state){
-	case SIdle:	  StateIdle();		 break;
-	case SHit:	  StateHit();		 break;
-	case SHave:	  StateHave();		 break;
-	case SAiming: StateAiming();	 break;
-	case SReloaded: StateReloaded(); break;
-	case SDamage: StateDamage();	 break;
-	case SDeath:  StateDeath();		 break;
+
+	if (m_canAct) {
+		switch (m_state) {
+		case SIdle:	  StateIdle();		 break;
+		case SHit:	  StateHit();		 break;
+		case SHave:	  StateHave();		 break;
+		case SAiming: StateAiming();	 break;
+		case SReloaded: StateReloaded(); break;
+		case SDamage: StateDamage();	 break;
+		case SDeath:  StateDeath();		 break;
+		}
+	}
+	else {
+		if (m_state == SAiming) NextState(SHave);
 	}
 
 	//カプセル
@@ -94,10 +104,12 @@ void Player::Update(){
 	//リロード
 	if ((m_state == SIdle || m_state == SHave) &&
 		!m_isMaxAmmo) {
-		if (PUSH(CInput::eButton2))
+		if (PUSH(CInput::eButton2) && !CInput::GetPadData(0) ||
+			PUSH(CInput::eButton1) && CInput::GetPadData(0))
 			NextState(SReloaded);
 	}
 
+	mp_intaractable = nullptr;
 	//デバッグ
 	//if (PUSH(CInput::eButton5)) m_vec.y = 5;
 	//m_pos += m_vec;
@@ -185,9 +197,6 @@ void Player::Collision(Base* b) {
 				mp_intaractable = g;
 			}
 		}
-		else {
-			if (mp_intaractable == nullptr) mp_intaractable = nullptr;
-		}
 		break;
 	}
 	}
@@ -198,8 +207,9 @@ void Player::StateIdle(){
 	UsePotion();
 	Interact();
 	//攻撃
-	if (PUSH(CInput::eMouseL)) NextState(SHit);
-	if (PUSH(CInput::eNum1) || PUSH(CInput::eNum2)) m_DownToAimFlag = true;
+	if (PUSH(CInput::eMouseL) || PUSH(CInput::eButton6) && CInput::GetPadData(0)) NextState(SHit);
+	if (PUSH(CInput::eButton6) && !CInput::GetPadData(0) ||
+		PUSH(CInput::eButton4) && CInput::GetPadData(0)) m_DownToAimFlag = true;
 }
 
 void Player::StateHit(){
@@ -232,20 +242,21 @@ void Player::StateHit(){
 }
 
 void Player::StateHave(){
-	if (PUSH(CInput::eMouseL)) Fire();
+	if (PUSH(CInput::eMouseL) || PUSH(CInput::eButton6) && CInput::GetPadData(0)) Fire();
 	Move(HAVE_SPEED);
 	Interact();
 
-	if (PUSH(CInput::eButton3)) NextState(SAiming);
-	if (PUSH(CInput::eNum3)) m_AimToDownFlag = true;
+	if (HOLD(CInput::eButton3) || HOLD(CInput::eButton5) && CInput::GetPadData(0)) NextState(SAiming);
+	if (PUSH(CInput::eButton6) && !CInput::GetPadData(0) ||
+		PUSH(CInput::eButton4) && CInput::GetPadData(0)) m_AimToDownFlag = true;
 }
 
 void Player::StateAiming(){
 	if (!Base::FindObject(eUIScope)) Base::Add(new UIScope());
-	if (HOLD(CInput::eMouseL)) Fire();
+	if (HOLD(CInput::eMouseL) || HOLD(CInput::eButton6) && CInput::GetPadData(0)) Fire();
 	Move(AIMING_SPEED);
 
-	if (PUSH(CInput::eButton3)) NextState(SHave);
+	if (PULL(CInput::eButton3) || PULL(CInput::eButton5) && CInput::GetPadData(0)) NextState(SHave);
 }
 
 void Player::StateReloaded(){
@@ -286,31 +297,33 @@ void Player::StateDeath(){
 }
 
 void Player::Move(float speed){
-	CVector3D key_dir(0, 0, 0);
+	CVector3D keyDir(0, 0, 0);
 	//移動
-	if (HOLD(CInput::eUp)) key_dir.z = 1;
-	if (HOLD(CInput::eDown)) key_dir.z = -1;
-	if (HOLD(CInput::eLeft)) key_dir.x = 1;
-	if (HOLD(CInput::eRight)) key_dir.x = -1;
+	if (HOLD(CInput::eUp)) keyDir.z = 1;
+	if (HOLD(CInput::eDown)) keyDir.z = -1;
+	if (HOLD(CInput::eLeft)) keyDir.x = 1;
+	if (HOLD(CInput::eRight)) keyDir.x = -1;
+	if (CInput::GetPadData(0)) {
+		CVector2D axis = CInput::GetLStick(0);
+		keyDir = CVector3D(-axis.x, 0, axis.y);
+	}
 	if (Camera* f = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
-		if (key_dir.LengthSq() > 0.05f) {
+		if (keyDir.LengthSq() > 0.05f) {
+			float keyForce = min(1.0f, keyDir.Length());
 			if (SOUND("FootstepsWalk")->CheckEnd()) {
 				float pitch = min(1.0f, speed * 1.5f);
 				SOUND("FootstepsWalk")->Pitch(pitch);
 				SOUND("FootstepsWalk")->Play3D(m_pos, m_pos);
 			}
 
-			m_dir = (CMatrix::MRotationY(m_rot.y) * key_dir).GetNormalize();
+			m_dir = (CMatrix::MRotationY(m_rot.y) * keyDir).GetNormalize();
 			switch (m_state){
 			case SIdle:
 				m_model.ChangeAnimation(1, Walk);
 				m_model.ChangeAnimation(0, Walk);
-				if (key_dir.z > 0) {
-					if (key_dir.LengthSq() < 0.3f || !HOLD(CInput::eButton4)) {
-						SOUND("FootstepsRun")->Stop();
-						m_pos += m_dir * DEFAULT_MOVE_SPEED;
-					}
-					else {
+				if (keyDir.z > 0) {
+					if (HOLD(CInput::eButton4) ||
+						keyForce > 0.7f && CInput::GetPadData(0)) {
 						SOUND("FootstepsWalk")->Stop();
 						if (SOUND("FootstepsRun")->CheckEnd()) {
 							SOUND("FootstepsRun")->Volume(0.4f);
@@ -319,30 +332,34 @@ void Player::Move(float speed){
 
 						m_pos += m_dir * (DEFAULT_MOVE_SPEED * speed);
 					}
+					else {
+						SOUND("FootstepsRun")->Stop();
+						m_pos += m_dir * (DEFAULT_MOVE_SPEED * keyForce);
+					}
 				}
 				else {
 					SOUND("FootstepsRun")->Stop();
-					m_pos += m_dir * DEFAULT_MOVE_SPEED;
+					m_pos += m_dir * (DEFAULT_MOVE_SPEED * keyForce);
 				}
-				/*if (key_dir.z > 0) {
-				if (key_dir.LengthSq() < 0.3f || !HOLD(CInput::eButton4)) m_model.ChangeAnimation(Walk);
+				/*if (keyDir.z > 0) {
+				if (keyDir.LengthSq() < 0.3f || !HOLD(CInput::eButton4)) m_model.ChangeAnimation(Walk);
 				else {
 					m_pos += m_dir * (MOVE_SPEED * 2.0f);
 					m_model.ChangeAnimation(Run);
 				}
 			}
-			else if (key_dir.z < 0) m_model.ChangeAnimation(BackWardWalk);
-			else if (key_dir.x > 0) m_model.ChangeAnimation(SideStepL);
-			else if (key_dir.x < 0) m_model.ChangeAnimation(SideStepR);*/
+			else if (keyDir.z < 0) m_model.ChangeAnimation(BackWardWalk);
+			else if (keyDir.x > 0) m_model.ChangeAnimation(SideStepL);
+			else if (keyDir.x < 0) m_model.ChangeAnimation(SideStepR);*/
 				break;
 			case SHave:
 			case SAiming:
 				m_model.ChangeAnimation(1, Aiming);
 				m_pos += m_dir * (DEFAULT_MOVE_SPEED * speed);
-				if (key_dir.z > 0) m_model.ChangeAnimation(0, StrafeF);
-				else if (key_dir.z < 0) m_model.ChangeAnimation(0, StrafeB);
-				else if (key_dir.x > 0) m_model.ChangeAnimation(0, StrafeL);
-				else if (key_dir.x < 0) m_model.ChangeAnimation(0, StrafeR);
+				if (keyDir.z > 0) m_model.ChangeAnimation(0, StrafeF);
+				else if (keyDir.z < 0) m_model.ChangeAnimation(0, StrafeB);
+				else if (keyDir.x > 0) m_model.ChangeAnimation(0, StrafeL);
+				else if (keyDir.x < 0) m_model.ChangeAnimation(0, StrafeR);
 				break;
 			}
 		}
@@ -387,7 +404,11 @@ void Player::Fire(){
 void Player::UsePotion(){
 	//ポーションを持っているかつ待機状態かつHPが100未満かつEを押したら
 	if (m_potionCnt > 0 && m_state == SIdle &&
-		m_hp < 100 && PUSH(CInput::eButton1)) {
+		m_hp < 100 && 
+		PUSH(CInput::eButton1) && !CInput::GetPadData(0) ||
+		m_potionCnt > 0 && m_state == SIdle &&
+		m_hp < 100 &&
+		PUSH(CInput::eButton3) && CInput::GetPadData(0)) {
 		SOUND("Potion")->Play3D(m_pos, m_pos);
 		m_hp = min(100, m_hp + POTION_HEAL_AMOUNT);
 		m_potionCnt--;
@@ -396,9 +417,12 @@ void Player::UsePotion(){
 }
 
 void Player::Interact(){
+	if (mp_intaractable == nullptr) return;
 	//インタラクト可能なオブジェクトに近づいているかつ
 	//Eを押したらインタラクトする
-	if (mp_intaractable && PUSH(CInput::eButton1)) 
+	if (mp_intaractable && 
+		PUSH(CInput::eButton1) && !CInput::GetPadData(0) ||
+		PUSH(CInput::eButton3) && CInput::GetPadData(0))
 		mp_intaractable->Interact();
 }
 

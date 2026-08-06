@@ -29,6 +29,7 @@ private:
 	CMatrix m_playerMat;
 	int m_fireTime;			//発砲時間
 	int m_potionCnt;		//所持しているポーション数
+	bool m_canAct;			//行動可能か
 	bool m_DownToAimFlag;	//DownToAimの遷移用
 	bool m_AimToDownFlag;	//AimToDownの遷移用
 	bool m_attackFlag;		//攻撃フラグ
@@ -60,10 +61,13 @@ public:
 	void UsePotion();
 	void Interact();
 	void AddForce(const CVector3D& vec, float force);
+	void SetCanAct(bool canAct) { m_canAct = canAct; }
 	void SetPotionCnt(int potionCnt) { m_potionCnt += potionCnt; }
 	CModel* GetModel() override { return &m_model; }
 	CCapsule* GetCapsule() override { return &m_capusle; }
 	CMatrix GetMatrix() const { return m_playerMat; }
 	int GetState() const { return m_state; }
 	int GetPotionCnt() const { return m_potionCnt; }
+	bool GetIntaractable() { return mp_intaractable; }
+	bool GetIsMaxAmmo() { return m_isMaxAmmo; }
 };

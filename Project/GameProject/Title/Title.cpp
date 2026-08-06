@@ -12,7 +12,8 @@ Title::Title()
 }
 
 void Title::Update(){
-	if (m_cnt++ >= 2 && PUSH(CInput::eButton5)) {
+	if (m_cnt++ >= 2 && PUSH(CInput::eButton5) && !CInput::GetPadData(0) ||
+		m_cnt++ >= 2 && PUSH(CInput::eButton3) && CInput::GetPadData(0)) {
 		SetKill();
 		Base::Add(new Game());
 	}

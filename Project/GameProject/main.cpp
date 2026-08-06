@@ -51,6 +51,7 @@ void Init(void)
 	CInput::SetButton(0, CInput::eButton3, 'C');
 	CInput::SetButton(0, CInput::eButton4, VK_LSHIFT);
 	CInput::SetButton(0, CInput::eButton5, VK_SPACE);
+	CInput::SetButton(0, CInput::eButton6, 'F');
 	CInput::SetButton(0, CInput::eButton10, VK_RETURN);
 	CInput::SetButton(0, CInput::eUp, 'W');
 	CInput::SetButton(0, CInput::eDown, 'S');
@@ -59,13 +60,10 @@ void Init(void)
 	CInput::SetButton(0, CInput::eMouseL, VK_LBUTTON);
 	CInput::SetButton(0, CInput::eMouseR, VK_RBUTTON);
 	CInput::SetButton(0, CInput::eMouseC, VK_MBUTTON);
-	CInput::SetButton(0, CInput::eNum1, '1');
-	CInput::SetButton(0, CInput::eNum2, '2');
-	CInput::SetButton(0, CInput::eNum3, '3');
 
 	//★マウス非表示
-	//CInput::ShowCursor(false);
-	//CInput::SetMouseInside(true);
+	CInput::ShowCursor(false);
+	CInput::SetMouseInside(true);
 	CInput::Update();
 	CInput::Update();
 
@@ -148,7 +146,11 @@ void Init(void)
 	ADD_RESOURCE("UIHP", CImage::CreateImage("UI/UIHP.png"));
 	ADD_RESOURCE("UILowHP", CImage::CreateImage("UI/UILowHP.png"));
 	ADD_RESOURCE("UIHPBack", CImage::CreateImage("UI/UIHPBack.png"));
+	ADD_RESOURCE("UIVignette", CImage::CreateImage("UI/UIVignette.png"));
+	ADD_RESOURCE("UIPromptsBack", CImage::CreateImage("UI/UIPromptsBack.png"));
 	ADD_RESOURCE("BossName", CImage::CreateImage("UI/BossName.png"));
+	ADD_RESOURCE("Keyboard", CImage::CreateImage("UI/Keyboard.png"));
+	ADD_RESOURCE("Pad", CImage::CreateImage("UI/Pad.png"));
 
 	SOUND("FootstepsRun")->Load("Sound/footstepsRun.mp3");
 	SOUND("FootstepsWalk")->Load("Sound/footstepsWalk.mp3");
@@ -160,7 +162,6 @@ void Init(void)
 	SOUND("Punch")->Load("Sound/punch.mp3");
 	SOUND("Haymaker")->Load("Sound/haymaker.mp3");
 	SOUND("JumpAtk")->Load("Sound/jumpAttack.mp3");
-	SOUND("BossDeath")->Load("Sound/bossDeath.wav");
 	SOUND("ChestUnlock")->Load("Sound/chestUnlock.wav");
 	SOUND("DoorOpen")->Load("Sound/doorOpen.mp3");
 	SOUND("DoorClose")->Load("Sound/doorClose.mp3");
@@ -281,8 +282,8 @@ int __main(int* argcp, char** argv) {
 	GL::hWnd = WindowFromDC(glDc);
 	
 	//★前面ボーダー無し
-	//SetWindowLong(GL::hWnd, GWL_STYLE, WS_MAXIMIZE);
-	//SetWindowPos(GL::hWnd, HWND_TOP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SWP_SHOWWINDOW);
+	SetWindowLong(GL::hWnd, GWL_STYLE, WS_MAXIMIZE);
+	SetWindowPos(GL::hWnd, HWND_TOP, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, SWP_SHOWWINDOW);
 	Init();
 
 

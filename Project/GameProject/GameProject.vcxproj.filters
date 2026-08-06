@@ -89,6 +89,12 @@
     <ClCompile Include="Title\GameOver.cpp">
       <Filter>Title</Filter>
     </ClCompile>
+    <ClCompile Include="UI\UIPrompts.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\UIVignette.cpp">
+      <Filter>UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -181,6 +187,12 @@
     </ClInclude>
     <ClInclude Include="Title\GameOver.h">
       <Filter>Title</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIPrompts.h">
+      <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\UIVignette.h">
+      <Filter>UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

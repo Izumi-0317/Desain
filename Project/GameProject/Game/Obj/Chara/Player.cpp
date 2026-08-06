@@ -246,7 +246,7 @@ void Player::StateHave(){
 	Move(HAVE_SPEED);
 	Interact();
 
-	if (HOLD(CInput::eButton3) || HOLD(CInput::eButton5) && CInput::GetPadData(0)) NextState(SAiming);
+	if (HOLD(CInput::eMouseR) || HOLD(CInput::eButton5) && CInput::GetPadData(0)) NextState(SAiming);
 	if (PUSH(CInput::eButton6) && !CInput::GetPadData(0) ||
 		PUSH(CInput::eButton4) && CInput::GetPadData(0)) m_AimToDownFlag = true;
 }
@@ -256,7 +256,7 @@ void Player::StateAiming(){
 	if (HOLD(CInput::eMouseL) || HOLD(CInput::eButton6) && CInput::GetPadData(0)) Fire();
 	Move(AIMING_SPEED);
 
-	if (PULL(CInput::eButton3) || PULL(CInput::eButton5) && CInput::GetPadData(0)) NextState(SHave);
+	if (PULL(CInput::eMouseR) || PULL(CInput::eButton5) && CInput::GetPadData(0)) NextState(SHave);
 }
 
 void Player::StateReloaded(){

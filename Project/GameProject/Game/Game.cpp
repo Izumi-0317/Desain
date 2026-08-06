@@ -19,7 +19,7 @@ const float ROOM_SIZE = 16.5f;
 
 Game::Game()
 	:Base(eScene)
-	, m_delayTime(30)
+	, m_delayTime(25)
 	, m_isComplete(false)
 	, m_isGameOver(false){
 	Base::Add(new Player(CVector3D(0, 0, 0)));

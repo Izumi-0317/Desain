@@ -4,8 +4,6 @@
 UIPrompts::UIPrompts()
 	: m_promptText("C:\\Windows\\Fonts\\msgothic.ttc", 40)
     , m_lastState(-1){
-	m_keyboardImg = COPY_RESOURCE("Keyboard", CImage);
-	m_padImg = COPY_RESOURCE("Pad", CImage);
 	m_backImg = COPY_RESOURCE("UIPromptsBack", CImage);
 	m_backImg.SetSize(480, 480);
 	m_backImg.SetPos(0, 550);

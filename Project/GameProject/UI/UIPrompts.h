@@ -3,8 +3,6 @@
 
 class UIPrompts :public UIBase {
 private:
-	CImage m_keyboardImg;
-	CImage m_padImg;
 	CFont m_promptText;
 	std::vector<std::string> m_prompts;
 	int m_lastState;

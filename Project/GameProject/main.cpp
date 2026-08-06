@@ -149,8 +149,6 @@ void Init(void)
 	ADD_RESOURCE("UIVignette", CImage::CreateImage("UI/UIVignette.png"));
 	ADD_RESOURCE("UIPromptsBack", CImage::CreateImage("UI/UIPromptsBack.png"));
 	ADD_RESOURCE("BossName", CImage::CreateImage("UI/BossName.png"));
-	ADD_RESOURCE("Keyboard", CImage::CreateImage("UI/Keyboard.png"));
-	ADD_RESOURCE("Pad", CImage::CreateImage("UI/Pad.png"));
 
 	SOUND("FootstepsRun")->Load("Sound/footstepsRun.mp3");
 	SOUND("FootstepsWalk")->Load("Sound/footstepsWalk.mp3");

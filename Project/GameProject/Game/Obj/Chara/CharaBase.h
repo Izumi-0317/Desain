@@ -1,12 +1,11 @@
 #pragma once
-#include "Base/Base.h"
+#include "Base/ObjectBase.h"
 #include "Base/Interface.h"
 
-class CharaBase :public Base, public Interface {
+class CharaBase :public ObjectBase, public Interface {
 public:
 	enum State {
 		SIdle,
-		SAttack,
 		SDamage,
 		SDeath,
 	};
@@ -23,10 +22,9 @@ public:
 	/// <summary>
 	/// ŽŸ‚Ìstate‚Ö‚Ì‘JˆÚ
 	/// </summary>
-	/// <param name="next">ŽŸ‚Ìstate</param>
-	void NextState(int next);
+	/// <param name="next">‘JˆÚ‚·‚éstate</param>
+	void ChangeState(int next);
 	virtual void StateIdle();
-	virtual void StateAttack();
 	virtual void StateDamage();
 	virtual void StateDeath();
 	void TakeDamage(int damage) override;

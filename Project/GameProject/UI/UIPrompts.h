@@ -1,5 +1,9 @@
 #pragma once
-#include "UI/UIBase.h"
+#include "UIBase.h"
+
+struct Prompts {
+	std::string Move, Dash, Punch, Ready, Shot, Safe, Aim, Hipfire, Reload, Interact, Potion;
+};
 
 class UIPrompts :public UIBase {
 private:
@@ -11,4 +15,5 @@ public:
 	UIPrompts();
 	void Update() override;
 	void Draw() override;
+	void DrawPrompts(const Prompts& pro);
 };

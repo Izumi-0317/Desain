@@ -1,9 +1,11 @@
 #include "Complete.h"
+#include "Base/ObjectManager.h"
 #include "Game/Obj/Chara/Player.h"
 #include "Title.h"
 
 Complete::Complete()
-	: Base(eScene)
+	: ObjectBase(ObjectType::eScene)
+	, m_cnt(0)
 	, m_alpha(0.0f)
 	, m_lerpTime(0.0f)
 	, m_isSound(true){
@@ -12,8 +14,8 @@ Complete::Complete()
 	m_backImg = COPY_RESOURCE("CompleteBack", CImage);
 	m_backImg.SetSize(1920, 1080);
 	m_backImg.SetColor(1.0f, 1.0f, 1.0f, m_lerpTime);
-	Kill(1 << eUI);
-	if (Player* p = dynamic_cast<Player*>(Base::FindObject(ePlayer))) {
+	ObjectManager::GetInstance()->Kill(1 << ObjectType::eUI);
+	if (Player* p = ObjectManager::FindObject<Player>(ObjectType::ePlayer)) {
 		p->SetCanAct(false);
 	}
 }
@@ -23,15 +25,14 @@ void Complete::Update(){
 	m_lerpTime = min(1.0f, m_lerpTime + 0.02f);
 
 	if (m_lerpTime >= 1.0f) {
-		Kill(~(1 << eScene));
+		ObjectManager::GetInstance()->Kill(~(1 << ObjectType::eScene));
 		if (m_isSound) {
 			SOUND("Complete")->Play();
 			m_isSound = false;
 		}
-		if (PUSH(CInput::eButton5) && !CInput::GetPadData(0) ||
-			PUSH(CInput::eButton3) && CInput::GetPadData(0)) {
+		if (m_cnt++ >= 2 && IsInput(CInput::eButton5, CInput::eButton3)) {
 			SetKill();
-			Base::Add(new Title());
+			new Title();
 		}
 	}
 }

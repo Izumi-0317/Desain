@@ -1,7 +1,7 @@
 #pragma once
-#include "Base/Base.h"
+#include "Base/ObjectBase.h"
 
-class GimmickBase :public Base {
+class GimmickBase :public ObjectBase {
 public:
 	CModelObj m_gimmick;
 	bool m_isInteractable;		//インタラクト可能か

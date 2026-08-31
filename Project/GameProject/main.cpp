@@ -1,4 +1,4 @@
-#include "Base/Base.h"
+#include "Base/ObjectManager.h"
 #include "Effekseer/EffekseerManager.h"
 #include "Title/Title.h"
 #include "UI/UIPotion.h"
@@ -13,13 +13,11 @@ void MainLoop(void) {
 	//ƒQ[ƒ€’†‚Í‚±‚ÌŠÖ”_‚ð1•bŠÔ‚É60‰ñŒÄ‚Ño‚µ‚Ä‚¢‚é
 	//--------------------------------------------------------------
 
-	Base::CheckKillALL();
-	Base::UpdateALL();
-	Base::CollisionALL();
-	Base::RenderALL();
-	Base::DrawALL();
-	
-	
+	ObjectManager::GetInstance()->CheckKillAll();
+	ObjectManager::GetInstance()->UpdateAll();
+	ObjectManager::GetInstance()->CollisionAll();
+	ObjectManager::GetInstance()->RenderAll();
+	ObjectManager::GetInstance()->DrawAll();
 
 }
 
@@ -137,6 +135,7 @@ void Init(void)
 	ADD_RESOURCE("GameOverBack", CImage::CreateImage("Title/GameOverBack.png"));
 	ADD_RESOURCE("Return", CImage::CreateImage("Title/Return.png"));
 
+	ADD_RESOURCE("UIAim", CImage::CreateImage("UI/UIAim.png"));
 	ADD_RESOURCE("UIScopeView", CImage::CreateImage("UI/UIScope.png"));
 	ADD_RESOURCE("UICnt", CImage::CreateImage("UI/UICnt.png"));
 	ADD_RESOURCE("UIRifle", CImage::CreateImage("UI/UIRifle.png"));
@@ -169,7 +168,7 @@ void Init(void)
 	SOUND("GameOver")->Load("Sound/gameOver.mp3");
 	SOUND("Complete")->Load("Sound/complete.mp3");
 
-	Base::Add(new Title());
+	new Title();
 
 }
 

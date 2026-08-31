@@ -1,12 +1,12 @@
 #include "Door.h"
 #include "Game/Obj/Chara/Player.h"
-float l = 0, p = 0;
+
 namespace {
 	constexpr float MOVE_DISTANCE = 6.1f;
 }
 
 Door::Door(const CVector3D& pos, float roty, bool stuck)
-	: GimmickBase(eDoor)
+	: GimmickBase(ObjectType::eDoor)
 	, m_moveDist(0)
 	, m_returnElapsedTime(0)
 	, m_isStuck(stuck){
@@ -18,10 +18,6 @@ Door::Door(const CVector3D& pos, float roty, bool stuck)
 }
 
 void Door::Update(){
-	//if (PUSH(CInput::eButton1)) l-=0.1;
-	//if (PUSH(CInput::eButton2)) p+=0.1;
-	//m_pos = CVector3D(-8.2+l, 0, -15.45f+p);
-	
 	switch ((int)RtoD(m_rot.y)) {
 	case 0:
 		Move(m_pos.z);

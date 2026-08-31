@@ -95,6 +95,12 @@
     <ClCompile Include="UI\UIVignette.cpp">
       <Filter>UI</Filter>
     </ClCompile>
+    <ClCompile Include="Base\ObjectBase.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
+    <ClCompile Include="Base\ObjectManager.cpp">
+      <Filter>Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Global.h" />
@@ -193,6 +199,15 @@
     </ClInclude>
     <ClInclude Include="UI\UIVignette.h">
       <Filter>UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\ObjectBase.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\ObjectManager.h">
+      <Filter>Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Base\ObjectType.h">
+      <Filter>Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

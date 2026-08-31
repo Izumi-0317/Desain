@@ -20,21 +20,22 @@ private:
 	float m_backRotX;	//後退する際のX軸の角度調整
 	float m_backRotZ;	//後退する際のZ軸の角度調整
 	bool m_skillFlag;	//次の攻撃がスキルか
-	Base* mp_target;	//攻撃ターゲット
-	Base* mp_shield;	//持っている盾のポインタ
-	Base* mp_sword;		//持っている剣のポインタ
-	Base* mp_effect;	//エフェクトのポインタ
+	ObjectBase* mp_target;	//攻撃ターゲット
+	ObjectBase* mp_shield;	//持っている盾のポインタ
+	ObjectBase* mp_sword;	//持っている剣のポインタ
+	ObjectBase* mp_effect;	//エフェクトのポインタ
 public:
 	enum AddState {
-		SSkillAttack = 4,	//スキル攻撃
+		SAttack = 3,	//攻撃
+		SSkillAttack,	//スキル攻撃
 	};
 	Paladin(const CVector3D& pos, bool servant = false);
 	~Paladin();
 	void Update() override;
 	void Render() override;
-	void Collision(Base* b) override;
+	void Collision(ObjectBase* b) override;
 	void StateIdle() override;
-	void StateAttack() override;
+	void StateAttack();
 	void StateSkillAttack();
 	void StateDamage() override;
 	void StateDeath() override;

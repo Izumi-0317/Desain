@@ -1,7 +1,7 @@
 #include "WeaponBase.h"
 
 WeaponBase::WeaponBase(int type)
-	: Base(type)
+	: ObjectBase(type)
 {
 
 }

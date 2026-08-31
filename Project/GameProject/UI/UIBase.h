@@ -1,12 +1,13 @@
 #pragma once
-#include "Base/Base.h"
+#include "Base/ObjectBase.h"
+#include "Base/ObjectManager.h"
 
-class UIBase :public Base {
+class UIBase :public ObjectBase {
 public:
 	CImage m_backImg;
 	CImage m_cntImg;
 public:
-	UIBase(int type = eUI);
+	UIBase(int type = ObjectType::eUI);
 	void Update() override;
 	void Draw() override;
 };

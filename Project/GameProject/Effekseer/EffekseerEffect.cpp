@@ -8,7 +8,7 @@ void EffekseerEffect::RemoveCallback(Effekseer::Manager*, Effekseer::Handle, boo
 }
 
 EffekseerEffect::EffekseerEffect(const std::string &name, const CVector3D& pos, const CVector3D& rot, const CVector3D& scale, int start,int end,bool loop,CMatrix* parent) :
-	Base(eEffect)
+	ObjectBase(ObjectType::eEffect)
 {
 	m_name = name;
 	m_ref = EffekseerManager::GetInstance()->GetEffect(name);

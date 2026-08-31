@@ -19,10 +19,10 @@ UIHP::UIHP(int type)
 	m_lowHpImg = COPY_RESOURCE("UILowHP", CImage);
 	m_backImg = COPY_RESOURCE("UIHPBack", CImage);
 	m_nameImg = COPY_RESOURCE("BossName", CImage);
-	if (CharaBase* c = dynamic_cast<CharaBase*>(Base::FindObject(type))) {
+	if (CharaBase* c = ObjectManager::FindObject<CharaBase>(type)) {
 		switch (type) {
-		case ePlayer:
-		case eBoss:
+		case ObjectType::ePlayer:
+		case ObjectType::eBoss:
 			m_maxHp = m_currentHp = c->m_maxHp;
 			break;
 		}
@@ -35,7 +35,7 @@ void UIHP::Update(){
 }
 
 void UIHP::Draw(){
-	if (CharaBase* c = dynamic_cast<CharaBase*>(Base::FindObject(m_type))) {
+	if (CharaBase* c = ObjectManager::FindObject<CharaBase>(m_type)) {
 		//HPÇ™å∏Ç¡ÇΩÇÁäeéÌê›íË
 		if (m_currentHp != c->m_hp) {
 			//òAë±Ç≈çUåÇÇéÛÇØÇƒÇ¢Ç»ÇØÇÍÇŒ
@@ -59,7 +59,7 @@ void UIHP::Draw(){
 	}
 
 	switch (m_type){
-	case ePlayer:
+	case ObjectType::ePlayer:
 		m_backImg.SetPos(0, 1030);
 
 		m_lowHpImg.SetPos(0, 1030);
@@ -69,7 +69,7 @@ void UIHP::Draw(){
 		m_hpImg.SetSize(m_currentHp * 10, PLAYER_HP_SIZE / 20);
 		m_hpImg.SetColor(0, 1, 0, 1);
 		break;
-	case eBoss:
+	case ObjectType::eBoss:
 		m_backImg.SetPos(210, 125);
 		m_backImg.SetSize(BOSS_HP_SIZE, BOSS_HP_SIZE / 20);
 

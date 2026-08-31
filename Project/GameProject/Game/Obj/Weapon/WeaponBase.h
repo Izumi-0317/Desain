@@ -1,7 +1,7 @@
 #pragma once
-#include "Base/Base.h"
+#include "Base/ObjectBase.h"
 
-class WeaponBase :public Base {
+class WeaponBase :public ObjectBase {
 public:
 	CModelObj m_weapon;
 	CMatrix m_weaponMat;

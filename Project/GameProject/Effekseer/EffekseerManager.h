@@ -5,7 +5,7 @@
 *
 *	エフェクト管理クラス
 */
-#include "../Base/Base.h"
+#include "../Base/ObjectBase.h"
 #include <map>
 //----------------------------------------------------------------------------------
 //
@@ -28,7 +28,7 @@
 
 
 
-class EffekseerManager : public Base {
+class EffekseerManager : public ObjectBase {
 	//同時発生数
 	static const int	m_inctane_size = 10;
 	Effekseer::ManagerRef			m_manager;
@@ -58,7 +58,7 @@ public:
 	@retval	エフェクトマネージャーのポインタ
 	**/
 	static EffekseerManager* GetInstance() {
-		if (!m_instance) Base::Add(m_instance = new EffekseerManager());
+		if (!m_instance) m_instance = new EffekseerManager();
 		return m_instance;
 	}
 	static bool isInstance() {

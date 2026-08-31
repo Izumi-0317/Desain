@@ -1,7 +1,7 @@
 #include "EffectMagic.h"
 
 EffectMagic::EffectMagic(const char* model, const CVector3D& pos, const CVector3D& rot, float scale, float time)
-	: Base(eEffect)
+	: ObjectBase(ObjectType::eEffect)
 	, m_time(time)
 	, m_scale(scale)
 	, m_alpha(1.0f){

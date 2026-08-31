@@ -13,7 +13,7 @@ private:
 		Run,			//走る
 		SideStepL,		//左移動
 		SideStepR,		//右移動
-		Hit,			//殴打
+		Punch,			//殴打
 		DownToAim,		//挙銃
 		Aiming,			//構える
 		Firing,			//発砲
@@ -40,27 +40,28 @@ private:
 	int m_upper_body;
 public:
 	enum AddState {
-		SHit = 4,		//殴打
-		SHave,			//構える
-		SAiming,		//狙撃準備
-		SReloaded,		//リロード
+		SPunch = 3,		//殴打
+		SHave,		//構える
+		SAiming,	//狙撃準備
+		SReloaded,	//リロード
 	};
 	Player(const CVector3D& pos);
 	void Update() override;
 	void Render() override;
-	void Collision(Base* b) override;
+	void Collision(ObjectBase* b) override;
 	void StateIdle();
-	void StateHit();
+	void StateDamage();
+	void StateDeath();
+	void StatePunch();
 	void StateHave();
 	void StateAiming();
 	void StateReloaded();
-	void StateDamage();
-	void StateDeath();
 	void Move(float speed);
 	void Fire();
 	void UsePotion();
 	void Interact();
 	void AddForce(const CVector3D& vec, float force);
+	void TransitionAnim(bool& flag, int anim, int nextState);
 	void SetCanAct(bool canAct) { m_canAct = canAct; }
 	void SetPotionCnt(int potionCnt) { m_potionCnt += potionCnt; }
 	CModel* GetModel() override { return &m_model; }

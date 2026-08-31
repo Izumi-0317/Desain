@@ -1,7 +1,7 @@
 #pragma once
-#include "Base/Base.h"
+#include "Base/ObjectBase.h"
 
-class Title :public Base {
+class Title :public ObjectBase {
 private:
 	CImage m_titleImg;
 	CImage m_startImg;

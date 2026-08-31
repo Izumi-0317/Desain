@@ -1,4 +1,5 @@
 #include "Boss.h"
+#include "Base/ObjectManager.h"
 #include "Game/Camera.h"
 #include "Game/Game.h"
 #include "Game/Obj/Room.h"
@@ -22,7 +23,7 @@ namespace {
 }
 
 Boss::Boss(const CVector3D& pos)
-	: CharaBase(eBoss)
+	: CharaBase(ObjectType::eBoss)
 	, m_atkCT(0, HAYMAKER_CT, JUMPATK_CT / 2)
 	, m_atkDmg(0)
 	, m_atkRad(0.0f)
@@ -46,7 +47,7 @@ void Boss::Update(){
 	CharaBase::Update();
 	switch (m_state){
 	case SIdle: StateIdle(); break;
-	case SAttack: StateAttack(); break;
+	case SPunch: StatePunch(); break;
 	case SHaymaker: StateHaymaker(); break;
 	case SJumpAttack: StateJumpAttack(); break;
 	case SShowOff: StateShowOff(); break;
@@ -72,9 +73,9 @@ void Boss::Render(){
 	//Utility::DrawSphere(m_pos + m_dir * 2.5f, JUMPATK_RAD, CVector4D(0, 0, 1, 0.5));
 }
 
-void Boss::Collision(Base* b) {
+void Boss::Collision(ObjectBase* b) {
 	switch (b->GetType()) {
-	case eRoom: {
+	case ObjectType::eRoom: {
 		CVector3D v(0, 0, 0);
 		auto tri = b->GetModel()->CollisionCapsule(m_capusle);
 		for (auto& t : tri) {
@@ -96,10 +97,9 @@ void Boss::Collision(Base* b) {
 		//部屋にプレイヤーが入ったら追跡
 		if (Room* r = dynamic_cast<Room*>(b)) {
 			if (r->IsCollision()) {
-				mp_target = Base::FindObject(ePlayer);
+				mp_target = ObjectManager::FindObject<Player>(ObjectType::ePlayer);
 				if (mp_UIHP == nullptr) {
-					mp_UIHP = new UIHP(eBoss);
-					Base::Add(mp_UIHP);
+					mp_UIHP = new UIHP(ObjectType::eBoss);
 				}
 			}
 			else {
@@ -112,7 +112,7 @@ void Boss::Collision(Base* b) {
 		}
 		break;
 	}
-	case ePlayer:
+	case ObjectType::ePlayer:
 		if (Player* p = dynamic_cast<Player*>(b)) {
 			float dist;
 			CVector3D cross, dir;
@@ -123,7 +123,7 @@ void Boss::Collision(Base* b) {
 				p->TakeDamage(m_atkDmg);
 				m_isHit = true;
 				switch (m_state){
-				case SAttack: SOUND("Punch")->Play3D(m_pos, m_pos); break;
+				case SPunch: SOUND("Punch")->Play3D(m_pos, m_pos); break;
 				case SHaymaker: SOUND("Haymaker")->Play3D(m_pos, m_pos); break;
 				case SJumpAttack:
 					SOUND("JumpAtk")->Play3D(m_pos, m_pos);
@@ -136,9 +136,9 @@ void Boss::Collision(Base* b) {
 			}
 		}
 		break;
-	case eChest:
-	case eDoor:
-	case ePotion: {
+	case ObjectType::eChest:
+	case ObjectType::eDoor:
+	case ObjectType::ePotion: {
 		float length;
 		CVector3D axis;
 		if (CCollision::CollisionOBBCapsule(b->m_obb, m_capusle, &axis, &length)) {
@@ -173,7 +173,7 @@ void Boss::StateIdle(){
 					//咆哮中はプレイヤーの行動を封じる
 					p->SetCanAct(false);
 
-					if (Camera* c = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
+					if (Camera* c = ObjectManager::FindObject<Camera>(ObjectType::eCamera)) {
 						c->SetShake(120, 0.067f);
 					}
 				}
@@ -189,22 +189,22 @@ void Boss::StateIdle(){
 			m_rot.y = atan2(vec.x, vec.z);
 			m_dir = CVector3D(sin(m_rot.y), 0, cos(m_rot.y));
 
-			if (m_isAtk[2]) NextState(SJumpAttack);
+			if (m_isAtk[2]) ChangeState(SJumpAttack);
 			//ターゲットへ移動
 			else if (vec.Length() > ATK_LENGTH) {
 				m_pos += m_dir * (MOVE_SPEED * 2);
 				m_model.ChangeAnimation(Run);
 			}
 			else {
-				if (m_isAtk[1]) NextState(SHaymaker);
-				else if (m_isAtk[0]) NextState(SAttack);
+				if (m_isAtk[1]) ChangeState(SHaymaker);
+				else if (m_isAtk[0]) ChangeState(SPunch);
 				else m_model.ChangeAnimation(Run);
 			}
 		}
 	}
 }
 
-void Boss::StateAttack(){
+void Boss::StatePunch(){
 	m_model.SetAnimationSpeed(0.5f);
 	m_model.ChangeAnimation(Punch, false);
 	switch (m_stateStep){
@@ -229,7 +229,7 @@ void Boss::StateAttack(){
 	m_atkCT[0] = PUNCH_CT;
 	m_isAtk[0] = false;
 	//攻撃が当たったら隙を作る
-	if (m_model.isAnimationEnd()) (m_isHit) ? NextState(SShowOff) : NextState(SIdle);
+	if (m_model.isAnimationEnd()) (m_isHit) ? ChangeState(SShowOff) : ChangeState(SIdle);
 }
 
 void Boss::StateHaymaker(){
@@ -250,7 +250,7 @@ void Boss::StateHaymaker(){
 	}
 	m_atkCT[1] = HAYMAKER_CT;
 	m_isAtk[1] = false;
-	if (m_model.isAnimationEnd()) (m_isHit) ? NextState(SShowOff) : NextState(SIdle);
+	if (m_model.isAnimationEnd()) (m_isHit) ? ChangeState(SShowOff) : ChangeState(SIdle);
 }
 
 void Boss::StateJumpAttack(){
@@ -283,18 +283,18 @@ void Boss::StateJumpAttack(){
 	}
 	m_atkCT[2] = JUMPATK_CT;
 	m_isAtk[2] = false;
-	if (m_model.isAnimationEnd()) (m_isHit) ? NextState(SShowOff) : NextState(SIdle);
+	if (m_model.isAnimationEnd()) (m_isHit) ? ChangeState(SShowOff) : ChangeState(SIdle);
 }
 
 void Boss::StateShowOff(){
 	m_model.ChangeAnimation(ShowOff, false);
-	if (m_model.isAnimationEnd()) NextState(SIdle);
+	if (m_model.isAnimationEnd()) ChangeState(SIdle);
 }
 
 void Boss::StateDeath(){
 	m_model.ChangeAnimation(Death, false);
 	if (m_model.isAnimationEnd()) 
-		if (Game* g = dynamic_cast<Game*>(Base::FindObject(eScene))) {
+		if (Game* g = ObjectManager::FindObject<Game>(ObjectType::eScene)) {
 			g->Game::markAsComplete();
 		}
 }
@@ -306,7 +306,7 @@ void Boss::TakeDamage(int damage){
 	}
 	else {
 		m_hp = 0;
-		NextState(SDeath);
+		ChangeState(SDeath);
 	}
 }
 

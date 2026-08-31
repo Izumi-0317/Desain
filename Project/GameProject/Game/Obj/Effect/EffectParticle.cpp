@@ -2,7 +2,7 @@
 
 EffectParticle::EffectParticle(const char* model, const CVector3D& pos, const CVector3D& vec, const CVector3D& accel,
 	float scale, float change_scale, float change_alpha, int blend, bool builbord, int time)
-	: Base(eEffect),
+	: ObjectBase(ObjectType::eEffect),
 	m_alpha(1.0f),
 	m_vec_accel(accel),
 	m_scale(scale),

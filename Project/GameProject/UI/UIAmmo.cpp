@@ -9,7 +9,7 @@ UIAmmo::UIAmmo()
 }
 
 void UIAmmo::Update() {
-	if (Gun* g = dynamic_cast<Gun*>(Base::FindObject(eGun))) {
+	if (Gun* g = ObjectManager::FindObject<Gun>(ObjectType::eGun)) {
 		m_ammo = g->GetLoadedAmmo();
 	}
 }

@@ -1,8 +1,9 @@
 #include "GameOver.h"
+#include "Base/ObjectManager.h"
 #include "Title.h"
 
 GameOver::GameOver()
-	: Base(eScene)
+	: ObjectBase(ObjectType::eScene)
 	, m_cnt(0)
 	, m_alpha(0.0f){
 	m_gameOverImg = COPY_RESOURCE("GameOver", CImage);
@@ -10,14 +11,13 @@ GameOver::GameOver()
 	m_backImg = COPY_RESOURCE("GameOverBack", CImage);
 	m_backImg.SetSize(1920, 1080);
 	SOUND("GameOver")->Play();
-	Kill(~(1 << eScene));
+	ObjectManager::GetInstance()->Kill(~(1 << ObjectType::eScene));
 }
 
 void GameOver::Update(){
-	if (m_cnt++ >= 2 && PUSH(CInput::eButton5) && !CInput::GetPadData(0) ||
-		m_cnt++ >= 2 && PUSH(CInput::eButton3) && CInput::GetPadData(0)) {
+	if (m_cnt++ >= 2 && IsInput(CInput::eButton5, CInput::eButton3)) {
 		SetKill();
-		Base::Add(new Title());
+		new Title();
 	}
 }
 

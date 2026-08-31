@@ -2,8 +2,8 @@
 #include "Game/Obj/Chara/Paladin.h"
 #include "Game/Obj/Chara/Player.h""
 
-Sword::Sword(Base* owner)
-	: WeaponBase(eSword)
+Sword::Sword(ObjectBase* owner)
+	: WeaponBase(ObjectType::eSword)
 	, m_damage(0)
 	, m_enableCap(false)
 	, mp_owner(owner){
@@ -26,9 +26,9 @@ void Sword::Render(){
 	//Utility::DrawCapsule(m_capusle, CVector4D(1, 0, 0, 0.5));
 }
 
-void Sword::Collision(Base* b){
+void Sword::Collision(ObjectBase* b){
 	switch (b->GetType()){
-	case ePlayer:
+	case ObjectType::ePlayer:
 		float dist;
 		CVector3D cross, dir;
 		if (m_enableCap && CCollision::CollisionCapsule(m_capusle, b->m_capusle, &dist, &cross, &dir)) {

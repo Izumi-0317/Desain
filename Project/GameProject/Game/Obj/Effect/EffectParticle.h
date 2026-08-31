@@ -1,7 +1,7 @@
 #pragma once
-#include "Base/Base.h"
+#include "Base/ObjectBase.h"
 
-class EffectParticle :public Base {
+class EffectParticle :public ObjectBase {
 private:
 	CModelObj	m_model;
 	CVector3D	m_vec_accel;

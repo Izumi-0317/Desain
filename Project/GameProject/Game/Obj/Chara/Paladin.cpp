@@ -1,4 +1,5 @@
 #include "Paladin.h"
+#include "Base/ObjectManager.h"
 #include "Game/Obj/Effect/EffectMagic.h"
 #include "Game/Obj/Room.h"
 #include "Game/Obj/Weapon/Shield.h"
@@ -19,7 +20,7 @@ namespace {
 }
 
 Paladin::Paladin(const CVector3D& pos, bool servant)
-	: CharaBase(eEnemy)
+	: CharaBase(ObjectType::eEnemy)
 	, m_attackCT(0)
 	, m_attackCnt(0)
 	, m_chaseTime(0)
@@ -34,15 +35,12 @@ Paladin::Paladin(const CVector3D& pos, bool servant)
 	m_state = SIdle;
 	m_hp = m_maxHp = PALADIN_HP;
 	m_rad = 0.2f;
-	m_rot.y = DtoR(Utility::NormalizeAngle(Base::GetRand(0.0f, 360.0f)));
+	m_rot.y = DtoR(Utility::NormalizeAngle(Utility::Rand(0.0f, 360.0f)));
 	m_dir = CVector3D(sin(m_rot.y), 0, cos(m_rot.y));
 	mp_shield = new Shield(this);
-	Base::Add(mp_shield);
 	mp_sword = new Sword(this);
-	Base::Add(mp_sword);
 	if (servant) {
 		mp_effect = new EffectMagic("ECircleR", m_pos, CVector3D(DtoR(90), 0, 0), 4.5f, -1);
-		Base::Add(mp_effect);
 	}
 }
 
@@ -56,11 +54,11 @@ void Paladin::Update(){
 	CharaBase::Update();
 	//状態遷移
 	switch (m_state) {
-	case SIdle: StateIdle(); break;
+	case SIdle: StateIdle();	 break;
 	case SAttack: StateAttack(); break;
 	case SSkillAttack: StateSkillAttack(); break;
 	case SDamage: StateDamage(); break;
-	case SDeath: StateDeath(); break;
+	case SDeath: StateDeath();	 break;
 	}
 	m_model.UpdateAnimation();
 	m_capusle = CCapsule(m_pos + CVector3D(0, PALADIN_HEIGHT - m_rad, 0), m_pos + CVector3D(0, m_rad, 0), m_rad);
@@ -78,7 +76,9 @@ void Paladin::Update(){
 	//追跡中は視野範囲に関係なくプレイヤーを追う
 	if (m_chaseTime != 0) {
 		m_chaseTime--;
-		if (Base::FindObject(ePlayer)) mp_target = Base::FindObject(ePlayer);
+		if (Player* p = ObjectManager::FindObject<Player>(ObjectType::ePlayer)) {
+			mp_target = p;
+		}
 	}
 }
 
@@ -101,9 +101,9 @@ void Paladin::Render(){
 	Utility::DrawSector(m, -FOV_ANGLE, FOV_ANGLE, FOV_LENGTH, color);*/
 }
 
-void Paladin::Collision(Base* b) {
+void Paladin::Collision(ObjectBase* b) {
 	switch (b->GetType()) {
-	case eRoom: {
+	case ObjectType::eRoom: {
 		CVector3D v(0, 0, 0);
 		auto tri = b->GetModel()->CollisionCapsule(m_capusle);
 		for (auto& t : tri) {
@@ -122,30 +122,42 @@ void Paladin::Collision(Base* b) {
 			}
 		}
 		m_pos += v;
+		break;
 	}
-			break;
-	case ePlayer:
+	case ObjectType::ePlayer:
 		if (Player* p = dynamic_cast<Player*>(b)) {
 			float dot(CVector3D::Dot(m_dir, (p->m_pos - m_pos).GetNormalize()));
 			//視野範囲内にプレイヤーがいたら
 			if (dot > cos(FOV_ANGLE) &&
 				(p->m_pos - m_pos).Length() < FOV_LENGTH) {
-				//ターゲットに設定
-				mp_target = b;
+				//障害物チェック
+				if (Room* r = ObjectManager::FindObject<Room>(ObjectType::eRoom)) {
+					CVector3D start = m_pos + CVector3D(0, 3.0f, 0);
+					CVector3D end = p->m_pos + CVector3D(0, 2.4f, 0);
+					CVector3D cross, normal;
+					//壁がなければ
+					if (!r->GetModel()->CollisionRay(&cross, &normal, start, end)) {
+						//ターゲットに設定
+						mp_target = b;
+					}
+					else {
+						mp_target = nullptr;
+					}
+				}
 			}
 			else if (m_chaseTime == 0) mp_target = nullptr;
 		}
 		break;
-	case eChest:
-	case eDoor:
-	case ePotion: {
+	case ObjectType::eChest:
+	case ObjectType::eDoor:
+	case ObjectType::ePotion: {
 		float length;
 		CVector3D axis;
 		if (CCollision::CollisionOBBCapsule(b->m_obb, m_capusle, &axis, &length)) {
 			m_pos += axis * (m_rad - length);
 		}
+		break;
 	}
-			break;
 	}
 }
 
@@ -172,8 +184,8 @@ void Paladin::StateIdle() {
 	//クールタイム中なら
 	else if (m_attackCT != 0 && mp_target) {
 		//ランダムに少し角度をつける
-		if (m_backRotX == 0) m_backRotX = Base::GetRand(-5.0f, 5.0f);
-		if (m_backRotZ == 0) m_backRotZ = Base::GetRand(-5.0f, 5.0f);
+		if (m_backRotX == 0) m_backRotX = Utility::Rand(-5.0f, 5.0f);
+		if (m_backRotZ == 0) m_backRotZ = Utility::Rand(-5.0f, 5.0f);
 		CVector3D vec(mp_target->m_pos - m_pos);
 		m_rot.y = atan2(vec.x, vec.z);
 		m_dir = (vec + CVector3D(sin(m_backRotX), 0, cos(m_backRotZ))).GetNormalize();
@@ -233,7 +245,7 @@ void Paladin::StateAttack(){
 			break;
 		}
 		m_attackCT = ATTACK_CT;
-		if (m_model.isAnimationEnd()) NextState(SIdle);
+		if (m_model.isAnimationEnd()) ChangeState(SIdle);
 	}
 }
 
@@ -257,21 +269,21 @@ void Paladin::StateSkillAttack(){
 			break;
 		}
 		m_attackCT = ATTACK_CT;
-		if (m_model.isAnimationEnd()) NextState(SIdle);
+		if (m_model.isAnimationEnd()) ChangeState(SIdle);
 	}
 }
 
 void Paladin::StateDamage(){
 	//追跡中はリアクションしない
 	if (m_chaseTime > 0) {
-		NextState(SIdle);
+		ChangeState(SIdle);
 		return;
 	}
 	m_model.SetAnimationSpeed(1.0f);
 	m_model.ChangeAnimation(Damage, false);
 	//ダメージを受けたら追跡時間を設定
 	m_chaseTime = CHASE_TIME;
-	if (m_model.isAnimationEnd()) NextState(SIdle);
+	if (m_model.isAnimationEnd()) ChangeState(SIdle);
 }
 
 void Paladin::StateDeath(){
@@ -281,15 +293,18 @@ void Paladin::StateDeath(){
 }
 
 void Paladin::WanderMove(){
-	if (Room* r = dynamic_cast<Room*>(Base::FindObject(eRoom))) {
+	if (Room* r = ObjectManager::FindObject<Room>(ObjectType::eRoom)) {
 		bool b = false;
 		do {
-			m_rot.y = DtoR(Utility::NormalizeAngle(Base::GetRand(0.0f, 360.0f)));
+			m_rot.y = DtoR(Utility::NormalizeAngle(Utility::Rand(0.0f, 360.0f)));
 			m_dir = CVector3D(sin(m_rot.y), 0, cos(m_rot.y));
-			m_moveTime = Base::GetRand(10.0f, 15.0f);
-			CVector3D afterPos = m_pos + m_dir.GetNormalize() * MOVE_SPEED * m_moveTime, c, n;
-			b = (r->GetModel()->CollisionRay(&c, &n,
-				m_pos, afterPos))
+			m_moveTime = Utility::Rand(10.0f, 15.0f);
+			CVector3D beforePos = m_pos + CVector3D(0.0f, 1.0f, 0.0f);
+			CVector3D afterPos = m_pos + m_dir.GetNormalize()
+				* MOVE_SPEED * m_moveTime + CVector3D(0.0f, 1.0f, 0.0f),
+				cross, normal;
+			b = (r->GetModel()->CollisionRay(&cross, &normal,
+				beforePos, afterPos))
 				? true : false;
 			//移動経路がフィールドと接触したら再設定
 		} while (b);
@@ -300,10 +315,10 @@ void Paladin::TakeDamage(int damage){
 	if (m_hp == 0) return;
 	if (m_hp - damage > 0) {
 		m_hp -= damage;
-		if (m_state != SSkillAttack) NextState(SDamage);
+		if (m_state != SSkillAttack) ChangeState(SDamage);
 	}
 	else {
 		m_hp = 0;
-		NextState(SDeath);
+		ChangeState(SDeath);
 	}
 }

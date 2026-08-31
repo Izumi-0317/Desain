@@ -1,7 +1,7 @@
 #include "GimmickBase.h"
 
 GimmickBase::GimmickBase(int type)
-	: Base(type)
+	: ObjectBase(type)
 	, m_isInteractable(false)
 {
 	

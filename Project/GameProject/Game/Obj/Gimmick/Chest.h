@@ -3,10 +3,11 @@
 
 class Chest :public GimmickBase {
 private:
-	std::vector<Base*> m_enemyList;		//生成した敵のリスト
-	float m_enemyMaxCnt;					//生成した敵の数
-	bool m_isOpen;						//開けるか
-	Base* mp_effect;
+	//生成した敵のリスト
+	std::vector<ObjectBase*> m_enemyList;
+	float m_enemyMaxCnt;		//生成した敵の数
+	bool m_isOpen;				//開けるか
+	ObjectBase* mp_effect;
 public:
 	Chest(const CVector3D& pos, float roty = 0, int enemyCnt = 0);
 	void Update() override;

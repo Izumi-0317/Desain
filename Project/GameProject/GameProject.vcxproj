@@ -20,6 +20,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base\Base.cpp" />
+    <ClCompile Include="Base\ObjectBase.cpp" />
+    <ClCompile Include="Base\ObjectManager.cpp" />
     <ClCompile Include="Effekseer\EffekseerEffect.cpp" />
     <ClCompile Include="Effekseer\EffekseerManager.cpp" />
     <ClCompile Include="Game\Camera.cpp" />
@@ -55,6 +57,9 @@
   <ItemGroup>
     <ClInclude Include="Base\Base.h" />
     <ClInclude Include="Base\Interface.h" />
+    <ClInclude Include="Base\ObjectBase.h" />
+    <ClInclude Include="Base\ObjectManager.h" />
+    <ClInclude Include="Base\ObjectType.h" />
     <ClInclude Include="Effekseer\EffekseerEffect.h" />
     <ClInclude Include="Effekseer\EffekseerManager.h" />
     <ClInclude Include="Game\Camera.h" />

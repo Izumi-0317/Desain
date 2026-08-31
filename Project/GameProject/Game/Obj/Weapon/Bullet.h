@@ -1,10 +1,8 @@
 #pragma once
-#include "Base/Base.h"
+#include "WeaponBase.h"
 
-class Bullet :public Base {
+class Bullet :public WeaponBase {
 private:
-	CModelObj m_bullet;
-	CMatrix m_bulletMat;
 	int m_killCnt;
 	bool m_isCol;			//着弾したか
 	CVector3D m_posOld;		//1フレーム前の座標
@@ -15,5 +13,5 @@ public:
 	~Bullet();
 	void Update() override;
 	void Render() override;
-	void Collision(Base* b) override;
+	void Collision(ObjectBase* b) override;
 };

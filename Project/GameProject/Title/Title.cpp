@@ -2,7 +2,7 @@
 #include "Game/Game.h"
 
 Title::Title()
-	: Base(eScene)
+	: ObjectBase(ObjectType::eScene)
 	, m_cnt(0)
 	, m_alpha(0.0f){
 	m_titleImg = COPY_RESOURCE("Title", CImage);
@@ -12,10 +12,9 @@ Title::Title()
 }
 
 void Title::Update(){
-	if (m_cnt++ >= 2 && PUSH(CInput::eButton5) && !CInput::GetPadData(0) ||
-		m_cnt++ >= 2 && PUSH(CInput::eButton3) && CInput::GetPadData(0)) {
+	if (m_cnt++ >= 2 && IsInput(CInput::eButton5, CInput::eButton3)) {
 		SetKill();
-		Base::Add(new Game());
+		new Game();
 	}
 }
 

@@ -1,7 +1,7 @@
 #include "Room.h"
 
 Room::Room(const CVector3D& pos, float roty, RoomType roomType)
-	: Base(eRoom)
+	: ObjectBase(ObjectType::eRoom)
 	, m_isCol(false){
 	m_pos = pos;
 	m_rot.y = DtoR(roty);
@@ -30,9 +30,9 @@ void Room::Render(){
 	//Utility::DrawAABB(CVector3D(-0.5f, -0.5f, -80), CVector3D(35, 5, -41.5f), CVector4D(1, 0, 0, 0.5f));
 }
 
-void Room::Collision(Base* b) {
+void Room::Collision(ObjectBase* b) {
 	switch (b->GetType()) {
-	case ePlayer:
+	case ObjectType::ePlayer:
 		if (CCollision::CollisionAABBPoint(
 			CVector3D(-0.5f, -0.5f, -80),
 			CVector3D(35, 5, -41.5f), b->m_pos)) {

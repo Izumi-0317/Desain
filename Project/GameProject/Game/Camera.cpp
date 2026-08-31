@@ -1,9 +1,10 @@
 #include "Camera.h"
+#include "Base/ObjectManager.h"
 #include "Game.h"
 #include "Game/Obj/Chara/Player.h"
 
 Camera::Camera()
-	:Base(eCamera)
+	: ObjectBase(ObjectType::eCamera)
 	, m_dist(2.0f)
 	, m_speed(0.003f) 
 	, m_shakeTime(0.0f)
@@ -22,17 +23,14 @@ void Camera::UpdateCam(){
 	m_rot += CVector3D(mouse_vec.y, -mouse_vec.x, 0) * m_speed;
 	m_rot.x = min(DtoR(35), max(DtoR(-35), m_rot.x));
 	m_rot.y = Utility::NormalizeAngle(m_rot.y);
-	if (Player* p = dynamic_cast<Player*>(Base::FindObject(ePlayer))) {
+	if (Player* p = ObjectManager::FindObject<Player>(ObjectType::ePlayer)) {
 		if (Game::m_cameraMode) {
-			/*m_camMat = CMatrix::MTranselate(p->GetModel()->GetFrameMatrix(7).GetPosition())
-				* CMatrix::MTranselate(CVector3D(sin(m_rot.y), 0, cos(m_rot.y)) * 0.1f)
-				* CMatrix::MRotation(m_rot);*/
 			m_dir = CVector3D(sin(m_rot.y), 0, cos(m_rot.y));
 
 			if (m_shakeTime > 0.0f) {
-				float x = Base::GetRand(-1.0f, 1.0f)
-					, y = Base::GetRand(-1.0f, 1.0f)
-					, z = Base::GetRand(-1.0f, 1.0f);
+				float x = Utility::Rand(-1.0f, 1.0f)
+					, y = Utility::Rand(-1.0f, 1.0f)
+					, z = Utility::Rand(-1.0f, 1.0f);
 				m_camMat = CMatrix::MTranselate(p->GetModel()->GetFrameMatrix(7).GetPosition())
 					* CMatrix::MTranselate(m_dir * 0.1f)
 					* CMatrix::MTranselate(CVector3D(x, y, z) * m_shakeIntensity)
@@ -61,7 +59,7 @@ void Camera::UpdateCam(){
 	}
 }
 
-void Camera::Collision(Base* b){
+void Camera::Collision(ObjectBase* b){
 	/*switch (b->GetType()){
 	case eField:
 

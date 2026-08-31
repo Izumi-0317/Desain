@@ -1,8 +1,9 @@
 #include "Potion.h"
+#include "Base/ObjectManager.h"
 #include "Game/Obj/Chara/Player.h"
 
 Potion::Potion(const CVector3D& pos)
-	: GimmickBase(ePotion){
+	: GimmickBase(ObjectType::ePotion){
 	m_gimmick = COPY_RESOURCE("Potion", CModelObj);
 	m_pos = pos;
 	m_scale = CVector3D(2, 2, 2);
@@ -20,7 +21,7 @@ void Potion::Render(){
 }
 
 void Potion::Interact(){
-	if (Player* p = dynamic_cast<Player*>(Base::FindObject(ePlayer))) {
+	if (Player* p = ObjectManager::FindObject<Player>(ObjectType::ePlayer)) {
 		p->SetPotionCnt(1);
 	}
 	SetKill();

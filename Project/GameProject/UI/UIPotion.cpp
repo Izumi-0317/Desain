@@ -33,7 +33,7 @@ void UIPotion::Update(){
 void UIPotion::Draw(){
 	m_backImg.SetPos(1814, 750);
 	m_backImg.Draw();
-	if (Player* p = dynamic_cast<Player*>(Base::FindObject(ePlayer))) {
+	if (Player* p = ObjectManager::FindObject<Player>(ObjectType::ePlayer)) {
 		int getPotion = p->GetPotionCnt();
 		if (m_potionCnt > getPotion) {
 			m_potionImg.ChangeAnimation(1, false);

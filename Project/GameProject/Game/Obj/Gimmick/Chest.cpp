@@ -4,7 +4,7 @@
 #include "Potion.h"
 
 Chest::Chest(const CVector3D& pos, float roty, int enemyCnt)
-	: GimmickBase(eChest)
+	: GimmickBase(ObjectType::eChest)
 	, m_enemyMaxCnt(enemyCnt)
 	, m_isOpen(true)
 	, mp_effect(nullptr){
@@ -15,15 +15,22 @@ Chest::Chest(const CVector3D& pos, float roty, int enemyCnt)
 	if (enemyCnt > 0) {
 		//敵生成
 		for (int i = 0;i < enemyCnt;i++) {
-			float randAng = DtoR(Base::GetRand(0.1, 360.0f));
-			float dist = std::sqrt(Base::GetRand(1.0f, 4.0f));
-			Base* ptr = new Paladin(m_pos + CVector3D(cos(randAng) * dist, 0, sin(randAng) * dist), true);
-			Base::Add(ptr);
+			float randAng = DtoR(Utility::Rand(0.1, 360.0f));
+			float dist = std::sqrt(Utility::Rand(1.0f, 4.0f));
+			auto ptr = new Paladin(
+				m_pos + CVector3D(cos(randAng) * dist, 0, sin(randAng) * dist),
+				true
+			);
 			m_enemyList.push_back(ptr);
 		}
 		//エフェクト生成
-		mp_effect = new EffectMagic("ECircleR", m_pos + CVector3D(0, 0.7f, 0), CVector3D(DtoR(90), 0, 0), 6.5f, -1);
-		Base::Add(mp_effect);
+		mp_effect = new EffectMagic(
+			"ECircleR",
+			m_pos + CVector3D(0, 0.7f, 0),
+			CVector3D(DtoR(90), 0, 0),
+			6.5f,
+			-1
+		);
 	}
 }
 
@@ -39,7 +46,7 @@ void Chest::Update(){
 		if (m_isInteractable) {
 			SOUND("ChestUnlock")->Play3D(m_pos, m_pos);
 			m_gimmick = COPY_RESOURCE("ChestOpen", CModelObj);
-			Base::Add(new Potion(m_pos));
+			new Potion(m_pos);
 			m_isOpen = false;
 		}
 	}

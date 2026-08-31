@@ -1,7 +1,7 @@
 #pragma once
-#include "Base/Base.h"
+#include "Base/ObjectBase.h"
 
-class GameOver :public Base {
+class GameOver :public ObjectBase {
 private:
 	CImage m_gameOverImg;
 	CImage m_returnImg;

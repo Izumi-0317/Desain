@@ -1,10 +1,10 @@
 #include "Player.h"
+#include "Base/ObjectManager.h"
 #include "Game/Camera.h"
 #include "Game/Obj/Gimmick/GimmickBase.h"
 #include "Game/Game.h"
 #include "Game/Obj/Weapon/Bullet.h"
 #include "Game/Obj/Weapon/Gun.h"
-#include "UI/UIScope.h"
 
 namespace {
 	constexpr int PLAYER_HP = 100;
@@ -16,8 +16,10 @@ namespace {
 	constexpr float AIMING_SPEED = 0.5f;
 }
 
+using enum CInput::E_BUTTON;
+
 Player::Player(const CVector3D& pos)
-	: CharaBase(ePlayer)
+	: CharaBase(ObjectType::ePlayer)
 	, m_fireTime(0)
 	, m_potionCnt(0)
 	, m_canAct(true)
@@ -39,31 +41,31 @@ Player::Player(const CVector3D& pos)
 	for (int i = m_upper_body; i <= m_body_end; i++)
 		m_model.GetNode(i)->SetAnimationLayer(1);
 
-	Base::Add(new Gun("AK47"));
-	if (Camera* f = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
-		f->m_rot = CVector3D(0, DtoR(180), 0);
+	new Gun("AK47");
+	if (Camera* c = ObjectManager::FindObject<Camera>(ObjectType::eCamera)) {
+		c->m_rot = CVector3D(0, DtoR(180), 0);
 	}
 }
 
 void Player::Update(){
 	CharaBase::Update();
-	if (Camera* f = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
-		m_rot.y = f->m_rot.y;
+	if (Camera* c = ObjectManager::FindObject<Camera>(ObjectType::eCamera)) {
+		m_rot.y = c->m_rot.y;
 	}
 
 	if (m_canAct) {
 		switch (m_state) {
 		case SIdle:	  StateIdle();		 break;
-		case SHit:	  StateHit();		 break;
+		case SDamage: StateDamage();	 break;
+		case SDeath:  StateDeath();		 break;
+		case SPunch:  StatePunch();		 break;
 		case SHave:	  StateHave();		 break;
 		case SAiming: StateAiming();	 break;
 		case SReloaded: StateReloaded(); break;
-		case SDamage: StateDamage();	 break;
-		case SDeath:  StateDeath();		 break;
 		}
 	}
 	else {
-		if (m_state == SAiming) NextState(SHave);
+		if(m_state != SIdle) ChangeState(SHave);
 	}
 
 	//カプセル
@@ -78,35 +80,15 @@ void Player::Update(){
 	if (m_pos.y < -0.3f) m_pos.y = 0;
 
 	//挙銃のアニメーション遷移
-	if (m_DownToAimFlag && (int)m_model.GetAnimation() != DownToAim) {
-		m_state = -1;
-		m_model.SetAnimationSpeed(1, 2.0f);
-		m_model.ChangeAnimation(1, DownToAim, false);
-		if (m_model.isAnimationEnd(1)) {
-			m_DownToAimFlag = false;
-			m_model.SetAnimationSpeed(1, 1.0f);
-			NextState(SHave);
-		}
-	}
-
+	TransitionAnim(m_DownToAimFlag, DownToAim, SHave);
 	//脱銃のアニメーション遷移
-	if (m_AimToDownFlag && (int)m_model.GetAnimation() != AimToDown) {
-		m_state = -1;
-		m_model.SetAnimationSpeed(1, 2.0f);
-		m_model.ChangeAnimation(1, AimToDown, false);
-		if (m_model.isAnimationEnd(1)) {
-			m_AimToDownFlag = false;
-			m_model.SetAnimationSpeed(1, 1.0f);
-			NextState(SIdle);
-		}
-	}
+	TransitionAnim(m_AimToDownFlag, AimToDown, SIdle);
 
 	//リロード
 	if ((m_state == SIdle || m_state == SHave) &&
 		!m_isMaxAmmo) {
-		if (PUSH(CInput::eButton2) && !CInput::GetPadData(0) ||
-			PUSH(CInput::eButton1) && CInput::GetPadData(0))
-			NextState(SReloaded);
+		if (IsInput(eButton2, eButton1))
+			ChangeState(SReloaded);
 	}
 
 	mp_intaractable = nullptr;
@@ -120,27 +102,27 @@ void Player::Render(){
 	m_model.SetRot(m_rot);
 	m_model.SetScale(0.02f, 0.02f, 0.02f);
 	m_model.UpdateMatrix();
-	if (Camera* f = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
-		f->UpdateCam();
-		if (m_state == SHit) {
-			m_model.BindFrameMatrix(m_upper_body, CMatrix::MRotation(f->m_rot), CA3MNode::eBind_Relative);
+	if (Camera* c = ObjectManager::FindObject<Camera>(ObjectType::eCamera)) {
+		c->UpdateCam();
+		if (m_state == SPunch) {
+			m_model.BindFrameMatrix(m_upper_body, CMatrix::MRotation(c->m_rot), CA3MNode::eBind_Relative);
 		}
 		else {
 			m_model.BindFrameMatrix(m_upper_body,
-				CMatrix::MRotation(f->m_rot) * CMatrix::MRotationY(DtoR(-40)), CA3MNode::eBind_Absolute);
+				CMatrix::MRotation(c->m_rot) * CMatrix::MRotationY(DtoR(-40)), CA3MNode::eBind_Absolute);
 		}
 	}
 	m_model.Render();
 	//Utility::DrawCapsule(m_capusle, CVector4D(1, 0, 0, 0.5f));
 	//プレイヤーの更新・描画後に銃を更新
-	if (Gun* g = dynamic_cast<Gun*>(Base::FindObject(eGun))) {
+	if (Gun* g = ObjectManager::FindObject<Gun>(ObjectType::eGun)) {
 		g->UpdateGun();
 	}
 }
 
-void Player::Collision(Base* b) {
+void Player::Collision(ObjectBase* b) {
 	switch (b->GetType()) {
-	case eRoom: {
+	case ObjectType::eRoom: {
 		CVector3D v(0, 0, 0);
 		auto tri = b->GetModel()->CollisionCapsule(m_capusle);
 		for (auto& t : tri) {
@@ -161,23 +143,22 @@ void Player::Collision(Base* b) {
 		m_pos += v;
 		break;
 	}
-	case eBoss:
-	case eEnemy: {
+	case ObjectType::eBoss:
+	case ObjectType::eEnemy: {
 		float dist;
 		CVector3D cross, dir;
 		if (CCollision::CollisionCapsule(m_capusle, b->m_capusle, &dist, &cross, &dir)) {
 			float s = (m_capusle.GetRadius() + b->m_capusle.GetRadius()) - dist;
-			b->m_pos += dir * s * 0.5f;
-			m_pos -= dir * s * 0.5f;
+			m_pos -= dir * s;
 		}
 		//近接攻撃
-		if (Camera* c = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
+		if (Camera* c = ObjectManager::FindObject<Camera>(ObjectType::eCamera)) {
 			CVector3D center = m_pos + CVector3D(0, 1, 0) + c->m_dir.GetNormalize() * 1.5f;
 			if (m_attackFlag && CCollision::CollisionCapsuleShpere(*b->GetCapsule(),
 				center, 1.0f,
 				&dist, &cross, &dir)) {
 				if (Interface* i = dynamic_cast<Interface*>(b)) {
-					SOUND("Hit")->Play();
+					SOUND("Punch")->Play();
 					i->TakeDamage(10);
 					m_attackFlag = false;
 				}
@@ -185,9 +166,9 @@ void Player::Collision(Base* b) {
 		}
 		break;
 	}
-	case eChest:
-	case eDoor:
-	case ePotion: {
+	case ObjectType::eChest:
+	case ObjectType::eDoor:
+	case ObjectType::ePotion: {
 		float length;
 		CVector3D axis;
 		if (CCollision::CollisionOBBCapsule(b->m_obb, m_capusle, &axis, &length)) {
@@ -207,16 +188,15 @@ void Player::StateIdle(){
 	UsePotion();
 	Interact();
 	//攻撃
-	if (PUSH(CInput::eMouseL) || PUSH(CInput::eButton6) && CInput::GetPadData(0)) NextState(SHit);
-	if (PUSH(CInput::eButton6) && !CInput::GetPadData(0) ||
-		PUSH(CInput::eButton4) && CInput::GetPadData(0)) m_DownToAimFlag = true;
+	if (IsInput(eMouseL, eButton6)) ChangeState(SPunch);
+	if (IsInput(eButton6, eButton4)) m_DownToAimFlag = true;
 }
 
-void Player::StateHit(){
+void Player::StatePunch(){
 	m_model.SetAnimationSpeed(1, 2.5f);
 	m_model.SetAnimationSpeed(0, 2.5f);
-	m_model.ChangeAnimation(1, Hit, false);
-	m_model.ChangeAnimation(0, Hit, false);
+	m_model.ChangeAnimation(1, Punch, false);
+	m_model.ChangeAnimation(0, Punch, false);
 	switch (m_stateStep){
 	case 0:
 		if (m_model.GetAnimationFrame() >= 30) {
@@ -237,30 +217,28 @@ void Player::StateHit(){
 	if (m_model.isAnimationEnd()) {
 		m_model.SetAnimationSpeed(1, 1.0f);
 		m_model.SetAnimationSpeed(0, 1.0f);
-		NextState(SIdle);
+		ChangeState(SIdle);
 	}
 }
 
 void Player::StateHave(){
-	if (PUSH(CInput::eMouseL) || PUSH(CInput::eButton6) && CInput::GetPadData(0)) Fire();
+	if (IsInput(eMouseL, eButton6)) Fire();
 	Move(HAVE_SPEED);
 	Interact();
 
-	if (HOLD(CInput::eMouseR) || HOLD(CInput::eButton5) && CInput::GetPadData(0)) NextState(SAiming);
-	if (PUSH(CInput::eButton6) && !CInput::GetPadData(0) ||
-		PUSH(CInput::eButton4) && CInput::GetPadData(0)) m_AimToDownFlag = true;
+	if (IsInput(eMouseR, eButton5, CInput::eHold)) ChangeState(SAiming);
+	if (IsInput(eButton6, eButton4)) m_AimToDownFlag = true;
 }
 
 void Player::StateAiming(){
-	if (!Base::FindObject(eUIScope)) Base::Add(new UIScope());
-	if (HOLD(CInput::eMouseL) || HOLD(CInput::eButton6) && CInput::GetPadData(0)) Fire();
+	if (IsInput(eMouseL, eButton6, CInput::eHold)) Fire();
 	Move(AIMING_SPEED);
 
-	if (PULL(CInput::eMouseR) || PULL(CInput::eButton5) && CInput::GetPadData(0)) NextState(SHave);
+	if (IsInput(eMouseR, eButton5, CInput::ePull)) ChangeState(SHave);
 }
 
 void Player::StateReloaded(){
-	if (Gun* g = dynamic_cast<Gun*>(Base::FindObject(eGun))) {
+	if (Gun* g = ObjectManager::FindObject<Gun>(ObjectType::eGun)) {
 		if (m_undoState != SDamage) {
 			m_model.ChangeAnimation(1, Reloading, false);
 			if (m_model.GetAnimationFrame(1) >= 50) {
@@ -270,9 +248,9 @@ void Player::StateReloaded(){
 					m_isMaxAmmo = true;
 				}
 			}
-			if (m_model.isAnimationEnd(1)) NextState(m_undoState);
+			if (m_model.isAnimationEnd(1)) ChangeState(m_undoState);
 		}
-		else if (m_model.isAnimationEnd(1)) NextState(SHave);
+		else if (m_model.isAnimationEnd(1)) ChangeState(SHave);
 	}
 }
 
@@ -282,7 +260,7 @@ void Player::StateDamage(){
 	m_model.ChangeAnimation(0, Damage, false);
 	if (m_model.isAnimationEnd()) {
 		m_model.SetAnimationSpeed(1.0f);
-		NextState(m_undoState);
+		ChangeState(m_undoState);
 	}
 }
 
@@ -290,7 +268,7 @@ void Player::StateDeath(){
 	m_model.ChangeAnimation(1, Death, false);
 	m_model.ChangeAnimation(0, Death, false);
 	if (m_model.isAnimationEnd()) {
-		if (Game* g = dynamic_cast<Game*>(Base::FindObject(eScene))) {
+		if (Game* g = ObjectManager::FindObject<Game>(ObjectType::eScene)) {
 			g->markAsGameOver();
 		}
 	}
@@ -307,7 +285,7 @@ void Player::Move(float speed){
 		CVector2D axis = CInput::GetLStick(0);
 		keyDir = CVector3D(-axis.x, 0, axis.y);
 	}
-	if (Camera* f = dynamic_cast<Camera*>(Base::FindObject(eCamera))) {
+	if (Camera* f = ObjectManager::FindObject<Camera>(ObjectType::eCamera)) {
 		if (keyDir.LengthSq() > 0.05f) {
 			float keyForce = min(1.0f, keyDir.Length());
 			if (SOUND("FootstepsWalk")->CheckEnd()) {
@@ -322,6 +300,7 @@ void Player::Move(float speed){
 				m_model.ChangeAnimation(1, Walk);
 				m_model.ChangeAnimation(0, Walk);
 				if (keyDir.z > 0) {
+					//走っているなら
 					if (HOLD(CInput::eButton4) ||
 						keyForce > 0.7f && CInput::GetPadData(0)) {
 						SOUND("FootstepsWalk")->Stop();
@@ -382,7 +361,7 @@ void Player::Move(float speed){
 }
 
 void Player::Fire(){
-	if (Gun* g = dynamic_cast<Gun*>(Base::FindObject(eGun))) {
+	if (Gun* g = ObjectManager::FindObject<Gun>(ObjectType::eGun)) {
 		if (g->GetLoadedAmmo() <= 0) {
 			if (m_isDryFiringSound)
 				SOUND("DryFiring")->Play3D(g->GetMatrix().GetPosition(), CVector3D(1, 1, 1));
@@ -395,20 +374,17 @@ void Player::Fire(){
 			CVector3D pos = g->GetMatrix() * CVector4D(0, 0, -0.4f, 1);
 			CVector3D dir = g->GetMatrix().GetFront().GetNormalize();
 			SOUND("Shot")->Play3D(g->GetMatrix().GetPosition(), CVector3D(1, 1, 1));
-			Base::Add(new Bullet(pos, -dir));
+			new Bullet(pos, -dir);
 			m_fireTime = 15;
 		}
 	}
 }
 
 void Player::UsePotion(){
-	//ポーションを持っているかつ待機状態かつHPが100未満かつEを押したら
+	//ポーションを持っているかつ待機状態かつHPが100未満かつ対応するキーを押したら
 	if (m_potionCnt > 0 && m_state == SIdle &&
 		m_hp < 100 && 
-		PUSH(CInput::eButton1) && !CInput::GetPadData(0) ||
-		m_potionCnt > 0 && m_state == SIdle &&
-		m_hp < 100 &&
-		PUSH(CInput::eButton3) && CInput::GetPadData(0)) {
+		IsInput(eButton1, eButton3)) {
 		SOUND("Potion")->Play3D(m_pos, m_pos);
 		m_hp = min(100, m_hp + POTION_HEAL_AMOUNT);
 		m_potionCnt--;
@@ -419,13 +395,25 @@ void Player::UsePotion(){
 void Player::Interact(){
 	if (mp_intaractable == nullptr) return;
 	//インタラクト可能なオブジェクトに近づいているかつ
-	//Eを押したらインタラクトする
+	//対応するキーを押したらインタラクトする
 	if (mp_intaractable && 
-		PUSH(CInput::eButton1) && !CInput::GetPadData(0) ||
-		PUSH(CInput::eButton3) && CInput::GetPadData(0))
+		IsInput(eButton1, eButton3))
 		mp_intaractable->Interact();
 }
 
 void Player::AddForce(const CVector3D& vec, float force){
 	m_pos += vec.GetNormalize() * force;
+}
+
+void Player::TransitionAnim(bool& flag, int anim, int nextState){
+	if (flag && (int)m_model.GetAnimation() != anim) {
+		m_state = -1;
+		m_model.SetAnimationSpeed(1, 2.0f);
+		m_model.ChangeAnimation(1, anim, false);
+		if (m_model.isAnimationEnd(1)) {
+			flag = false;
+			m_model.SetAnimationSpeed(1, 1.0f);
+			ChangeState(nextState);
+		}
+	}
 }

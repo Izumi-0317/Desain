@@ -2,11 +2,11 @@
 #include "Game/Obj/Chara/Player.h"
 
 UIPrompts::UIPrompts()
-	: m_promptText("C:\\Windows\\Fonts\\msgothic.ttc", 40)
+	: m_promptText("C:\\Windows\\Fonts\\msgothic.ttc", 30)
     , m_lastState(-1){
 	m_backImg = COPY_RESOURCE("UIPromptsBack", CImage);
-	m_backImg.SetSize(480, 480);
-	m_backImg.SetPos(0, 550);
+	m_backImg.SetSize(360, 360);
+	m_backImg.SetPos(0, 670);
 	m_isPad = CInput::GetPadData(0);
 }
 
@@ -18,84 +18,71 @@ void UIPrompts::Draw(){
 	m_backImg.Draw();
 	if (m_isPad) {
 		//pad
-		if (Player* p = dynamic_cast<Player*>(Base::FindObject(ePlayer))) {
-			int currentState = p->GetState();
-
-			if (currentState == p->SIdle || currentState == p->SHave || currentState == p->SAiming) {
-				m_prompts.clear();
-				m_prompts.push_back("[Lｽﾃｨｯｸ]　　　移動");
-
-				switch (currentState) {
-				case p->SIdle:
-					m_prompts.push_back("[Lｽﾃｨｯｸ↑] 　ダッシュ");
-					m_prompts.push_back("[RT]　　　　　殴打");
-					m_prompts.push_back("[X] 　　　　　挙銃");
-					if (!p->GetIsMaxAmmo())   m_prompts.push_back("[Y] 　　　リロード");
-					if (p->GetIntaractable()) m_prompts.push_back("[A] 　　インタラクト");
-					break;
-				case p->SHave:
-					m_prompts.push_back("[RT]　　　　　発砲");
-					m_prompts.push_back("[X] 　　　　　脱銃");
-					m_prompts.push_back("[LT]　　　　　エイム");
-					if (!p->GetIsMaxAmmo())   m_prompts.push_back("[Y] 　　　リロード");
-					if (p->GetIntaractable()) m_prompts.push_back("[A] 　　インタラクト");
-					break;
-				case p->SAiming:
-					m_prompts.push_back("[RT]　　　　　発砲");
-					m_prompts.push_back("[LT]　　　　　エイム解除");
-					break;
-				}
-				m_lastState = currentState;
-			}
-		}
-		for (int i = 0; i < m_prompts.size(); i++) {
-			m_promptText.Draw(30, 970 - i * 80, 1, 1, 0, m_prompts[i].c_str());
-		}
+		DrawPrompts({
+			.Move = "[Lｽﾃｨｯｸ]　　　移動",
+			.Dash = "[Lｽﾃｨｯｸ↑] 　ダッシュ",
+			.Punch = "[RT]　　　　　殴打",
+			.Ready = "[X] 　　　　　挙銃",
+			.Shot = "[RT]　　　　　発砲",
+			.Safe = "[X] 　　　　　脱銃",
+			.Aim = "[LT]　　　　　エイム",
+			.Hipfire = "[LT]　　　　　エイム解除",
+			.Reload = "[Y] 　　　リロード",
+			.Interact = "[A] 　　インタラクト",
+			.Potion = "[A] 　　　ポーション"
+			});
 	}
 	else {
 		//keyboard
-        if (Player* p = dynamic_cast<Player*>(Base::FindObject(ePlayer))) {
-            int currentState = p->GetState();
-
-            if (currentState == p->SIdle || currentState == p->SHave || currentState == p->SAiming) {
-                m_prompts.clear();
-                m_prompts.push_back("[WASD]　　　　移動");
-
-                switch (currentState) {
-                case p->SIdle:
-                    m_prompts.push_back("[SHIFT+W]　　ダッシュ");
-                    m_prompts.push_back("[左クリック]　殴打");
-                    m_prompts.push_back("[F] 　　　　　挙銃");
-                    if (!p->GetIsMaxAmmo())   m_prompts.push_back("[R] 　　　リロード");
-                    if (p->GetIntaractable()) m_prompts.push_back("[E] 　　インタラクト");
-                    break;
-                case p->SHave:
-                    m_prompts.push_back("[左クリック]　発砲");
-                    m_prompts.push_back("[F] 　　　　　脱銃");
-                    m_prompts.push_back("[右クリック]　エイム");
-                    if (!p->GetIsMaxAmmo())   m_prompts.push_back("[R] 　　　リロード");
-                    if (p->GetIntaractable()) m_prompts.push_back("[E] 　　インタラクト");
-                    break;
-                case p->SAiming:
-                    m_prompts.push_back("[左クリック]　発砲");
-                    m_prompts.push_back("[右クリック]　エイム解除");
-                    break;
-                }
-                m_lastState = currentState;
-            }
-        }
-		for (int i = 0; i < m_prompts.size(); i++) {
-            m_promptText.Draw(30, 970 - i * 80, 1, 1, 0, m_prompts[i].c_str());
-		}
-		//m_keyboardImg.SetSize(74, 72);
-		//for (int i = 0;i < 4;i++) {
-		//	m_keyboardImg.SetRect(74 * i, 0, 74 + 74 * i, 72);
-		//	m_keyboardImg.SetPos(30 + 74 * i, 920);
-		//	//m_keyboardImg.Draw();
-		//}
-
-		//m_keyboardImg.SetRect(296, 0, 370, 72);
-		//m_keyboardImg.SetPos(30, 830);
-		//m_keyboardImg.Draw();
+		DrawPrompts({
+			.Move = "[WASD]　　　　移動",
+			.Dash = "[SHIFT+W]　　ダッシュ",
+			.Punch = "[左クリック]　殴打",
+			.Ready = "[F] 　　　　　挙銃",
+			.Shot = "[左クリック]　発砲",
+			.Safe = "[F] 　　　　　脱銃",
+			.Aim = "[右クリック]　エイム",
+			.Hipfire = "[右クリック]　エイム解除",
+			.Reload = "[R] 　　　リロード",
+			.Interact = "[E] 　　インタラクト",
+			.Potion = "[E] 　　　ポーション"
+			});
 	}
+}
+
+void UIPrompts::DrawPrompts(const Prompts& pro){
+    if (Player* p = ObjectManager::FindObject<Player>(ObjectType::ePlayer)) {
+        int currentState = p->GetState();
+
+        if (currentState == p->SIdle || currentState == p->SHave || currentState == p->SAiming) {
+            m_prompts.clear();
+            m_prompts.push_back(pro.Move);
+
+            switch (currentState) {
+            case p->SIdle:
+                m_prompts.push_back(pro.Dash);
+                m_prompts.push_back(pro.Punch);
+                m_prompts.push_back(pro.Ready);
+                if (!p->GetIsMaxAmmo())   m_prompts.push_back(pro.Reload);
+				if (p->GetIntaractable()) m_prompts.push_back(pro.Interact);
+				else if (p->GetPotionCnt() > 0) m_prompts.push_back(pro.Potion);
+                break;
+            case p->SHave:
+                m_prompts.push_back(pro.Shot);
+                m_prompts.push_back(pro.Safe);
+                m_prompts.push_back(pro.Aim);
+                if (!p->GetIsMaxAmmo())   m_prompts.push_back(pro.Reload);
+                if (p->GetIntaractable()) m_prompts.push_back(pro.Interact);
+                break;
+            case p->SAiming:
+                m_prompts.push_back(pro.Shot);
+                m_prompts.push_back(pro.Hipfire);
+                break;
+            }
+            m_lastState = currentState;
+        }
+    }
+    for (int i = 0; i < m_prompts.size(); i++) {
+        m_promptText.Draw(30, 970 - i * 45, 1, 1, 0, m_prompts[i].c_str());
+    }
 }

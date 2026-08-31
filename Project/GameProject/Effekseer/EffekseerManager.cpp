@@ -4,7 +4,7 @@
 EffekseerManager *EffekseerManager::m_instance = nullptr;
 
 EffekseerManager::EffekseerManager() :
-	Base(eEffectManager)
+	ObjectBase(ObjectType::eEffectManager)
 {
 	//エフェクトの先読み
 	struct EFK_DATA {

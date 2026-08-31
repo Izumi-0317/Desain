@@ -1,7 +1,7 @@
 #pragma once
-#include "Base/Base.h"
+#include "Base/ObjectBase.h"
 
-class Game :public Base {
+class Game :public ObjectBase {
 private:
 	int m_delayTime;		//シーン遷移の待ち時間
 	bool m_isComplete;		//ゲームのクリアフラグ

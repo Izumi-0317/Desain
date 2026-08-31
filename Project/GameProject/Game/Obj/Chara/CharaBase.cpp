@@ -1,7 +1,8 @@
 #include "CharaBase.h"
+#include "Base/ObjectManager.h"
 
 CharaBase::CharaBase(int type)
-	: Base(type)
+	: ObjectBase(type)
 	, m_hp(0)
 	, m_maxHp(0)
 	, m_state(-1)
@@ -22,7 +23,7 @@ void CharaBase::Render()
 {
 }
 
-void CharaBase::NextState(int next)
+void CharaBase::ChangeState(int next)
 {
 	if (m_state == next) return;
 	m_undoState = m_state;
@@ -31,10 +32,6 @@ void CharaBase::NextState(int next)
 }
 
 void CharaBase::StateIdle()
-{
-}
-
-void CharaBase::StateAttack()
 {
 }
 
@@ -51,10 +48,10 @@ void CharaBase::TakeDamage(int damage)
 	if (m_hp == 0) return;
 	if (m_hp - damage > 0) {
 		m_hp -= damage;
-		NextState(SDamage);
+		ChangeState(SDamage);
 	}
 	else {
 		m_hp = 0;
-		NextState(SDeath);
+		ChangeState(SDeath);
 	}
 }

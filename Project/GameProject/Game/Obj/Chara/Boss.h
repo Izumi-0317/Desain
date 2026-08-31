@@ -24,20 +24,21 @@ private:
 	CVector3D m_atkPos;		//攻撃の中心座標
 	CVector3D m_jumpPos;	//跳躍点
 	CVector3D m_landingPos;	//着地点
-	Base* mp_target;	//ターゲットのポインタ
-	Base* mp_UIHP;		//自分のUIHPのポインタ
+	ObjectBase* mp_target;	//ターゲットのポインタ
+	ObjectBase* mp_UIHP;		//自分のUIHPのポインタ
 public:
 	enum AddState {
-		SHaymaker = 4,
+		SPunch = 3,
+		SHaymaker,
 		SJumpAttack,
 		SShowOff,
 	};
 	Boss(const CVector3D& pos);
 	void Update() override;
 	void Render() override;
-	void Collision(Base* b) override;
+	void Collision(ObjectBase* b) override;
 	void StateIdle() override;
-	void StateAttack() override;
+	void StatePunch();
 	void StateHaymaker();
 	void StateJumpAttack();
 	void StateShowOff();

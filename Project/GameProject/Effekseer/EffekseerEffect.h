@@ -7,7 +7,7 @@
 #include "../Base/Base.h"
 #include "EffekseerManager.h"
 //エフェクトクラス
-class EffekseerEffect :public Base{
+class EffekseerEffect :public ObjectBase{
 	Effekseer::Handle	m_handle;		//!発生したエフェクトのハンドル
 	Effekseer::EffectRef m_ref;
 	CMatrix *m_parent;					//!親

@@ -5,16 +5,18 @@ UIVignette::UIVignette()
 	: m_alpha(0.0f)
     , m_lerpTime(1.0f){
 	m_vignetteImg = COPY_RESOURCE("UIVignette", CImage);
-    if (Player* p = dynamic_cast<Player*>(Base::FindObject(ePlayer))) {
+    if (Player* p = ObjectManager::FindObject<Player>(ObjectType::ePlayer)) {
         m_currentHp = p->m_maxHp;
     }
 }
 
 void UIVignette::Update(){
     if (m_lerpTime < 1.0f) m_lerpTime += 0.01f;
-    if (Player* p = dynamic_cast<Player*>(Base::FindObject(ePlayer))) {
+    if (Player* p = ObjectManager::FindObject<Player>(ObjectType::ePlayer)) {
         if (m_currentHp != p->m_hp) {
+            //HPが減ったら
             if (m_currentHp > p->m_hp) {
+                //ビネット表示
                 m_alpha = 1.0f;
                 m_lerpTime = 0.0f;
             }

@@ -1,7 +1,7 @@
 #pragma once
-#include "Base/Base.h"
+#include "Base/ObjectBase.h"
 
-class EffectMagic : public Base {
+class EffectMagic : public ObjectBase {
 	CModelObj m_model;
 	int m_time;
 	float m_scale;

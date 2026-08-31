@@ -1,15 +1,13 @@
 #include "Shield.h"
 
-int i = 0;
-Shield::Shield(Base* owner)
-	: WeaponBase(eShield)
+Shield::Shield(ObjectBase* owner)
+	: WeaponBase(ObjectType::eShield)
 	, mp_owner(owner){
 	m_weapon = COPY_RESOURCE("Shield", CModelObj);
 	m_rot.z = DtoR(175);
 }
 
 void Shield::Update(){
-	//if (i++ >= 360)i = 0;
 	m_weaponMat = mp_owner->GetModel()->GetFrameMatrix(35)
 		* CMatrix::MTranselate(0, -4, 0)
 		* CMatrix::MRotationZ(DtoR(175))
@@ -19,7 +17,9 @@ void Shield::Update(){
 		*CMatrix::MRotationX(DtoR(i));
 	CVector3D offsetOBB(0, 0.055, 0.01);*/
 	
-	m_obb = COBB(m_weaponMat.GetPosition(), m_weaponMat.GetEuler(CMatrix::eZYX), m_weaponMat.GetScale() * CMatrix::MScale(0.35f, 0.1f, 0.54f));
+	m_obb = COBB(m_weaponMat.GetPosition(),
+		m_weaponMat.GetEuler(CMatrix::eZYX),
+		m_weaponMat.GetScale() * CMatrix::MScale(0.35f, 0.1f, 0.54f));
 }
 
 void Shield::Render(){

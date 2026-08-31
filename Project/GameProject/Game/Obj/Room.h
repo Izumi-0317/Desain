@@ -1,7 +1,7 @@
 #pragma once
-#include "Base/Base.h"
+#include "Base/ObjectBase.h"
 
-class Room :public Base {
+class Room :public ObjectBase {
 private:
 	CModelObj m_room;
 	bool m_isCol;
@@ -24,7 +24,7 @@ public:
 	Room(const CVector3D& pos, float roty, RoomType roomType);
 	void Update() override;
 	void Render() override;
-	void Collision(Base* b) override;
-	CModel* GetModel() override { return mp_room; }
+	void Collision(ObjectBase* b) override;
+	CModel* GetModel() { return mp_room; }
 	bool IsCollision() { return m_isCol; }
 };
